@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="AI CRM - Recruitment Management System" />
+    
+<!-- Google Analytics -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQKFN7G82E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZQKFN7G82E');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BKH0VRXCRQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BKH0VRXCRQ');
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RLG7GV59TB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-RLG7GV59TB');
+</script>
+
+<title>AI-Powered Talent CRM - Login</title>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<!-- Feather icons -->
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    /* Inter font included for modern look */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    
+    :root {
+        --primary-color: #3B82F6;
+        --success-color: #10B981;
+        --warning-color: #FBBF24;
+        --danger-color: #EF4444;
+        --sidebar-bg: #0F172A;
+        --sidebar-hover: #1E293B;
+        --card-bg: #fff;
+        --text-light: #6B7280;
+    }
+    
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    
+    /* Auth Container */
+    .auth-container {
+        display: flex;
+        width: 100%;
+        max-width: 1200px;
+        min-height: 700px;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Left Side - Welcome Section */
+    .auth-welcome {
+        flex: 1;
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+        color: white;
+        padding: 60px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .auth-welcome::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%233B82F6" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: cover;
+    }
+    
+    .auth-welcome-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 40px;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: white;
+    }
+    
+    .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-color);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .welcome-title {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1.1rem;
+        color: #CBD5E1;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 40px 0;
+    }
+    
+    .features-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        color: #CBD5E1;
+        font-size: 1rem;
+    }
+    
+    .features-list i {
+        color: var(--primary-color);
+        margin-right: 15px;
+        font-size: 1.2rem;
+        min-width: 24px;
+    }
+    
+    /* Right Side - Auth Forms */
+    .auth-forms {
+        flex: 1;
+        padding: 60px 40px;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .auth-header h1 {
+        font-size: 2rem;
+        color: #1E293B;
+        margin-bottom: 10px;
+    }
+    
+    .auth-header p {
+        color: var(--text-light);
+        font-size: 1rem;
+    }
+    
+    /* Tabs */
+    .auth-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #E5E7EB;
+        padding-bottom: 10px;
+    }
+    
+    .auth-tab {
+        flex: 1;
+        padding: 15px 20px;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-light);
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-tab.active {
+        color: var(--primary-color);
+        background: rgba(59, 130, 246, 0.1);
+        position: relative;
+    }
+    
+    .auth-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+    
+    /* Forms */
+    .auth-form {
+        display: none;
+    }
+    
+    .auth-form.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #E5E7EB;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .form-control.error {
+        border-color: var(--danger-color);
+    }
+    
+    .error-message {
+        color: var(--danger-color);
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    .error-message.show {
+        display: block;
+    }
+    
+    .password-input {
+        position: relative;
+    }
+    
+    .toggle-password {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        font-size: 1.1rem;
+    }
+    
+    /* Terms Checkbox */
+    .terms-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+    
+    .terms-group input[type="checkbox"] {
+        margin-top: 4px;
+        accent-color: var(--primary-color);
+    }
+    
+    .terms-group label {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.5;
+    }
+    
+    .terms-group a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .terms-group a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Submit Button */
+    .submit-btn {
+        width: 100%;
+        padding: 16px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .submit-btn:hover {
+        background: #2563EB;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+    
+    .submit-btn.loading {
+        opacity: 0.8;
+        cursor: not-allowed;
+    }
+    
+    /* Divider */
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 30px 0;
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+    
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #E5E7EB;
+    }
+    
+    .divider span {
+        padding: 0 15px;
+    }
+    
+    /* Social Login */
+    .social-login {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .social-btn {
+        flex: 1;
+        padding: 14px;
+        border: 2px solid #E5E7EB;
+        background: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #374151;
+    }
+    
+    .social-btn:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    .social-btn.google {
+        color: #DB4437;
+    }
+    
+    .social-btn.linkedin {
+        color: #0077B5;
+    }
+    
+    /* CRM Demo Preview */
+    .crm-demo-preview {
+        background: #F8FAFC;
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 40px;
+        border: 2px solid #E5E7EB;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .crm-demo-preview::before {
+        content: 'CRM PREVIEW';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--primary-color);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .demo-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .demo-stat {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .demo-stat .value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .demo-stat .label {
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+    
+    .demo-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    
+    .demo-feature {
+        background: white;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--text-light);
+        border: 1px solid #E5E7EB;
+    }
+    
+    /* Message Box */
+    #authMessageBox {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background-color: var(--success-color);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+        font-weight: 600;
+        animation: slideIn 0.3s ease-out;
+        max-width: 400px;
+    }
+    
+    @keyframes slideIn {
+        from { right: -300px; opacity: 0; }
+        to { right: 20px; opacity: 1; }
+    }
+    
+    /* Forgot Password Link */
+    .forgot-password {
+        text-align: right;
+        margin-top: -15px;
+        margin-bottom: 25px;
+    }
+    
+    .forgot-password a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .forgot-password a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .auth-container {
+            flex-direction: column;
+            max-width: 500px;
+            min-height: auto;
+        }
+        
+        .auth-welcome {
+            padding: 40px 30px;
+        }
+        
+        .auth-forms {
+            padding: 40px 30px;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        body {
+            padding: 10px;
+        }
+        
+        .auth-container {
+            border-radius: 15px;
+        }
+        
+        .auth-welcome,
+        .auth-forms {
+            padding: 30px 20px;
+        }
+        
+        .social-login {
+            flex-direction: column;
+        }
+        
+        .demo-stats {
+            grid-template-columns: 1fr;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+        }
+        
+        .welcome-title {
+            font-size: 1.8rem;
+        }
+    }
+    
+    /* Switch to Register/Login */
+    .switch-auth {
+        text-align: center;
+        margin-top: 30px;
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    
+    .switch-auth a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+    
+    .switch-auth a:hover {
+        text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+
+<!-- Message Box -->
+<div id="authMessageBox"></div>
+
+<!-- Auth Container -->
+<div class="auth-container">
+    <!-- Left Side - Welcome -->
+    <div class="auth-welcome">
+        <div class="auth-welcome-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i data-feather="cpu"></i>
+                </div>
+                <span>AI Talent CRM</span>
+            </div>
+            
+            <h1 class="welcome-title">AI-Powered Recruitment Platform</h1>
+            <p class="welcome-subtitle">
+                Streamline your recruitment process with intelligent candidate matching, 
+                automated outreach, and real-time analytics powered by artificial intelligence.
+            </p>
+            
+            <ul class="features-list">
+                <li><i data-feather="zap"></i> AI Candidate Matching with 94% Accuracy</li>
+                <li><i data-feather="search"></i> Real-time Job Market Intelligence</li>
+                <li><i data-feather="mail"></i> Automated Outreach & Follow-ups</li>
+                <li><i data-feather="bar-chart"></i> Advanced Analytics Dashboard</li>
+                <li><i data-feather="users"></i> Team Collaboration Tools</li>
+                <li><i data-feather="shield"></i> Enterprise-grade Security</li>
+            </ul>
+            
+            <div class="crm-demo-preview">
+                <div class="demo-stats">
+                    <div class="demo-stat">
+                        <span class="value">1,247</span>
+                        <span class="label">Active Candidates</span>
+                    </div>
+                    <div class="demo-stat">
+                        <span class="value">86</span>
+                        <span class="label">Live Jobs</span>
+                    </div>
+                    <div class="demo-stat">
+                        <span class="value">342</span>
+                        <span class="label">Applications</span>
+                    </div>
+                    <div class="demo-stat">
+                        <span class="value">94%</span>
+                        <span class="label">AI Match Rate</span>
+                    </div>
+                </div>
+                <div class="demo-features">
+                    <span class="demo-feature">Google Drive Sync</span>
+                    <span class="demo-feature">LinkedIn Integration</span>
+                    <span class="demo-feature">Email Campaigns</span>
+                    <span class="demo-feature">Real-time Analytics</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Side - Auth Forms -->
+    <div class="auth-forms">
+        <div class="auth-header">
+            <h1 id="authTitle">Welcome Back</h1>
+            <p id="authSubtitle">Sign in to access your AI-powered recruitment dashboard</p>
+        </div>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+            <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+            <div class="form-group">
+                <label for="loginEmail">Email Address</label>
+                <input type="email" id="loginEmail" class="form-control" placeholder="your.email@company.com" required>
+                <div class="error-message" id="loginEmailError">Please enter a valid email address</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <div class="password-input">
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">
+                        <i data-feather="eye"></i>
+                    </button>
+                </div>
+                <div class="error-message" id="loginPasswordError">Password must be at least 8 characters</div>
+            </div>
+            
+            <div class="forgot-password">
+                <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="loginSubmit">
+                <span>Sign In</span>
+            </button>
+            
+            <div class="divider">
+                <span>Or continue with</span>
+            </div>
+            
+            <div class="social-login">
+                <button type="button" class="social-btn google" onclick="socialLogin('google')">
+                    <i data-feather="mail"></i>
+                    Google
+                </button>
+                <button type="button" class="social-btn linkedin" onclick="socialLogin('linkedin')">
+                    <i data-feather="linkedin"></i>
+                    LinkedIn
+                </button>
+            </div>
+            
+            <div class="switch-auth">
+                Don't have an account?
+                <a href="#" onclick="switchAuthTab('register')">Sign up here</a>
+            </div>
+        </form>
+        
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label for="registerName">Full Name</label>
+                <input type="text" id="registerName" class="form-control" placeholder="John Smith" required>
+                <div class="error-message" id="registerNameError">Please enter your full name</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="registerEmail">Email Address</label>
+                <input type="email" id="registerEmail" class="form-control" placeholder="your.email@company.com" required>
+                <div class="error-message" id="registerEmailError">Please enter a valid email address</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="registerCompany">Company (Optional)</label>
+                <input type="text" id="registerCompany" class="form-control" placeholder="Your company name">
+            </div>
+            
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <div class="password-input">
+                    <input type="password" id="registerPassword" class="form-control" placeholder="Create a strong password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">
+                        <i data-feather="eye"></i>
+                    </button>
+                </div>
+                <div class="error-message" id="registerPasswordError">Password must be at least 8 characters with uppercase, lowercase, and numbers</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="registerConfirmPassword">Confirm Password</label>
+                <div class="password-input">
+                    <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Confirm your password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('registerConfirmPassword')">
+                        <i data-feather="eye"></i>
+                    </button>
+                </div>
+                <div class="error-message" id="registerConfirmPasswordError">Passwords do not match</div>
+            </div>
+            
+            <div class="terms-group">
+                <input type="checkbox" id="termsAgreement" required>
+                <label for="termsAgreement">
+                    I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                </label>
+                <div class="error-message" id="termsError">You must accept the terms and conditions</div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="registerSubmit">
+                <span>Create Account</span>
+            </button>
+            
+            <div class="switch-auth">
+                Already have an account?
+                <a href="#" onclick="switchAuthTab('login')">Sign in here</a>
+            </div>
+        </form>
+        
+        <!-- Forgot Password Form (Hidden by default) -->
+        <form id="forgotPasswordForm" class="auth-form" style="display: none;">
+            <div class="auth-header">
+                <h1>Reset Password</h1>
+                <p>Enter your email to receive reset instructions</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="forgotEmail">Email Address</label>
+                <input type="email" id="forgotEmail" class="form-control" placeholder="your.email@company.com" required>
+                <div class="error-message" id="forgotEmailError">Please enter a valid email address</div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="forgotSubmit">
+                <span>Send Reset Instructions</span>
+            </button>
+            
+            <div class="switch-auth" style="margin-top: 20px;">
+                <a href="#" onclick="switchAuthTab('login')">Back to Sign In</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script>
+// Initialize Feather Icons
+feather.replace();
+
+// Simulated user database (in production, this would be a backend API)
+const mockUsers = [
+    {
+        id: 1,
+        name: "Demo User",
+        email: "demo@aitalentcrm.com",
+        password: "Demo@123",
+        company: "AI Talent CRM",
+        role: "admin",
+        createdAt: new Date().toISOString()
+    }
+];
+
+// Current user session
+let currentUser = null;
+
+// Switch between auth tabs
+function switchAuthTab(tab) {
+    // Update tabs
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    
+    if (tab === 'login') {
+        document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+        document.getElementById('loginForm').classList.add('active');
+        document.getElementById('authTitle').textContent = 'Welcome Back';
+        document.getElementById('authSubtitle').textContent = 'Sign in to access your AI-powered recruitment dashboard';
+    } else if (tab === 'register') {
+        document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+        document.getElementById('registerForm').classList.add('active');
+        document.getElementById('authTitle').textContent = 'Create Account';
+        document.getElementById('authSubtitle').textContent = 'Start your free trial with AI Talent CRM';
+    }
+}
+
+// Toggle password visibility
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const button = field.parentElement.querySelector('.toggle-password i');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        button.setAttribute('data-feather', 'eye-off');
+    } else {
+        field.type = 'password';
+        button.setAttribute('data-feather', 'eye');
+    }
+    feather.replace();
+}
+
+// Show forgot password form
+function showForgotPassword() {
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('forgotPasswordForm').classList.add('active');
+    document.getElementById('authTitle').textContent = 'Reset Password';
+    document.getElementById('authSubtitle').textContent = 'Enter your email to receive reset instructions';
+}
+
+// Show message
+function showAuthMessage(message, type = 'success') {
+    const box = document.getElementById('authMessageBox');
+    const colors = {
+        success: '#10B981',
+        error: '#EF4444',
+        warning: '#FBBF24',
+        info: '#3B82F6'
+    };
+    
+    box.textContent = message;
+    box.style.backgroundColor = colors[type] || colors.success;
+    box.style.display = 'block';
+    
+    setTimeout(() => {
+        box.style.display = 'none';
+    }, 5000);
+}
+
+// Form validation
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validatePassword(password) {
+    return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password);
+}
+
+// Login form submission
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const submitBtn = document.getElementById('loginSubmit');
+    
+    // Reset errors
+    document.getElementById('loginEmailError').classList.remove('show');
+    document.getElementById('loginPasswordError').classList.remove('show');
+    
+    let valid = true;
+    
+    // Validate email
+    if (!validateEmail(email)) {
+        document.getElementById('loginEmailError').classList.add('show');
+        document.getElementById('loginEmail').classList.add('error');
+        valid = false;
+    }
+    
+    // Validate password
+    if (password.length < 8) {
+        document.getElementById('loginPasswordError').classList.add('show');
+        document.getElementById('loginPassword').classList.add('error');
+        valid = false;
+    }
+    
+    if (!valid) return;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<div class="spinner"></div>';
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        // Check credentials
+        const user = mockUsers.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            // Store user in session
+            currentUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                company: user.company,
+                role: user.role
+            };
+            
+            localStorage.setItem('aiTalentUser', JSON.stringify(currentUser));
+            localStorage.setItem('aiTalentToken', 'mock_jwt_token_' + Date.now());
+            
+            showAuthMessage('Login successful! Redirecting to CRM...', 'success');
+            
+            // Redirect to CRM dashboard
+            setTimeout(() => {
+                window.location.href = 'crm-dashboard.html'; // This would be your actual CRM page
+            }, 1500);
+        } else {
+            showAuthMessage('Invalid email or password. Try demo@aitalentcrm.com / Demo@123', 'error');
+            submitBtn.innerHTML = '<span>Sign In</span>';
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }, 1500);
+});
+
+// Register form submission
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const company = document.getElementById('registerCompany').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+    const termsAgreed = document.getElementById('termsAgreement').checked;
+    const submitBtn = document.getElementById('registerSubmit');
+    
+    // Reset errors
+    const errorIds = ['registerNameError', 'registerEmailError', 'registerPasswordError', 'registerConfirmPasswordError', 'termsError'];
+    errorIds.forEach(id => document.getElementById(id).classList.remove('show'));
+    
+    let valid = true;
+    
+    // Validate name
+    if (name.length < 2) {
+        document.getElementById('registerNameError').classList.add('show');
+        document.getElementById('registerName').classList.add('error');
+        valid = false;
+    }
+    
+    // Validate email
+    if (!validateEmail(email)) {
+        document.getElementById('registerEmailError').classList.add('show');
+        document.getElementById('registerEmail').classList.add('error');
+        valid = false;
+    }
+    
+    // Validate password
+    if (!validatePassword(password)) {
+        document.getElementById('registerPasswordError').textContent = 'Password must be at least 8 characters with uppercase, lowercase, and numbers';
+        document.getElementById('registerPasswordError').classList.add('show');
+        document.getElementById('registerPassword').classList.add('error');
+        valid = false;
+    }
+    
+    // Validate password match
+    if (password !== confirmPassword) {
+        document.getElementById('registerConfirmPasswordError').classList.add('show');
+        document.getElementById('registerConfirmPassword').classList.add('error');
+        valid = false;
+    }
+    
+    // Validate terms
+    if (!termsAgreed) {
+        document.getElementById('termsError').classList.add('show');
+        valid = false;
+    }
+    
+    if (!valid) return;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<div class="spinner"></div>';
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        // Check if user already exists
+        if (mockUsers.some(u => u.email === email)) {
+            showAuthMessage('An account with this email already exists', 'error');
+            submitBtn.innerHTML = '<span>Create Account</span>';
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+            return;
+        }
+        
+        // Create new user
+        const newUser = {
+            id: mockUsers.length + 1,
+            name: name,
+            email: email,
+            password: password,
+            company: company || 'Individual',
+            role: 'user',
+            createdAt: new Date().toISOString()
+        };
+        
+        // In a real app, this would be an API call
+        mockUsers.push(newUser);
+        
+        // Store user in session
+        currentUser = {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            company: newUser.company,
+            role: newUser.role
+        };
+        
+        localStorage.setItem('aiTalentUser', JSON.stringify(currentUser));
+        localStorage.setItem('aiTalentToken', 'mock_jwt_token_' + Date.now());
+        
+        showAuthMessage('Account created successfully! Setting up your CRM...', 'success');
+        
+        // Redirect to onboarding or dashboard
+        setTimeout(() => {
+            window.location.href = 'crm-dashboard.html';
+        }, 2000);
+    }, 2000);
+});
+
+// Forgot password form submission
+document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('forgotEmail').value.trim();
+    const submitBtn = document.getElementById('forgotSubmit');
+    
+    // Reset error
+    document.getElementById('forgotEmailError').classList.remove('show');
+    
+    // Validate email
+    if (!validateEmail(email)) {
+        document.getElementById('forgotEmailError').classList.add('show');
+        document.getElementById('forgotEmail').classList.add('error');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.innerHTML = '<div class="spinner"></div>';
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        showAuthMessage('Password reset instructions sent to your email', 'success');
+        
+        // Reset form
+        document.getElementById('forgotEmail').value = '';
+        submitBtn.innerHTML = '<span>Send Reset Instructions</span>';
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        
+        // Go back to login after 2 seconds
+        setTimeout(() => {
+            switchAuthTab('login');
+        }, 2000);
+    }, 1500);
+});
+
+// Social login
+function socialLogin(provider) {
+    showAuthMessage(`Connecting with ${provider}...`, 'info');
+    
+    // Simulate social login
+    setTimeout(() => {
+        if (provider === 'google' || provider === 'linkedin') {
+            // For demo, use the demo account
+            currentUser = {
+                id: 999,
+                name: provider === 'google' ? 'Google User' : 'LinkedIn User',
+                email: `${provider}.user@example.com`,
+                company: 'Social Login',
+                role: 'user'
+            };
+            
+            localStorage.setItem('aiTalentUser', JSON.stringify(currentUser));
+            localStorage.setItem('aiTalentToken', 'mock_social_token_' + Date.now());
+            
+            showAuthMessage(`Logged in with ${provider}! Redirecting...`, 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'crm-dashboard.html';
+            }, 1500);
+        }
+    }, 2000);
+}
+
+// Show terms and privacy (mock)
+function showTerms() {
+    showAuthMessage('Terms of Service - This is a demo application. In production, you would see the full terms here.', 'info');
+}
+
+function showPrivacy() {
+    showAuthMessage('Privacy Policy - Your data is secure. This is a demo application.', 'info');
+}
+
+// Input validation on blur
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('blur', function() {
+        const id = this.id;
+        const value = this.value.trim();
+        
+        this.classList.remove('error');
+        
+        if (id === 'loginEmail' || id === 'registerEmail' || id === 'forgotEmail') {
+            if (value && !validateEmail(value)) {
+                this.classList.add('error');
+            }
+        }
+        
+        if (id === 'registerPassword') {
+            if (value && !validatePassword(value)) {
+                this.classList.add('error');
+            }
+        }
+    });
+});
+
+// Check if user is already logged in (for demo purposes)
+document.addEventListener('DOMContentLoaded', function() {
+    const storedUser = localStorage.getItem('aiTalentUser');
+    if (storedUser) {
+        showAuthMessage('Welcome back! You are already logged in.', 'info');
+        
+        // Auto-redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = 'crm-dashboard.html';
+        }, 3000);
+    }
+    
+    // Demo login shortcut
+    document.getElementById('loginEmail').value = 'demo@aitalentcrm.com';
+    document.getElementById('loginPassword').value = 'Demo@123';
+});
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W78QPHLZ');</script>
+<!-- End Google Tag Manager -->
+ <script src="js/auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script>
+// Initialize Feather Icons
+feather.replace(); // <--- THIS is where the function call is currently
+// ... followed by the rest of your JavaScript logic
+</script>
+</body>
+</html>
