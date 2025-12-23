@@ -1,0 +1,4644 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="AI CRM - Recruitment Management System" />
+    
+<!-- Google Analytics - Consolidated to one script -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQKFN7G82E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZQKFN7G82E');
+</script>
+
+<title>AI-Powered Talent CRM</title>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<!-- Feather icons -->
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<style>
+    /* Inter font included for modern look */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    
+    :root {
+        --primary-color: #3B82F6;
+        --success-color: #10B981;
+        --warning-color: #FBBF24;
+        --danger-color: #EF4444;
+        --sidebar-bg: #0F172A;
+        --sidebar-hover: #1E293B;
+        --card-bg: #fff;
+        --text-light: #6B7280;
+    }
+    
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        min-height: 100vh;
+        background-color: #f0f2f5;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+        width: 250px;
+        background-color: var(--sidebar-bg);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        height: 100vh;
+        z-index: 50;
+        border-right: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+        overflow-y: auto;
+    }
+    
+    .sidebar.collapsed {
+        width: 80px;
+    }
+    
+    .sidebar-header {
+        padding: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .toggle-sidebar {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2em;
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.collapsed .toggle-sidebar {
+        transform: rotate(180deg);
+    }
+    
+    .nav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .nav li {
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: background 0.2s;
+        border-left: 3px solid transparent;
+        white-space: nowrap;
+    }
+    
+    .nav li:hover {
+        background-color: var(--sidebar-hover);
+    }
+    
+    .nav li.active {
+        background-color: var(--sidebar-hover);
+        border-left: 3px solid var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .nav li i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    
+    .nav a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .nav span {
+        transition: opacity 0.3s ease;
+    }
+    
+    .sidebar.collapsed .nav span {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+    }
+    
+    .platform-connectors {
+        margin-top: 20px;
+        padding: 0 20px;
+        transition: opacity 0.3s ease;
+    }
+    
+    .sidebar.collapsed .platform-connectors {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .platform-connectors h4 {
+        margin-bottom: 10px;
+        font-size: 0.9em;
+    }
+    
+    .platform-connectors p {
+        font-size: 0.8em;
+        color: #9CA3AF;
+        margin-bottom: 15px;
+    }
+    
+    .connector-item {
+        margin-bottom: 10px;
+    }
+    
+    .connector-item strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.85em;
+    }
+    
+    .connector-btn {
+        background-color: #1E40AF;
+        color: white;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8em;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 5px;
+        transition: background 0.2s;
+    }
+    
+    .connector-btn:hover {
+        background-color: #1E3A8A;
+    }
+    
+    .connector-btn.linkedin {
+        background-color: #0E7490;
+    }
+    
+    .connector-btn.linkedin:hover {
+        background-color: #0C5A6F;
+    }
+    
+    .connector-btn.apollo {
+        background-color: #F97316;
+    }
+    
+    .connector-btn.apollo:hover {
+        background-color: #EA580C;
+    }
+    
+    /* Main content styles */
+    .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-left: 250px;
+        transition: margin-left 0.3s ease;
+    }
+    
+    .main.expanded {
+        margin-left: 80px;
+    }
+    
+    /* Header */
+    .header {
+        background-color: #fff;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+    }
+    
+    .header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: #374151;
+        padding: 8px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .mobile-menu-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .mobile-menu-toggle.active {
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Message Box */
+    #messageBox {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background-color: var(--success-color);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+        font-weight: 600;
+        animation: slideIn 0.3s ease-out;
+        max-width: 90%;
+    }
+    
+    @keyframes slideIn {
+        from { right: -300px; opacity: 0; }
+        to { right: 20px; opacity: 1; }
+    }
+    
+    /* Spin animation for loading icons */
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .spin {
+        animation: spin 1s infinite linear;
+    }
+    
+    /* Main content area */
+    .main-content {
+        padding: 20px;
+        overflow-y: auto;
+    }
+    
+    /* Stats cards */
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .card {
+        background: var(--card-bg);
+        flex: 1 1 200px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s;
+        min-width: 0;
+    }
+    
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card h3 {
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+    }
+    
+    .value {
+        font-size: 2em;
+        margin-top: 10px;
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+    
+    /* Content grids and tables */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .section {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th {
+        background-color: #f8fafc;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 2px solid #ddd;
+    }
+    
+    td {
+        padding: 12px;
+        border-top: 1px solid #ddd;
+    }
+    
+    .table th, .table td {
+        font-size: 0.9em;
+    }
+    
+    /* Buttons */
+    .btn {
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        font-family: inherit;
+        font-size: 0.9rem;
+    }
+    
+    .btn:hover {
+        background-color: #2563eb;
+    }
+    
+    .btn:active {
+        transform: translateY(1px);
+    }
+    
+    /* Jobs page specific styles */
+    .search-area {
+        margin-bottom: 30px;
+    }
+    
+    .search-bar {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        max-width: 800px;
+        flex-wrap: wrap;
+    }
+    
+    .search-bar input {
+        flex-grow: 1;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: inherit;
+        min-width: 150px;
+    }
+    
+    .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .job-card {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .job-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .job-title {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+    
+    .job-company {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #34495e;
+    }
+    
+    .job-description {
+        font-size: 0.9em;
+        color: #555;
+        margin-bottom: 12px;
+        flex-grow: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    
+    .apply-link {
+        margin-top: auto;
+        align-self: flex-start;
+        padding: 10px 18px;
+        background-color: var(--success-color);
+        color: #fff;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+    
+    .apply-link:hover {
+        background-color: #059669;
+    }
+    
+    .ai-lead-output {
+        margin-top: 20px;
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        padding: 20px;
+        background: #EFF6FF;
+    }
+    
+    .ai-lead-item {
+        padding: 15px;
+        border-bottom: 1px solid #CCE5FF;
+        margin-bottom: 10px;
+    }
+    
+    .ai-lead-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .ai-contact-info a {
+        color: #1D4ED8;
+        text-decoration: none;
+        margin-right: 15px;
+    }
+    
+    /* Modal Styles */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    
+    .modal-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .modal-content {
+        background: var(--card-bg);
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transform: scale(0.9);
+        transition: transform 0.3s;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-backdrop.show .modal-content {
+        transform: scale(1);
+    }
+    
+    .modal-content h3 {
+        margin-top: 0;
+        color: var(--primary-color);
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .modal-content input, .modal-content select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    
+    /* Settings Page Styles */
+    .settings-section {
+        background: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    
+    .settings-header {
+        background-color: #f8fafc;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        font-weight: 600;
+        color: #374151;
+        display: flex;
+        align-items: center;
+    }
+    
+    .settings-header i {
+        margin-right: 10px;
+        color: var(--primary-color);
+    }
+    
+    .settings-body {
+        padding: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.95em;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .form-help {
+        font-size: 0.85em;
+        color: var(--text-light);
+        margin-top: 5px;
+    }
+    
+    .settings-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-secondary {
+        background-color: #6b7280;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #4b5563;
+    }
+    
+    .btn-success {
+        background-color: var(--success-color);
+    }
+    
+    .btn-success:hover {
+        background-color: #059669;
+    }
+    
+    /* Mobile-specific styles */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 45;
+        display: none;
+    }
+    
+    .overlay.active {
+        display: block;
+    }
+    
+    /* Animation for the toggle button */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .mobile-menu-toggle.pulse {
+        animation: pulse 0.5s ease;
+    }
+    
+    /* New feature section styles */
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .feature-card {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-card h3 {
+        margin-top: 0;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .feature-card p {
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+    
+    .feature-card .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    /* New Dashboard Menu */
+    .dashboard-menu {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .dashboard-menu-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+    }
+    
+    .dashboard-menu-item:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+    
+    .dashboard-menu-item.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 900px) {
+        .sidebar {
+            width: 80px;
+        }
+        
+        .main {
+            margin-left: 80px;
+        }
+        
+        .sidebar-header {
+            font-size: 0.8em;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: 250px;
+        }
+        
+        .sidebar.mobile-open {
+            transform: translateX(0);
+        }
+        
+        .main {
+            margin-left: 0;
+        }
+        
+        .mobile-menu-toggle {
+            display: block;
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+        }
+        
+        .main-content {
+            padding: 15px;
+        }
+        
+        .card {
+            flex: 1 1 100%;
+        }
+        
+        .search-bar {
+            flex-direction: column;
+        }
+        
+        .search-bar input {
+            width: 100%;
+        }
+        
+        .jobs-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .settings-actions {
+            justify-content: center;
+        }
+        
+        .settings-actions .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .modal-content {
+            padding: 20px;
+        }
+        
+        #messageBox {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: calc(100% - 20px);
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .header {
+            padding: 10px 15px;
+        }
+        
+        .main-content {
+            padding: 10px;
+        }
+        
+        .card {
+            padding: 15px;
+        }
+        
+        .section {
+            padding: 15px;
+        }
+        
+        .value {
+            font-size: 1.8em;
+        }
+        
+        .job-card {
+            padding: 15px;
+        }
+        
+        .job-title {
+            font-size: 1.3em;
+        }
+        
+        .ai-lead-output {
+            padding: 15px;
+        }
+        
+        .ai-lead-item {
+            padding: 10px;
+        }
+    }
+    
+    /* Modal Styling */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 1000;
+    }
+    
+    .modal-overlay .modal-content {
+        background: white; padding: 25px; border-radius: 12px;
+        width: 500px; max-width: 90%; position: relative;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .modal-header {
+        display: flex; justify-content: space-between;
+        align-items: center; border-bottom: 1px solid #eee;
+        padding-bottom: 15px; margin-bottom: 20px;
+    }
+    
+    .close-btn {
+        background: none; border: none; font-size: 24px; cursor: pointer; color: #666;
+    }
+    
+    .info-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;
+    }
+    
+    .info-item strong { color: #555; display: block; font-size: 0.85rem; }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .fa-spin {
+        animation: spin 1s linear infinite;
+    }
+    
+    /* Ensure the main container grows with content */
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Takes full screen height minimum */
+        height: auto;      /* Allows it to grow beyond 100vh */
+        overflow-y: visible; 
+        padding-bottom: 50px; /* Space at the bottom */
+    }
+
+    .content-grid {
+        flex-grow: 1;      /* Pushes elements down naturally */
+    }
+
+    /* Checkbox styling */
+    .candidate-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    
+    #dashboardSearch:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+    }
+    
+    .search-container {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+    
+    .dashboard {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .header h1 {
+        color: #333;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .metric-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+        border-left: 5px solid;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .metric-card.users { border-left-color: #4cc9f0; }
+    .metric-card.new { border-left-color: #f72585; }
+    .metric-card.time { border-left-color: #4361ee; }
+    .metric-card.events { border-left-color: #3f37c9; }
+    
+    .metric-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .metric-card.users .metric-icon { color: #4cc9f0; }
+    .metric-card.new .metric-icon { color: #f72585; }
+    .metric-card.time .metric-icon { color: #4361ee; }
+    .metric-card.events .metric-icon { color: #3f37c9; }
+    
+    .metric-value {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .metric-label {
+        color: #666;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+    
+    .data-warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .data-warning i {
+        color: #f39c12;
+        font-size: 1.5rem;
+    }
+    
+    .pages-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    
+    .pages-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .pages-table td {
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .pages-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .pages-table tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .bounce-rate {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .low-bounce { background: #d4edda; color: #155724; }
+    .medium-bounce { background: #fff3cd; color: #856404; }
+    .high-bounce { background: #f8d7da; color: #721c24; }
+    
+    .ga-link {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 30px;
+        transition: transform 0.3s ease;
+    }
+    
+    .ga-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .timestamp {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #f0f0f0;
+    }
+    
+    @media (max-width: 768px) {
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .pages-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+        }
+    }
+    
+    /* New Styles for Candidates Page */
+    .ai-analysis-section {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid var(--primary-color);
+    }
+    
+    .ai-analysis-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .ai-analysis-header i {
+        color: var(--primary-color);
+        font-size: 1.5em;
+    }
+    
+    .ai-analysis-header h3 {
+        margin: 0;
+        color: #1E293B;
+        font-size: 1.3em;
+    }
+    
+    .ai-analysis-content {
+        color: #4B5563;
+        line-height: 1.6;
+        font-size: 0.95em;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 5px solid;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .stat-title {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.95em;
+    }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+    }
+    
+    .icon-total {
+        background: #EFF6FF;
+        color: #3B82F6;
+    }
+    
+    .icon-score {
+        background: #ECFDF5;
+        color: #10B981;
+    }
+    
+    .icon-top {
+        background: #FFFBEB;
+        color: #F59E0B;
+    }
+    
+    .icon-new {
+        background: #F5F3FF;
+        color: #8B5CF6;
+    }
+    
+    .stat-value {
+        font-size: 2.2em;
+        font-weight: 800;
+        color: #1E293B;
+        margin-bottom: 5px;
+    }
+    
+    .stat-trend {
+        font-size: 0.85em;
+        color: #6B7280;
+    }
+    /* Minimal styling - won't break your layout */
+.horizontal-links {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.link-btn:hover {
+  background: #e0e0e0;
+}
+
+.link-dropdown a {
+  color: #333;
+  text-decoration: none;
+}
+
+.link-dropdown a:hover {
+  background: #f0f0f0;
+}
+/* Basic styling for links */
+.horizontal-links {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  align-items: center;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.link-btn:hover {
+  background: #e0e0e0;
+}
+
+/* Email dropdown hover effect for links */
+.email-dropdown a:hover {
+  background: #f0f0f0;
+}
+/* Basic styling for links */
+.horizontal-links {
+  display: flex;
+  gap: 12px;
+  padding: 15px 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: #495057;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.link-btn:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+/* Email dropdown link hover */
+.email-dropdown a:hover {
+  background: #f8f9fa;
+  color: #0066cc;
+}
+</style>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W78QPHLZ');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Live Data Connection -->
+<script>
+    // API Configuration
+    const LIVE_API_URL = 'https://active-glya.onrender.com';
+    const API_BASE_URL = 'https://active-glya.onrender.com/api/v1';
+    
+    // Global state
+    window.liveCandidates = [];
+    window.lastUpdate = null;
+    
+    // Load live data
+    async function loadLiveData() {
+        console.log('Loading live data from:', LIVE_API_URL);
+        try {
+            const response = await fetch(LIVE_API_URL);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            window.liveCandidates = data.candidates || [];
+            window.lastUpdate = new Date();
+            
+            console.log(`Loaded ${window.liveCandidates.length} candidates`);
+            
+            // Update dashboard if function exists
+            if (typeof updateDashboard === 'function') {
+                updateDashboard(data);
+            }
+            
+            // Update stats if function exists
+            if (typeof updateStats === 'function') {
+                updateStats(data);
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Failed to load live data:', error);
+            
+            // Show error in UI
+            const errorDiv = document.getElementById('live-data-error');
+            if (errorDiv) {
+                errorDiv.innerHTML = `
+                    <div style="padding: 15px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; margin: 10px 0;">
+                        <strong style="color: #DC2626;">Connection Error:</strong> ${error.message}<br>
+                        <small>API Server: ${LIVE_API_URL}</small><br>
+                        <button onclick="loadLiveData()" style="margin-top: 10px; padding: 5px 10px; background: #DC2626; color: white; border: none; border-radius: 4px;">
+                            Retry Connection
+                        </button>
+                    </div>
+                `;
+            }
+            
+            return null;
+        }
+    }
+    
+    // Update stats cards
+    function updateStats(data) {
+        const elements = {
+            'totalApplications': data.total,
+            'avgScore': data.averageScore + '%',
+            'topMatches': data.topMatches,
+            'newToday': data.newToday
+        };
+        
+        for (const [id, value] of Object.entries(elements)) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+    }
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+        if (document.visibilityState === 'visible') {
+            loadLiveData();
+        }
+    }, 30000);
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(loadLiveData, 1000);
+        
+        // Add connection status indicator
+        const header = document.querySelector('.header');
+        if (header && !document.getElementById('live-status')) {
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'live-status';
+            statusDiv.style.cssText = 'display: flex; align-items: center; gap: 8px; font-size: 0.8em;';
+            statusDiv.innerHTML = `
+                <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                <span>Live Data Connected</span>
+            `;
+            header.appendChild(statusDiv);
+        }
+    });
+</script>
+<style>
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W78QPHLZ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div id="messageBox"></div>
+
+<!-- Mobile overlay for sidebar -->
+<div class="overlay" id="mobileOverlay"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    AI Talent CRM
+    <button class="toggle-sidebar" id="toggleSidebar">
+      <i data-feather="chevron-left"></i>
+    </button>
+  </div>
+  <ul class="nav"> 
+    <li onclick="showPage('dashboard', this)" class="active">
+      <i data-feather="bar-chart-2"></i><span>Dashboard</span>
+    </li> 
+		
+    <li> 
+        <a href="https://mail.google.com" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Google Mail</span>
+        </a> 
+    </li>
+    <li> 
+        <a href="https://mail.yahoo.com" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Yahoo Mail</span> 
+        </a> 
+    </li> 
+
+    <li> 
+        <a href="https://docs.google.com/forms/d/1IDTk4a-H0EMUsYs0FWHCqIiTn0xJ5vztvppCUzR7-LA/edit?pli=1" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Google-App-form</span> 
+        </a> 
+    </li> 
+		
+    <li> 
+        <a href="https://activeskillsrecruitment.co.uk/" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>ASR</span> 
+        </a> 
+    </li> 
+	
+    <li> 
+        <a href="https://admin.fasthosts.co.uk/" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Fasthosts</span> 
+        </a> 
+    </li> 
+    
+    <li> 
+        <a href="https://notebooklm.google.com/notebook/bb55f9ac-441a-4c23-9c76-707cfec00b45" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Notebooklm..ai</span> 
+        </a> 
+    </li> 
+    
+    <li> 
+        <a href="https://chat.deepseek.com/" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Deepseeks.ai</span> 
+        </a> 
+    </li> 
+    
+    <li> 
+        <a href="https://gemini.google.com/app" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Gemini.ai</span> 
+        </a> 
+    </li> 
+    
+    <li> 
+        <a href="https://activeskillsrecruitment.co.uk/CRM-ai/analytics-dashboard.html" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Application</span> 
+        </a> 
+    </li> 
+	
+    <li> 
+        <a href="https://web.whatsapp.com/" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Whatsapp</span> 
+        </a> 
+    </li> 
+    
+    <li> 
+        <a href="https://activeskillsrecruitment.co.uk/CRM-ai/Job-listing.html" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Job listing</span> 
+        </a> 
+    </li> 
+    
+    <li> 
+        <a href="https://activeskillsrecruitment.co.uk/CRM-ai/analytics.html" target="_blank" rel="noopener"> 
+            <i data-feather="mail"></i><span>Analytics</span> 
+        </a> 
+    </li> 
+	
+    <li onclick="showPage('jobs', this)">
+      <i data-feather="briefcase"></i><span>Live Job Search</span>
+    </li> 
+    <li onclick="showPage('leads', this)">
+      <i data-feather="target"></i><span>Company Leads (AIO)</span>
+    </li>
+    <li onclick="showPage('candidates', this)">
+      <i data-feather="users"></i><span>Candidates</span>
+    </li> 
+    <li onclick="showPage('integrations', this)">
+      <i data-feather="tool"></i><span>Integrations</span>
+    </li>
+    <li onclick="showPage('email-templates', this)">
+      <i data-feather="mail"></i><span>Email Templates</span>
+    </li>
+    <li onclick="showPage('automations', this)">
+      <i data-feather="zap"></i><span>Automations</span>
+    </li>
+    <li onclick="showPage('settings', this)">
+      <i data-feather="settings"></i><span>Settings</span>
+    </li> 
+  </ul>
+  
+  <!-- Platform Connectors -->
+  <div style="margin-top: 20px; padding: 0 20px;">
+    <h4>Platform Connectors</h4>
+    <p style="font-size: 0.8em; color: #9CA3AF;">Use these links for quick access to external platforms.</p>
+    <div style="margin-bottom: 10px;">
+      <strong>Facebook Jobs</strong>
+      <br/>
+      <a href="https://facebook.com/jobs" target="_blank" class="btn" style="margin-top: 5px; font-size: 0.9em; background-color: #1E40AF; display: inline-block;">Connect (External)</a>
+    </div>
+    <div style="margin-bottom: 10px;">
+      <strong>LinkedIn Jobs</strong>
+      <br/>
+      <a href="https://linkedin.com/jobs" target="_blank" class="btn" style="margin-top: 5px; font-size: 0.9em; background-color: #0E7490; display: inline-block;">Connect (External)</a>
+    </div>
+    <div style="margin-bottom: 15px;">
+      <strong>Apollo.io Leads</strong>
+      <br/>
+      <a href="https://apollo.io/" target="_blank" class="btn" style="margin-top: 5px; font-size: 0.9em; background-color: #F97316; display: inline-block;">Connect (External)</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <!-- Header -->
+  <div class="header">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+      <i data-feather="menu"></i>
+    </button>
+    <h1 id="page-title">Dashboard</h1>
+    <!-- User/Auth Status -->
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div id="auth-status" style="font-size: 0.8em; color: #6B7280;">
+            <i data-feather="user" style="width:14px; height:14px;"></i> 
+            <span id="user-name-display">User</span>
+        </div>
+        <!-- Add this RIGHT AFTER the user display section -->
+        <button class="btn" onclick="logout()" style="background-color: #EF4444; padding: 6px 12px; font-size: 0.8em;">
+            <i data-feather="log-out" style="width:14px; height:14px;"></i> Logout
+        </button>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content" id="main-content">
+    <!-- Dashboard -->
+    <div id="dashboard" class="page">
+      <!-- Dashboard Menu -->
+      <div class="dashboard-menu">
+        <div class="dashboard-menu-item active" onclick="showDashboardSection('overview', this)">
+          <i data-feather="activity"></i> Overview
+        </div>
+        <div class="dashboard-menu-item" onclick="showDashboardSection('quick-actions', this)">
+          <i data-feather="zap"></i> Quick Actions
+        </div>
+        <div class="dashboard-menu-item" onclick="showDashboardSection('recent-activity', this)">
+          <i data-feather="clock"></i> Recent Activity
+        </div>
+        <div class="dashboard-menu-item" onclick="showDashboardSection('performance', this)">
+          <i data-feather="trending-up"></i> Performance
+        </div>
+      </div>
+      
+      <!-- Dashboard Overview Section -->
+          <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Total Applications</div>
+                            <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
+                        </div>
+                        <div class="stat-value" id="totalApplications">0</div>
+                        <div class="stat-trend"> 12% from last month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Average AI Score</div>
+                            <div class="stat-icon icon-score"><i class="fas fa-robot"></i></div>
+                        </div>
+                        <div class="stat-value" id="avgScore">0%</div>
+                        <div class="stat-trend">5.2% improvement</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Top Matches (90%+)</div>
+                            <div class="stat-icon icon-top"><i class="fas fa-star"></i></div>
+                        </div>
+                        <div class="stat-value" id="topMatches">0</div>
+                        <div class="stat-trend">High quality matches</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">New Today</div>
+                            <div class="stat-icon icon-new"><i class="fas fa-calendar-day"></i></div>
+                        </div>
+                        <div class="stat-value" id="newToday">0</div>
+                        <div class="stat-trend">Active pipeline</div>
+                    </div>
+                </div>
+        </section>
+        
+        <div class="data-warning">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>This card uses 100% of available data.</strong> Data is pulled directly from your Google Analytics Reports Hub.
+            </div>
+        </div>
+        
+        <table class="pages-table">
+            <thead>
+                <tr>
+                    <th>Page Title / Screen Class</th>
+                    <th>Views</th>
+                    <th>Active Users</th>
+                    <th>Event Count</th>
+                    <th>Bounce Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ActiveSkills Recruitment - Empowering Second Chances</strong></td>
+                    <td>407</td>
+                    <td>124</td>
+                    <td>1,300</td>
+                    <td><span class="bounce-rate medium-bounce">27.3%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Activeskills Recuitment | Ilford [ Book now ]</strong></td>
+                    <td>186</td>
+                    <td>10</td>
+                    <td>384</td>
+                    <td><span class="bounce-rate low-bounce">0.0%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Pathways to Employment</strong></td>
+                    <td>64</td>
+                    <td>22</td>
+                    <td>192</td>
+                    <td><span class="bounce-rate low-bounce">14.3%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>AI-Powered Talent CRM</strong></td>
+                    <td>48</td>
+                    <td>8</td>
+                    <td>155</td>
+                    <td><span class="bounce-rate high-bounce">30.8%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>[Login] Welcome back to Activeskills Recuitment | Ilford</strong></td>
+                    <td>6</td>
+                    <td>1</td>
+                    <td>12</td>
+                    <td><span class="bounce-rate low-bounce">0.0%</span></td>
+                </tr>
+                <tr>
+                    <td><strong>ActiveSkills CRM - CV Dashboard</strong></td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>tr</td>
+                    <td><span class="bounce-rate">N/A</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://analytics.google.com/analytics/web/?authuser=2#/a320574833p448975556/reports/reportinghub?params=_u..nav%3Dmaui" 
+               target="_blank" class="ga-link">
+                <i class="fas fa-external-link-alt"></i> View Full Analytics in Google Analytics
+            </a>
+        </div>
+        
+        <div class="timestamp">
+            <p><i class="fas fa-sync-alt"></i> Data fetched from Google Analytics | Last updated: Current session</p>
+            <p>Property ID: 448975556 | Account ID: a320574833</p>
+        </div>
+
+        <!-- Applications & Jobs Lists -->
+       
+      
+      <!-- Dashboard Recent Activity Section -->
+      <div id="dashboard-recent-activity" class="dashboard-section" style="display: none;">
+        <h2>Recent Activity</h2>
+        <div class="section">
+          <div id="recent-activity-list">
+            <div class="activity-item" style="padding: 15px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
+              <div style="background: #EFF6FF; padding: 10px; border-radius: 50%;">
+                <i data-feather="user-plus" style="color: #3B82F6;"></i>
+              </div>
+              <div>
+                <p style="margin: 0; font-weight: 500;">New candidate added</p>
+                <p style="margin: 0; font-size: 0.9em; color: #6B7280;">Sarah Johnson was added to the database</p>
+                <p style="margin: 0; font-size: 0.8em; color: #9CA3AF;">2 hours ago</p>
+              </div>
+            </div>
+            <div class="activity-item" style="padding: 15px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
+              <div style="background: #F0FDF4; padding: 10px; border-radius: 50%;">
+                <i data-feather="send" style="color: #10B981;"></i>
+              </div>
+              <div>
+                <p style="margin: 0; font-weight: 500;">Email campaign sent</p>
+                <p style="margin: 0; font-size: 0.9em; color: #6B7280;">"Software Engineers in London" campaign was sent to 45 candidates</p>
+                <p style="margin: 0; font-size: 0.8em; color: #9CA3AF;">5 hours ago</p>
+              </div>
+            </div>
+            <div class="activity-item" style="padding: 15px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
+              <div style="background: #FEF3C7; padding: 10px; border-radius: 50%;">
+                <i data-feather="briefcase" style="color: #F59E0B;"></i>
+              </div>
+              <div>
+                <p style="margin: 0; font-weight: 500;">Job application received</p>
+                <p style="margin: 0; font-size: 0.9em; color: #6B7280;">Michael Chen applied for Senior Frontend Developer</p>
+                <p style="margin: 0; font-size: 0.8em; color: #9CA3AF;">1 day ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dashboard Performance Section -->
+      <div id="dashboard-performance" class="dashboard-section" style="display: none;">
+        <h2>Performance Metrics</h2>
+        <div class="content-grid">
+          <div class="section">
+            <h3>Conversion Funnel</h3>
+            <div id="conversion-funnel">
+              <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 6px;">
+                  <span>Leads Generated</span>
+                  <span style="font-weight: bold;">245</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 6px;">
+                  <span>Candidates Contacted</span>
+                  <span style="font-weight: bold;">189</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 6px;">
+                  <span>Interviews Scheduled</span>
+                  <span style="font-weight: bold;">76</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 6px;">
+                  <span>Offers Made</span>
+                  <span style="font-weight: bold;">32</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 6px;">
+                  <span>Hires</span>
+                  <span style="font-weight: bold;">18</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <h3>Top Performers</h3>
+            <div id="top-performers">
+              <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>Recruiter</span>
+                  <span style="font-weight: bold;">Placements</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F0F9FF; border-radius: 6px;">
+                  <span>Jennifer Wilson</span>
+                  <span style="font-weight: bold; color: #3B82F6;">12</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F0F9FF; border-radius: 6px;">
+                  <span>Robert Garcia</span>
+                  <span style="font-weight: bold; color: #3B82F6;">9</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F0F9FF; border-radius: 6px;">
+                  <span>Amanda Lee</span>
+                  <span style="font-weight: bold; color: #3B82F6;">7</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBS PAGE - AI LEAD GEN & LIVE JOBS -->
+    <div id="jobs" class="page" style="display:none;">
+      <div class="section">
+        <h2 class="section-title" style="color:#059669;"><i data-feather="cpu" style="width:20px; height:20px; margin-right: 5px;"></i> Live Job Search (AI-Sourced)</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">
+            Search for real-time job openings and employer contacts from the web. Use descriptive location queries (e.g., "London or UK but not the US").
+        </p>
+        
+        <header>
+            <div class="search-bar">
+                <input type="text" placeholder="Target Job Title (e.g., Senior Frontend Dev)" id="aiJobTitle" value="Software Engineer"/>
+                <input type="text" placeholder="Location Query (e.g., London or UK not US)" id="aiLocation" style="width: 150px;" value="London or UK not US"/>
+                <button id="aiLeadBtn" class="btn" onclick="aiLeadGeneration()" style="background-color: #059669;">
+                    <i data-feather="search" style="width:18px; height:18px;"></i> Search
+                </button>
+            </div>
+        </header>
+
+        <div id="aiLeadOutput" class="ai-lead-output" style="margin-top: 20px; display: none;">
+            <div id="aiLeadLoader" style="text-align: center; color: #3B82F6; padding: 20px;">
+                <i data-feather="loader" class="spin" style="width:24px; height:24px;"></i> Searching for leads...
+            </div>
+            <div id="aiLeadResults"></div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 30px; margin-top: 20px;">
+        <h2 class="section-title" id="job-listing-title">AI-Found Job Listings</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">
+            Displaying the live job advertisements retrieved by the AI search above.
+        </p>
+        <!-- Job Listings -->
+        <section class="jobs-grid" id="jobsContainer">
+             <div class="no-jobs" style="grid-column: 1 / -1; text-align: center; color: #555; padding: 30px 0;">
+                <i data-feather="alert-circle" style="width:18px; height:18px; margin-right: 5px;"></i> Perform a search above to see real-time job listings here.
+            </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- LEADS PAGE - COMPANY LEAD GENERATION & AIO -->
+    <div id="leads" class="page" style="display:none;">
+        <div class="section" style="margin-bottom: 20px;">
+            <h2 class="section-title" style="color:#F97316;"><i data-feather="target" style="width:20px; height:20px; margin-right: 5px;"></i> AI Company Lead Generator</h2>
+            <p style="font-size: 0.9em; color: #6B7280;">
+                Generate sales and recruiting leads by searching for key personnel contact information and recent company activities.
+            </p>
+            
+            <header>
+                <div class="search-bar" style="max-width: 100%;">
+                    <input type="text" placeholder="Target Company or Industry (e.g., Fintech startups in Berlin)" id="aiCompanyQuery" value="Fintech startups in Berlin"/>
+                    <button id="aiCompanyLeadBtn" class="btn" onclick="aiCompanyLeadGeneration()" style="background-color: #F97316;">
+                        <i data-feather="search" style="width:18px; height:18px;"></i> Search Companies
+                    </button>
+                </div>
+            </header>
+
+            <div id="aiCompanyLoader" style="text-align: center; color: #F97316; padding: 20px; display: none;">
+                <i data-feather="loader" class="spin" style="width:24px; height:24px;"></i> Searching for company leads...
+            </div>
+
+            <div id="aiCompanyOutput" class="ai-lead-output" style="margin-top: 20px; display: none;">
+                <!-- Output for company leads -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Generated Company Leads</h2>
+            <p style="font-size: 0.9em; color: #6B7280;">Leads generated from the AI search are saved here (Private Collection).</p>
+            
+            <div style="overflow-x: auto;">
+                <table id="leads-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Contact Role</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>AIO Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="company-leads-body">
+                        <tr><td colspan="6" style="text-align: center;">No company leads saved yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANDIDATES PAGE (Updated Design) -->
+    <div id="candidates" class="page" style="display:none;">
+        <!-- AI Analysis Section -->
+        <div class="ai-analysis-section" id="aiAnalysisSection">
+            <div class="ai-analysis-header">
+                <i class="fas fa-robot"></i>
+                <h3>AI Recruitment Insights</h3>
+            </div>
+            <div class="ai-analysis-content" id="aiAnalysisContent">
+                <!-- AI insights will be loaded here -->
+                <p>Click "Bulk Analyze" below to generate AI insights on your candidate database.</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Applications</div>
+                    <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="stat-value" id="totalApplications">0</div>
+                <div class="stat-trend"> 12% from last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Average AI Score</div>
+                    <div class="stat-icon icon-score"><i class="fas fa-robot"></i></div>
+                </div>
+                <div class="stat-value" id="avgScore">0%</div>
+                <div class="stat-trend">5.2% improvement</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Top Matches (90%+)</div>
+                    <div class="stat-icon icon-top"><i class="fas fa-star"></i></div>
+                </div>
+                <div class="stat-value" id="topMatches">0</div>
+                <div class="stat-trend">High quality matches</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">New Today</div>
+                    <div class="stat-icon icon-new"><i class="fas fa-calendar-day"></i></div>
+                </div>
+                <div class="stat-value" id="newToday">0</div>
+                <div class="stat-trend">Active pipeline</div>
+            </div>
+        </div>
+
+        <!-- Candidates Database -->
+        <div class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h2>Candidates Database</h2>
+                <button class="btn" onclick="showAddCandidateModal()"><i data-feather="plus" style="width:18px; height:18px;"></i> Add Candidate</button>
+            </div>
+            <p style="font-size: 0.9em; color: #EF4444;">
+                <i data-feather="alert-triangle" style="width:14px; height:14px;"></i> CV parsing and real Google Drive access require a secure backend. Please ensure the URL is publicly accessible.
+            </p>
+            <div style="overflow-x: auto;">
+                <table style="margin-top: 15px; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #f8fafc; text-align: left;">
+                            <th style="padding: 12px; border-bottom: 2px solid #e2e8f0;">Name</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #e2e8f0;">Position</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #e2e8f0;">Status</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #e2e8f0;">Skills</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #e2e8f0;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidates-table-body">
+                        <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading candidates...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Page -->
+    <div id="applications" class="page" style="display:none;">
+      <div class="section">
+        <h2>Manage Applications (Mock List)</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">Displaying a larger, more comprehensive list of mock applications.</p>
+        <div style="overflow-x: auto;">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Candidate</th><th>Job Applied</th><th>Status</th><th>Submitted</th><th>Match Score</th><th>Actions</th>
+                  </tr>
+              </thead>
+              <tbody id="applications-list">
+                  <!-- Content populated dynamically via JS -->
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integrations Page -->
+    <div id="integrations" class="page" style="display:none;">
+        <h2>External Integrations & Tools</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">Clicking these buttons will take you directly to the external platform website in a new tab.</p>
+        <section class="cards" id="integration-cards-top">
+            <!-- Card 1: Apollo Talent Room -->
+            <div class="card" style="flex: 1 1 300px;">
+                <h3><i data-feather="users" style="width:18px; height:18px; margin-right: 5px;"></i>Apollo Talent Room (Leads)</h3>
+                <p style="font-size: 0.9em; color: #555;">Retrieve qualified leads and job candidates from the Apollo platform (your customer CRM).</p>
+                <a href="https://apollo.io/" target="_blank" class="btn" style="background-color: #F97316; margin-top: 10px;">Go to Apollo Talent Room</a>
+            </div>
+
+            <!-- Card 2: Bravo Studio (Mobile Project Push) -->
+            <div class="card" style="flex: 1 1 300px;">
+                <h3><i data-feather="code" style="width:18px; height:18px; margin-right: 5px;"></i>Bravo Studio (Mobile Push)</h3>
+                <p style="font-size: 0.9em; color: #555;">Push candidate profiles to Bravo for inclusion in mobile app development projects.</p>
+                <a href="https://bravo.studio/" target="_blank" class="btn" style="background-color: #10B981; margin-top: 10px;">Go to Bravo Studio</a>
+            </div>
+
+            <!-- Card 3: Benchmark Email (AI Outreach) -->
+            <div class="card" style="flex: 1 1 300px;">
+                <h3><i data-feather="send" style="width:18px; height:18px; margin-right: 5px;"></i>Benchmark Email (AI Outreach)</h3>
+                <p style="font-size: 0.9em; color: #555;">**ui.benchmarkemail.com**: Generate and send AI-drafted outreach emails to employers.</p>
+                <a href="https://www.benchmarkemail.com/" target="_blank" class="btn" style="background-color: #EF4444; margin-top: 10px;">Go to Benchmark Email</a>
+            </div>
+        </section>
+
+        <!-- Notebook Section -->
+        <section class="section" style="margin-top: 20px;">
+            <h2 class="section-title"><i data-feather="book-open" style="width:20px; height:20px; margin-right: 5px;"></i>Quick Notebook (Local Persistence)</h2>
+            <p style="font-size: 0.8em; color: #6B7280;">This uses local storage for quick, persistent notes.</p>
+            <textarea id="quick-notebook" oninput="saveNotebook(true)" placeholder="Your persistent notes go here..." style="width: 100%; height: 250px; padding: 15px; border-radius: 4px; border: 1px solid #ccc; font-family: 'Inter', sans-serif; font-size: 1em;"></textarea>
+            <div style="text-align: right; margin-top: 10px;">
+                <button class="btn" onclick="saveNotebook()" style="background-color: #6B7280;">Force Save Notes</button>
+                <div id="notebook-status" style="margin-top: 5px; font-size: 0.8em; color: #6B7280;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Email Templates Page -->
+    <div id="email-templates" class="page" style="display:none;">
+      <div class="section">
+        <h2>Email Templates</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">Create and manage email templates for candidate outreach.</p>
+        
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3><i data-feather="mail"></i> Outreach Template</h3>
+            <p>Template for initial candidate outreach and introduction.</p>
+            <button class="btn" onclick="showMessage('Opening outreach template editor', 'Info')">Edit Template</button>
+          </div>
+          <div class="feature-card">
+            <h3><i data-feather="calendar"></i> Interview Invite</h3>
+            <p>Template for inviting candidates to interviews.</p>
+            <button class="btn" onclick="showMessage('Opening interview invite template editor', 'Info')">Edit Template</button>
+          </div>
+          <div class="feature-card">
+            <h3><i data-feather="check-circle"></i> Offer Letter</h3>
+            <p>Template for formal job offer letters.</p>
+            <button class="btn" onclick="showMessage('Opening offer letter template editor', 'Info')">Edit Template</button>
+          </div>
+          <div class="feature-card">
+            <h3><i data-feather="plus"></i> Create New Template</h3>
+            <p>Create a custom email template from scratch.</p>
+            <button class="btn" style="background-color: #10B981;" onclick="showMessage('Creating new email template', 'Info')">Create Template</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Page -->
+    <div id="analytics" class="page" style="display:none;">
+      <div class="section">
+        <h2>Analytics & Reporting</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">Track performance and generate detailed reports.</p>
+        
+        <div class="content-grid">
+          <div class="section">
+            <h3>Recruitment Metrics</h3>
+            <div id="recruitment-metrics">
+              <div class="cards" style="margin-top: 20px;">
+                <div class="card">
+                  <h3>Time to Fill</h3>
+                  <p class="value">24 days</p>
+                </div>
+                <div class="card">
+                  <h3>Cost per Hire</h3>
+                  <p class="value">$4,200</p>
+                </div>
+                <div class="card">
+                  <h3>Quality of Hire</h3>
+                  <p class="value">87%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <h3>Source Effectiveness</h3>
+            <div id="source-effectiveness">
+              <div style="margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                  <span>LinkedIn</span>
+                  <span style="font-weight: bold;">42%</span>
+                </div>
+                <div style="height: 10px; background: #E5E7EB; border-radius: 5px; overflow: hidden;">
+                  <div style="height: 100%; width: 42%; background: #3B82F6;"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin: 15px 0 10px;">
+                  <span>Job Boards</span>
+                  <span style="font-weight: bold;">28%</span>
+                </div>
+                <div style="height: 10px; background: #E5E7EB; border-radius: 5px; overflow: hidden;">
+                  <div style="height: 100%; width: 28%; background: #10B981;"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin: 15px 0 10px;">
+                  <span>Referrals</span>
+                  <span style="font-weight: bold;">18%</span>
+                </div>
+                <div style="height: 10px; background: #E5E7EB; border-radius: 5px; overflow: hidden;">
+                  <div style="height: 100%; width: 18%; background: #F59E0B;"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin: 15px 0 10px;">
+                  <span>Direct Applications</span>
+                  <span style="font-weight: bold;">12%</span>
+                </div>
+                <div style="height: 10px; background: #E5E7EB; border-radius: 5px; overflow: hidden;">
+                  <div style="height: 100%; width: 12%; background: #EF4444;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="section" style="margin-top: 20px;">
+          <h3>Generate Reports</h3>
+          <div class="search-bar">
+            <select style="flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px;">
+              <option>Monthly Recruitment Report</option>
+              <option>Source Performance Analysis</option>
+              <option>Time-to-Fill Trends</option>
+              <option>Candidate Pipeline Report</option>
+            </select>
+            <button class="btn" style="background-color: #8B5CF6;">
+              <i data-feather="download" style="width:18px; height:18px;"></i> Generate Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Automations Page -->
+    <div id="automations" class="page" style="display:none;">
+      <div class="section">
+        <h2>Automation Workflows</h2>
+        <p style="font-size: 0.9em; color: #6B7280;">Set up automated workflows to streamline your recruitment process.</p>
+        
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3><i data-feather="user-plus"></i> Candidate Sourcing</h3>
+            <p>Automatically source candidates from multiple platforms based on your criteria.</p>
+            <button class="btn" onclick="showMessage('Configuring candidate sourcing automation', 'Info')">Configure</button>
+          </div>
+          <div class="feature-card">
+            <h3><i data-feather="mail"></i> Email Sequences</h3>
+            <p>Set up automated email sequences for candidate nurturing.</p>
+            <button class="btn" onclick="showMessage('Configuring email sequence automation', 'Info')">Configure</button>
+          </div>
+          <div class="feature-card">
+            <h3><i data-feather="calendar"></i> Interview Scheduling</h3>
+            <p>Automate interview scheduling with candidate self-service.</p>
+            <button class="btn" onclick="showMessage('Configuring interview scheduling automation', 'Info')">Configure</button>
+          </div>
+          <div class="feature-card">
+            <h3><i data-feather="refresh-cw"></i> Status Updates</h3>
+            <p>Automatically update candidate status based on predefined triggers.</p>
+            <button class="btn" onclick="showMessage('Configuring status update automation', 'Info')">Configure</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="settings" class="page" style="display:none;">
+        <h2>System Settings</h2>
+        <p style="color: #4B5563; margin-bottom: 20px;">Configure your system settings and security preferences.</p>
+        
+        <!-- Security System Settings Section -->
+        <div class="settings-section">
+            <div class="settings-header">
+                <i data-feather="shield"></i>
+                Security System Settings
+            </div>
+            <div class="settings-body">
+                <p>This section is for configuring user permissions, API keys, and data retention policies.</p>
+                
+                <div class="form-group">
+                    <label for="geminiApi">Google API Key (for Live Job Search)</label>
+                    <input type="password" id="geminiApi" placeholder="Enter Gemini API Key">
+                    <div class="form-help">Used for accessing Google's Gemini AI services</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="openaiApi">OpenAI API Key (for specialized AI features)</label>
+                    <input type="password" id="openaiApi" placeholder="Enter OpenAI API Key">
+                    <div class="form-help">Used for accessing OpenAI's GPT models</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="supabaseUrl">Supabase URL (for secure data store)</label>
+                    <input type="text" id="supabaseUrl" placeholder="e.g., https://xyz.supabase.co">
+                    <div class="form-help">Your Supabase project URL</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="supabaseKey">Supabase Key (Anon Key)</label>
+                    <input type="password" id="supabaseKey" placeholder="Enter Anon Public Key">
+                    <div class="form-help">Your Supabase anonymous/public key</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="s3Bucket">S3 Bucket Name (for secure CV storage)</label>
+                    <input type="text" id="s3Bucket" placeholder="e.g., ai-talent-cv-storage">
+                    <div class="form-help">This is crucial for security and performance of CV ingestion.</div>
+                </div>
+                
+                <div class="settings-actions">
+                    <button class="btn btn-secondary" onclick="resetSettings()">
+                        <i data-feather="refresh-cw"></i> Reset
+                    </button>
+                    <button class="btn btn-success" onclick="saveSettings()">
+                        <i data-feather="save"></i> Save All Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Permissions Section -->
+        <div class="settings-section">
+            <div class="settings-header">
+                <i data-feather="users"></i>
+                User Permissions
+            </div>
+            <div class="settings-body">
+                <div class="form-group">
+                    <label for="userRole">Default User Role</label>
+                    <select id="userRole" class="form-control">
+                        <option value="admin">Administrator</option>
+                        <option value="manager">Manager</option>
+                        <option value="recruiter" selected>Recruiter</option>
+                        <option value="viewer">Viewer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dataRetention">Data Retention Policy (months)</label>
+                    <input type="number" id="dataRetention" min="1" max="60" value="24">
+                    <div class="form-help">How long to keep candidate data before automatic deletion</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- API Configuration Section -->
+        <div class="settings-section">
+            <div class="settings-header">
+                <i data-feather="key"></i>
+                API Configuration
+            </div>
+            <div class="settings-body">
+                <div class="form-group">
+                    <label for="apiRateLimit">API Rate Limit (requests/minute)</label>
+                    <input type="number" id="apiRateLimit" min="10" max="1000" value="100">
+                    <div class="form-help">Maximum number of API requests per minute</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="webhookUrl">Webhook URL for Notifications</label>
+                    <input type="url" id="webhookUrl" placeholder="https://your-domain.com/webhook">
+                    <div class="form-help">URL to send system notifications and alerts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div id="candidateModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalName">Candidate Details</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="info-item"><strong>Email:</strong> <span id="modalEmail"></span></div>
+                <div class="info-item"><strong>Job Role:</strong> <span id="modalRole"></span></div>
+                <div class="info-item"><strong>AI Score:</strong> <span id="modalScore"></span></div>
+                <div class="info-item"><strong>Date:</strong> <span id="modalDate"></span></div>
+                <div class="info-item">
+                    <strong>Update Status:</strong>
+                    <select id="statusSelect" onchange="updateCandidateStatus()" class="status-dropdown">
+                        <option value="New">New</option>
+                        <option value="Shortlisted">Shortlisted</option>
+                        <option value="Interviewing">Interviewing</option>
+                        <option value="Hired">Hired</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <div id="modalSkills" style="margin-top:15px;"></div>
+            <div class="communication-actions" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="display: flex; gap: 10px;">
+                    <a id="emailLink" href="#" class="btn btn-primary" style="flex: 1; text-align: center; text-decoration: none;"><i class="fas fa-envelope"></i> Email</a>
+                    <a id="phoneLink" href="#" class="btn btn-success" style="flex: 1; text-align: center; text-decoration: none;"><i class="fas fa-phone"></i> Call</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADD CANDIDATE MODAL -->
+<div id="addCandidateModal" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Import Candidate CV</h3>
+        <p style="font-size: 0.85em; color: #EF4444; margin-bottom: 15px;">
+            <i data-feather="alert-triangle" style="width:14px; height:14px;"></i> CV Parsing is simulated. Please use a **publicly viewable** Google Drive URL.
+        </p>
+
+        <label for="candidateName">Candidate Full Name</label>
+        <input type="text" id="candidateName" placeholder="E.g., David Chen" required />
+
+        <label for="candidatePosition">Target Position</label>
+        <input type="text" id="candidatePosition" placeholder="E.g., Senior Full-Stack Engineer" required />
+        
+        <label for="candidatePhone">Phone Number (For WhatsApp Link)</label>
+        <input type="tel" id="candidatePhone" placeholder="E.g., +447700900123 (with country code)" required />
+
+        <label for="cvDriveUrl">Google Drive CV URL (or PDF Link)</label>
+        <input type="url" id="cvDriveUrl" placeholder="https://drive.google.com/..." required />
+
+        <div class="modal-actions">
+            <button class="btn" onclick="addCandidate()" id="addCandidateBtn">
+                <i data-feather="upload-cloud" style="width:18px; height:18px;"></i> Import & Parse CV
+            </button>
+            <button class="btn" onclick="closeAddCandidateModal()" style="background-color: #6B7280;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="emailTemplateModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="width: 600px;">
+        <div class="modal-header">
+            <h2>Send Canned Response</h2>
+            <button class="close-btn" onclick="closeEmailModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <label>Select Template:</label>
+            <select id="templateSelect" onchange="loadTemplate()" class="status-dropdown" style="width: 100%; margin-bottom: 15px;">
+                <option value="">-- Choose a Template --</option>
+                <option value="invite">Interview Invite</option>
+                <option value="followup">Follow-up on Application</option>
+                <option value="reject">Not Moving Forward</option>
+            </select>
+            
+            <label>Message Preview:</label>
+            <textarea id="emailBody" style="width: 100%; height: 200px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;"></textarea>
+            
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-outline" onclick="closeEmailModal()">Cancel</button>
+                <button class="btn btn-success" onclick="sendFinalEmails()">Send to Selected</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Bubble -->
+<div id="ai-chat-bubble" onclick="toggleAIChat()" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #4a90e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 2000;">
+    <i class="fas fa-robot"></i>
+</div>
+
+<div id="ai-chat-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); z-index: 2000; flex-direction: column; overflow: hidden;">
+    <div style="background: #4a90e2; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between;">
+        ActiveSkills AI 
+        <span onclick="toggleAIChat()" style="cursor: pointer;">&times;</span>
+    </div>
+    <div id="chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 0.9rem; color: #333;">
+        <p><strong>AI:</strong> Hello! I can help you summarize CVs or find the best developer. Who are we looking for today?</p>
+    </div>
+    <div style="padding: 10px; border-top: 1px solid #eee; display: flex;">
+        <input type="text" id="ai-input" placeholder="Ask AI..." style="flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none;">
+    </div>
+</div>
+
+<script>
+// Authentication check
+(function() {
+    const user = localStorage.getItem('aiTalentUser');
+    const token = localStorage.getItem('aiTalentToken');
+    
+    if (!user || !token) {
+        // Redirect to login page if not authenticated
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Optional: Parse user data for display
+    try {
+        const userData = JSON.parse(user);
+        // Update user info in CRM if elements exist
+        const userIdDisplay = document.getElementById('user-id-display');
+        if (userIdDisplay) {
+            userIdDisplay.textContent = userData.id;
+        }
+    } catch (error) {
+        console.error('Error parsing user data:', error);
+    }
+})();
+
+// Logout function
+function logout() {
+    // 1. Clear the stored authentication data (token and user object)
+    localStorage.removeItem('aiTalentUser');
+    localStorage.removeItem('aiTalentToken');
+    
+    // Optional: Show a temporary success message (for good UX)
+    showMessage('You have been successfully logged out.', 'success');
+    
+    // 2. Redirect the user back to the login page
+    window.location.href = 'login.html';
+}
+
+// --- DATA ---
+const candidatesData = [
+    { id: 1, name: "Lewis Taylor", email: "lewis.taylor@candidate.com", role: "Developer", status: "New", score: 91, skills: [], date: "2025-12-10", initial: "L", color: "#3498db" },
+    { id: 2, name: "Trevor Sands", email: "trevor.sands@candidate.com", role: "Developer", status: "New", score: 100, skills: [], date: "2025-12-04", initial: "T", color: "#1abc9c" },
+    { id: 3, name: "John Smith", email: "john.smith@candidate.com", role: "Frontend Developer", status: "New", score: 85, skills: ["React", "TypeScript", "CSS"], date: "2024-01-15", initial: "J", color: "#e67e22" },
+    { id: 4, name: "Sarah Jenkins", email: "s.jenkins@candidate.com", role: "UI/UX Designer", status: "Shortlisted", score: 94, skills: ["Figma", "Adobe XD"], date: "2025-12-15", initial: "S", color: "#9b59b6" },
+    { id: 5, name: "Michael Chen", email: "m.chen@candidate.com", role: "Backend Developer", status: "Interview", score: 88, skills: ["Node.js", "Python"], date: "2025-12-12", initial: "M", color: "#34495e" }
+];
+
+const templates = {
+    invite: { subject: "Interview Invite", body: "Hi [Name], we'd like to invite you for an interview for the [Role] position." },
+    followup: { subject: "Follow up", body: "Hi [Name], we are still reviewing your application for [Role]." },
+    reject: { subject: "Application Update", body: "Hi [Name], thank you for applying for [Role]. Unfortunately..." }
+};
+
+let currentEditingId = null;
+
+// --- UK Locations for Company Leads ---
+const ukLocations = [
+  // England
+  "London", "Birmingham", "Manchester", "Leeds", "Liverpool", "Newcastle", "Sheffield", "Bristol",
+  "Cambridge", "Oxford", "Nottingham", "Southampton", "Reading", "Derby", "Plymouth", "Wolverhampton",
+  "Coventry", "Stoke-on-Trent", "Sunderland", "Wigan", "Middlesbrough", "Portsmouth", "Salisbury",
+  "Bath", "Exeter", "Truro", "Canterbury", "Colchester", "Camelford", "Dover", "Ely", "Folkestone",
+  "Gillingham", "Hastings", "Horsham", "Huntingdon", "Ipswich", "Liskeard", "Loughborough", "Mansfield",
+  "Morecambe", "Newark-on-Trent", "Norwich", "Okehampton", "Peterborough", "Rochester", "Rotherham",
+  "Southend-on-Sea", "Taunton", "Tunbridge Wells", "Wells", "Whitby", "Worcester", "Wymondham",
+  "Bournemouth", "Poole", "Swindon", "Gloucester", "Cheltenham", "Worcester", "Hereford", "Shrewsbury",
+  "Telford", "Warrington", "Stockport", "Salford", "Oldham", "Bury", "Blackpool", "Blackburn",
+  "Barnsley", "Huddersfield", "Leicester", "Luton", "Stevenage", "Harlow", "Basildon", "Braintree",
+  "Maldon", "Saffron Walden", "Hitchin", "Letchworth Garden City", "Welwyn Garden City", "Hertford",
+  "Hemel Hempstead", "St Albans", "Windsor", "Maidenhead", "Slough", "Basingstoke", "Camberley",
+  "Egham", "Runnymede", "Guildford", "Woking", "Farnham", "Guilford", "Hampton", "Richmond",
+  "Kingston upon Thames", "Mitcham", "Croydon", "Bromley", "Sutton", "Epsom", "Dorking", "Reigate",
+  "Redhill", "Teddington", "Twickenham", "Hounslow", "Hampton", "Richmond", "Bracknell", "Ascot",
+  "Brentford", "Hounslow", "Fulham", "Chelsea", "Kensington", "Westminster", "City of London",
+  "Hackney", "Islington", "Camden", "Haringey", "Barnet", "Enfield", "Waltham Forest", "Redbridge",
+  "Hammersmith", "Fulham", "Ealing", "Hounslow", "Richmond", "Kingston", "Merton", "Sutton",
+  "Bexley", "Barking and Dagenham", "Havering", "Hillingdon", "Harrow", "Ruislip", "Uxbridge", 
+  "Hounslow", "Epsom", "Mole Valley", "Woking", "Spelthorne", "Runnymede", "Surrey",
+
+  // Scotland
+  "Edinburgh", "Glasgow", "Aberdeen", "Dundee", "Inverness", "Perth", "Stirling", "Ayr", "Kirkcaldy",
+  "Dumfries", "Hamilton", "Motherwell", "Falkirk", "Livingston", "Cumbernauld", "Paisley", "East Kilbride",
+  "Inverkeithing", "Kilmarnock", "Airdrie", "Clydebank", "Gourock", "Helensburgh", "Dunfermline", "Elgin",
+  "Peterhead", "St Andrews", "Stirling", "Inverness", "Oban", "Fort William",
+
+  // Wales
+  "Cardiff", "Swansea", "Newport", "Bangor", "Wrexham", "Llandudno", "Cwmbran", "Merthyr Tydfil",
+  "Barry", "Bridgend", "Caerphilly", "Newtown", "Pontypridd", "Ystrad Mynach", "Bargoed", "Abergavenny",
+  "Tenby", "Pembroke", "Haverfordwest", "Llanelli", "Carmarthen", "Neath", "Port Talbot", "Porthcawl",
+
+  // Northern Ireland
+  "Belfast", "Lisburn", "Newtownabbey", "Newry", "Bangor", "Craigavon", "Larne", "Derry", "Armagh", "Banbridge",
+  "Londonderry", "Craigavon", "Holywood", "Newtownards", "Bangor", "Carrickfergus", "Coleraine", "Bangor", "Antrim"
+];
+
+// --- MAIN FUNCTIONS ---
+// Mobile menu functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-open');
+            mobileOverlay.classList.toggle('active');
+            this.classList.toggle('active');
+            this.classList.add('pulse');
+            
+            // Change icon based on state
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('mobile-open')) {
+                icon.setAttribute('data-feather', 'x');
+            } else {
+                icon.setAttribute('data-feather', 'menu');
+            }
+            feather.replace();
+            
+            // Remove pulse animation after it completes
+            setTimeout(() => {
+                this.classList.remove('pulse');
+            }, 500);
+        });
+    }
+    
+    if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('mobile-open');
+            mobileOverlay.classList.remove('active');
+            mobileMenuToggle.classList.remove('active');
+            
+            const icon = mobileMenuToggle.querySelector('i');
+            icon.setAttribute('data-feather', 'menu');
+            feather.replace();
+        });
+    }
+    
+    // Close sidebar when clicking on a nav item on mobile
+    const navItems = document.querySelectorAll('.nav li');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                
+                const icon = mobileMenuToggle.querySelector('i');
+                icon.setAttribute('data-feather', 'menu');
+                feather.replace();
+            }
+        });
+    });
+    
+    // Initialize Feather icons
+    feather.replace();
+    
+    // Initialize dashboard
+    updateDashboardStats();
+    renderDashboardTable();
+    
+    // Initialize notebook
+    loadNotebook();
+    
+    // Initialize Candidates page stats
+    updateCandidatesStats();
+});
+
+// --- Helper functions ---
+function showPage(id, element) {
+    document.querySelectorAll('.page').forEach(p => p.style.display='none');
+    const targetPage = document.getElementById(id);
+    if (targetPage) {
+        targetPage.style.display='block';
+    }
+
+    // Update active class in sidebar
+    document.querySelectorAll('.nav li').forEach(li => li.classList.remove('active'));
+    if (element) {
+        element.classList.add('active');
+    }
+
+    document.getElementById('page-title').innerText = {
+        'dashboard': 'Dashboard',
+        'jobs': 'Live Job Search',
+        'leads': 'Company Leads (AIO)',
+        'candidates': 'Candidates',
+        'applications': 'Applications',
+        'integrations': 'External Integrations', 
+        'email-templates': 'Email Templates',
+        'analytics': 'Analytics & Reporting',
+        'automations': 'Automation Workflows',
+        'settings': 'System Settings'
+    }[id] || 'Dashboard';
+
+    // Load specific content if needed
+    if (id === 'integrations') {
+        loadNotebook();
+    }
+    if (id === 'applications') {
+        renderApplicationsList();
+    }
+    if (id === 'candidates') {
+        updateCandidatesStats();
+    }
+    
+    // Close mobile menu if open
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        
+        sidebar.classList.remove('mobile-open');
+        mobileOverlay.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+        
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.setAttribute('data-feather', 'menu');
+        feather.replace();
+    }
+}
+
+// Dashboard section navigation
+function showDashboardSection(sectionId, element) {
+    // Hide all dashboard sections
+    document.querySelectorAll('.dashboard-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show selected section
+    document.getElementById('dashboard-' + sectionId).style.display = 'block';
+    
+    // Update active menu item
+    document.querySelectorAll('.dashboard-menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    element.classList.add('active');
+}
+
+// Function to calculate and display dashboard stats
+function updateDashboardStats() {
+    // Try to update elements safely
+    const elements = {
+        'stat-candidates': '1,247',
+        'stat-jobs': '86',
+        'stat-applications': '342',
+        'stat-match-rate': '94%',
+        'totalApplications': '1,247',
+        'avgScore': '94%',
+        'topMatches': '342',
+        'newToday': '86'
+    };
+    
+    for (const [id, value] of Object.entries(elements)) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+    
+    // Render recent applications on the dashboard
+    renderRecentApplications();
+}
+
+// Function to update Candidates page stats
+function updateCandidatesStats() {
+    const totalApplications = candidatesData.length;
+    const avgScore = Math.round(candidatesData.reduce((sum, c) => sum + c.score, 0) / candidatesData.length);
+    const topMatches = candidatesData.filter(c => c.score >= 90).length;
+    const today = new Date().toISOString().split('T')[0];
+    const newToday = candidatesData.filter(c => c.date === today).length;
+    
+    document.getElementById('totalApplications').innerText = totalApplications;
+    document.getElementById('avgScore').innerText = avgScore + '%';
+    document.getElementById('topMatches').innerText = topMatches;
+    document.getElementById('newToday').innerText = newToday;
+}
+
+// --- TABLE RENDERING ---
+function renderDashboardTable() {
+    const tbody = document.getElementById('applications-body-dashboard');
+    if(!tbody) return;
+
+    tbody.innerHTML = candidatesData.map(c => `
+        <tr>
+            <td><input type="checkbox" class="candidate-checkbox" data-id="${c.id}"></td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="background: ${c.color}; width: 30px; height: 30px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px;">${c.initial}</div>
+                    <div><strong>${c.name}</strong><br><small>${c.email}</small></div>
+                </div>
+            </td>
+            <td>${c.role}</td>
+            <td><span class="badge">${c.status}</span></td>
+            <td><strong style="color: ${c.score >= 90 ? '#27ae60' : '#f39c12'}">${c.score}%</strong></td>
+            <td>${c.skills.map(s => `<span class="skill-tag">${s}</span>`).join(' ')}</td>
+            <td>${c.date}</td>
+            <td>
+                <button onclick="viewCandidate(${c.id})" class="btn-icon"><i class="fas fa-eye"></i></button>
+                <button onclick="deleteCandidate(${c.id})" class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderRecentApplications() {
+    const dashboardBody = document.getElementById('applications-body-dashboard');
+    if (!dashboardBody) return;
+    
+    // Show only the top 5 recent applications
+    const recent = candidatesData.slice(0, 5);
+    
+    dashboardBody.innerHTML = recent.map(app => {
+        const statusColor = app.status === 'New' ? '#3B82F6' : (app.status === 'Interview' ? '#F59E0B' : (app.status === 'Hired' ? '#10B981' : '#6B7280'));
+        return `
+          <tr>
+            <td>${app.name}</td>
+            <td>${app.role}</td>
+            <td><span style="color: ${statusColor};">${app.status}</span></td>
+            <td>${app.score}%</td>
+            <td><button class="btn" onclick="showMessage('Viewing ${app.name} details.')">View</button></td>
+          </tr>
+        `;
+    }).join('');
+}
+
+function renderApplicationsList() {
+    const listBody = document.getElementById('applications-list');
+    if (!listBody) return;
+    
+    // Mock applications data
+    const mockApplications = [
+        { candidate: "Jane Doe", job: "Frontend Developer", status: "Interview", score: "94%", submitted: "2 days ago" },
+        { candidate: "Marco Rossi", job: "Cloud Architect", status: "New", score: "88%", submitted: "1 day ago" },
+        { candidate: "Sarah Lee", job: "UX Designer", status: "Hired", score: "98%", submitted: "5 days ago" },
+        { candidate: "Alex Chen", job: "Marketing Director", status: "Reviewing", score: "92%", submitted: "3 days ago" },
+        { candidate: "Ben Turner", job: "Data Analyst", status: "Hired", score: "96%", submitted: "1 week ago" },
+        { candidate: "Clara Bell", job: "Product Designer", status: "Interview", score: "88%", submitted: "4 days ago" },
+        { candidate: "David Kim", job: "Backend Engineer", status: "Rejected", score: "75%", submitted: "2 weeks ago" }
+    ];
+    
+    listBody.innerHTML = mockApplications.map(app => {
+        const statusColor = app.status === 'New' ? '#10B981' : (app.status === 'Interview' ? '#3B82F6' : (app.status === 'Reviewing' ? '#F59E0B' : '#EF4444'));
+        const actionText = app.status === 'Interview' ? 'Schedule' : (app.status === 'New' ? 'Process' : 'View');
+        
+        return `
+            <tr>
+                <td>${app.candidate}</td>
+                <td>${app.job}</td>
+                <td style="color:${statusColor};">${app.status}</td>
+                <td>${app.submitted}</td>
+                <td>${app.score}</td>
+                <td><button class="btn" onclick="showMessage('${actionText}ing ${app.candidate}.')">${actionText}</button></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// --- Message Utility (Replaces alert()) ---
+let messageTimeout;
+function showMessage(message, type = 'Info') {
+    const box = document.getElementById('messageBox');
+    clearTimeout(messageTimeout);
+    box.innerText = `${type}: ${message}`;
+    box.style.display = 'block';
+    
+    // Set background based on type
+    let bgColor = '#10B981'; // Success/Info (Default)
+    if (type === 'Error') bgColor = '#EF4444';
+    if (type === 'Warning') bgColor = '#FBBF24';
+    if (type === 'Mock' || type === 'AI') bgColor = '#3B82F6'; // Use blue for mock status
+    box.style.backgroundColor = bgColor;
+
+    messageTimeout = setTimeout(() => {
+        box.style.display = 'none';
+    }, 4000);
+}
+
+// --- Settings and Init ---
+function saveSettings() {
+    showMessage('Mock Settings saved successfully.', 'Success');
+    document.getElementById('settingsStatus').innerText = 'Settings saved!';
+    setTimeout(() => { document.getElementById('settingsStatus').innerText = ''; }, 3000);
+}
+
+function resetSettings() {
+    showMessage('Settings reset to default values.', 'Info');
+}
+
+// --- Candidate Modal Handlers ---
+function showAddCandidateModal() {
+    document.getElementById('addCandidateModal').classList.add('show');
+}
+
+function closeAddCandidateModal() {
+    document.getElementById('addCandidateModal').classList.remove('show');
+}
+
+function addCandidate() {
+    const name = document.getElementById('candidateName').value;
+    const position = document.getElementById('candidatePosition').value;
+    
+    if (name && position) {
+        showMessage(`Candidate ${name} added successfully!`, 'Success');
+        closeAddCandidateModal();
+        
+        // Reset form
+        document.getElementById('candidateName').value = '';
+        document.getElementById('candidatePosition').value = '';
+        document.getElementById('candidatePhone').value = '';
+        document.getElementById('cvDriveUrl').value = '';
+        
+        // Add to candidates data and refresh table
+        const newId = candidatesData.length + 1;
+        candidatesData.push({
+            id: newId,
+            name: name,
+            email: `${name.toLowerCase().replace(/\s+/g, '.')}@candidate.com`,
+            role: position,
+            status: "New",
+            score: Math.floor(Math.random() * (100 - 70 + 1)) + 70,
+            skills: [],
+            date: new Date().toISOString().split('T')[0],
+            initial: name.charAt(0),
+            color: '#' + Math.floor(Math.random()*16777215).toString(16)
+        });
+        
+        renderDashboardTable();
+        updateCandidatesStats();
+    } else {
+        showMessage('Please fill in all required fields.', 'Error');
+    }
+}
+
+// --- INTEGRATIONS LOGIC ---
+// 1. Notebook (Bravo) - Uses localStorage for persistence
+function loadNotebook() {
+    const notebook = document.getElementById('quick-notebook');
+    if (notebook) {
+        notebook.value = localStorage.getItem('quickNotebookContent') || 'Start typing your quick notes here...';
+        document.getElementById('notebook-status').innerText = 'Notes loaded from local storage.';
+    }
+}
+
+function saveNotebook(isAutoSave = false) {
+    const notebook = document.getElementById('quick-notebook');
+    if (notebook) {
+        localStorage.setItem('quickNotebookContent', notebook.value);
+        if (!isAutoSave) {
+            document.getElementById('notebook-status').innerText = `Notes saved manually at ${new Date().toLocaleTimeString()}.`;
+            showMessage('Notebook notes saved.', 'Success');
+        } else {
+            document.getElementById('notebook-status').innerText = `Notes auto-saved at ${new Date().toLocaleTimeString()}.`;
+        }
+    }
+}
+
+// --- AI JOB LEAD GENERATION (Mock) ---
+async function aiLeadGeneration() {
+    const jobTitle = document.getElementById('aiJobTitle').value.trim();
+    const locationQuery = document.getElementById('aiLocation').value.trim();
+    const outputDiv = document.getElementById('aiLeadOutput');
+    const resultsDiv = document.getElementById('aiLeadResults');
+    const loaderDiv = document.getElementById('aiLeadLoader');
+    const leadBtn = document.getElementById('aiLeadBtn');
+    const jobsContainer = document.getElementById('jobsContainer');
+
+    if (!jobTitle || !locationQuery) {
+        showMessage("Please enter a Job Title and Location for the AI search.", "Warning");
+        return;
+    }
+    
+    // Clear previous results and show loader
+    outputDiv.style.display = 'block';
+    resultsDiv.innerHTML = '';
+    jobsContainer.innerHTML = ''; // Clear job listings
+    loaderDiv.style.display = 'block';
+    leadBtn.disabled = true;
+    leadBtn.innerHTML = '<i data-feather="loader" class="spin"></i> Searching...';
+    feather.replace();
+    document.getElementById('job-listing-title').innerText = `AI-Found Job Listings for "${jobTitle}" in "${locationQuery}"`;
+
+    // Simulate API call with timeout
+    setTimeout(() => {
+        loaderDiv.style.display = 'none';
+        leadBtn.disabled = false;
+        leadBtn.innerHTML = '<i data-feather="search" style="width:18px; height:18px;"></i> Search';
+        feather.replace();
+        
+        // Generate 200+ mock job results
+        const mockResults = generateMockJobs(jobTitle, locationQuery, 200);
+        
+        renderJobLeads(mockResults.slice(0, 10)); // Show top 10 in leads section
+        renderLiveJobsList(mockResults); // Show all 200+ in job listings
+        showMessage(`AI successfully found ${mockResults.length} job leads!`, 'AI');
+    }, 2000);
+}
+
+// Generate 200+ mock job results
+function generateMockJobs(jobTitle, locationQuery, count) {
+    const jobTitles = [
+        'Senior Software Engineer', 'Junior Developer', 'Full Stack Developer', 'Frontend Developer',
+        'Backend Developer', 'DevOps Engineer', 'Data Scientist', 'Machine Learning Engineer',
+        'Product Manager', 'UX Designer', 'QA Engineer', 'Cloud Architect', 'Security Analyst',
+        'Mobile Developer', 'Database Administrator', 'Systems Analyst', 'IT Support Specialist',
+        'Network Engineer', 'Business Analyst', 'Technical Lead'
+    ];
+    
+    const companies = [
+        'TechInnovate Inc', 'DataSystems Ltd', 'CloudSolutions', 'FinTech Corp', 'HealthTech Solutions',
+        'RetailTech', 'EdTech Innovations', 'GreenEnergy Co', 'SmartCity Tech', 'AutoTech Ltd',
+        'FoodTech', 'TravelTech', 'MediaTech', 'BioTech Research', 'CyberSecurity Solutions',
+        'AI Innovations', 'BlockChain Ventures', 'IoT Solutions', 'VR/AR Studios', 'Quantum Computing'
+    ];
+    
+    const locations = ukLocations;
+    
+    const mockResults = [];
+    for (let i = 0; i < count; i++) {
+        const randomCompany = companies[Math.floor(Math.random() * companies.length)];
+        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+        const randomJobTitle = jobTitles[Math.floor(Math.random() * jobTitles.length)];
+        
+        mockResults.push({
+            employer: randomCompany,
+            jobTitle: randomJobTitle,
+            location: randomLocation,
+            contactEmail: `hr@${randomCompany.toLowerCase().replace(/\s+/g, '')}.com`,
+            contactPhone: `+44 ${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 9000) + 1000}`,
+            sourceUrl: `https://example.com/job/${Math.floor(Math.random() * 10000)}`,
+            salary: `ï¿½${Math.floor(Math.random() * 70) + 30},000 - ï¿½${Math.floor(Math.random() * 100) + 80},000`,
+            type: ['Full-time', 'Part-time', 'Contract', 'Remote'][Math.floor(Math.random() * 4)]
+        });
+    }
+    
+    return mockResults;
+}
+
+// Renders the AI-Found Jobs in the main job listing area
+function renderLiveJobsList(jobs) {
+    const jobsContainer = document.getElementById('jobsContainer');
+    jobsContainer.innerHTML = '';
+    
+    if (jobs.length === 0) {
+        jobsContainer.innerHTML = '<div class="no-jobs" style="grid-column: 1 / -1; text-align: center; color: #555; padding: 30px 0;">No live job listings were found.</div>';
+        return;
+    }
+
+    // Show first 50 jobs (for performance)
+    const displayJobs = jobs.slice(0, 50);
+    
+    displayJobs.forEach((job, index) => {
+        const card = document.createElement('div');
+        card.className = 'job-card';
+        
+        // Generate a simple mock description since the API doesn't return full text
+        const mockDescription = `This is a high-priority, AI-sourced opening for a ${job.jobTitle} position at ${job.employer}. The location is ${job.location}. This is a ${job.type} position with salary range ${job.salary}. Click 'View Source' for full details and application instructions.`;
+        
+        // Assign a random 'days ago' for visual flair
+        const daysAgo = (index % 7) + 1;
+        
+        card.innerHTML = `
+            <div class="job-title">${job.jobTitle}</div>
+            <div class="job-company">${job.employer} - ${job.location}</div>
+            <div class="job-details" style="display: flex; gap: 15px; margin-bottom: 10px; font-size: 0.85em; color: #6B7280;">
+                <span><i class="fas fa-money-bill-wave"></i> ${job.salary}</span>
+                <span><i class="fas fa-clock"></i> ${job.type}</span>
+                <span><i class="fas fa-calendar"></i> Posted ${daysAgo} day(s) ago</span>
+            </div>
+            <div class="job-description">${mockDescription}</div>
+            <a class="apply-link" href="${job.sourceUrl}" target="_blank" rel="noopener noreferrer">View Source Job</a>
+        `;
+        jobsContainer.appendChild(card);
+    });
+    
+    // If there are more jobs, show a count
+    if (jobs.length > 50) {
+        const countCard = document.createElement('div');
+        countCard.className = 'job-card';
+        countCard.style.textAlign = 'center';
+        countCard.style.padding = '30px';
+        countCard.innerHTML = `
+            <h3 style="color: #3B82F6; margin-bottom: 10px;"><i class="fas fa-database"></i> ${jobs.length} Jobs Found</h3>
+            <p>Showing 50 of ${jobs.length} available positions. Refine your search to see more specific results.</p>
+            <button class="btn" onclick="showMessage('To see all ${jobs.length} jobs, please refine your search criteria.', 'Info')" style="margin-top: 15px;">
+                <i class="fas fa-filter"></i> Refine Search
+            </button>
+        `;
+        jobsContainer.appendChild(countCard);
+    }
+}
+
+// Renders the AI Leads section with contact info (used on Jobs page)
+function renderJobLeads(leads) {
+    const resultsDiv = document.getElementById('aiLeadResults');
+    resultsDiv.innerHTML = `
+        <h4 style="color: #1D4ED8; border-bottom: 1px dashed #A5B4FC; padding-bottom: 10px;">AI-Generated Job Leads (${leads.length} results)</h4>
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${leads.map((lead, index) => `
+                <div class="ai-lead-item">
+                    <h5 style="margin-top: 0; margin-bottom: 5px; color: #0F172A;">${lead.jobTitle} at ${lead.employer} (${lead.location})</h5>
+                    <div style="font-size: 0.85em; color: #4B5563; margin-bottom: 10px;">
+                        <span style="margin-right: 15px;"><i class="fas fa-money-bill-wave"></i> ${lead.salary}</span>
+                        <span><i class="fas fa-clock"></i> ${lead.type}</span>
+                    </div>
+                    <div class="ai-contact-info" style="font-size: 0.9em; margin-bottom: 10px; color: #4B5563;">
+                        <p style="margin: 0;">
+                            <strong>Email:</strong> 
+                            ${lead.contactEmail && lead.contactEmail !== 'N/A' ? `<a href="mailto:${lead.contactEmail}" title="Email Employer"><i data-feather="mail" style="width:14px; height:14px; margin-right: 2px;"></i> ${lead.contactEmail}</a>` : 'N/A'}
+                        </p>
+                        <p style="margin: 0;">
+                            <strong>Phone:</strong> 
+                            ${lead.contactPhone && lead.contactPhone !== 'N/A' ? `<a href="tel:${lead.contactPhone}" title="Call Employer"><i data-feather="phone" style="width:14px; height:14px; margin-right: 2px;"></i> ${lead.contactPhone}</a>` : 'N/A'}
+                        </p>
+                    </div>
+                    <a href="${lead.sourceUrl}" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 5px 10px; font-size: 0.8em; background-color: #FBBF24;">View Source Job</a>
+                    <!-- Add a unique ID for saving logic -->
+                    <button class="btn" style="padding: 5px 10px; font-size: 0.8em; background-color: #10B981; margin-left: 10px;" onclick="showMessage('Lead for ${lead.employer} saved to CRM!', 'Success')">Save to CRM</button>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    feather.replace();
+}
+
+// --- AI COMPANY LEAD GENERATION (Mock) ---
+async function aiCompanyLeadGeneration() {
+    const companyQuery = document.getElementById('aiCompanyQuery').value.trim();
+    const outputDiv = document.getElementById('aiCompanyOutput');
+    const loaderDiv = document.getElementById('aiCompanyLoader');
+    const leadBtn = document.getElementById('aiCompanyLeadBtn');
+
+    if (!companyQuery) {
+        showMessage("Please enter a company or industry query.", "Warning");
+        return;
+    }
+    
+    // Show loader
+    outputDiv.style.display = 'none';
+    loaderDiv.style.display = 'block';
+    leadBtn.disabled = true;
+    leadBtn.innerHTML = '<i data-feather="loader" class="spin"></i> Searching...';
+    feather.replace();
+
+    // Simulate API call with timeout
+    setTimeout(() => {
+        loaderDiv.style.display = 'none';
+        leadBtn.disabled = false;
+        leadBtn.innerHTML = '<i data-feather="search" style="width:18px; height:18px;"></i> Search Companies';
+        feather.replace();
+
+        // Generate company leads with UK locations
+        const mockResults = generateCompanyLeads(companyQuery, 50);
+        
+        if (mockResults.length > 0) {
+            renderCompanyLeadResults(mockResults);
+            showMessage(`AI successfully found ${mockResults.length} company leads!`, 'AI');
+        } else {
+            outputDiv.innerHTML = '<p style="color:#EF4444; font-style:italic;">AI could not find suitable company leads based on your query.</p>';
+            outputDiv.style.display = 'block';
+            showMessage('AI found no results.', 'Warning');
+        }
+    }, 2000);
+}
+
+// Generate company leads with UK locations
+function generateCompanyLeads(query, count) {
+    const industries = [
+        'FinTech', 'HealthTech', 'EdTech', 'RetailTech', 'FoodTech', 'TravelTech', 'MediaTech',
+        'BioTech', 'CyberSecurity', 'AI', 'BlockChain', 'IoT', 'VR/AR', 'Quantum Computing',
+        'Clean Energy', 'E-commerce', 'SaaS', 'Marketing Tech', 'HR Tech', 'Legal Tech'
+    ];
+    
+    const roles = [
+        'CEO', 'CTO', 'CFO', 'Head of Talent Acquisition', 'HR Director', 'Recruitment Manager',
+        'Technical Director', 'Engineering Manager', 'Product Lead', 'Marketing Director',
+        'Business Development Manager', 'Sales Director', 'Operations Manager'
+    ];
+    
+    const activities = [
+        'Recently secured Series A funding', 'Expanding into European markets', 'Launching new product next quarter',
+        'Hiring for multiple tech roles', 'Recently moved to new headquarters', 'Partnered with major industry player',
+        'Won industry award for innovation', 'Growing team by 50% this year', 'Expanding to new markets',
+        'Developing cutting-edge AI solutions', 'Leading sustainability initiatives', 'Digital transformation underway'
+    ];
+    
+    const mockResults = [];
+    for (let i = 0; i < count; i++) {
+        const industry = industries[Math.floor(Math.random() * industries.length)];
+        const location = ukLocations[Math.floor(Math.random() * ukLocations.length)];
+        const company = `${industry} ${['Solutions', 'Innovations', 'Ventures', 'Technologies', 'Labs', 'Group', 'Partners'][Math.floor(Math.random() * 7)]}`;
+        const role = roles[Math.floor(Math.random() * roles.length)];
+        const activity = activities[Math.floor(Math.random() * activities.length)];
+        
+        mockResults.push({
+            company: company,
+            keyPersonRole: role,
+            contactEmail: `${role.toLowerCase().replace(/\s+/g, '.')}@${company.toLowerCase().replace(/\s+/g, '')}.com`,
+            contactPhone: Math.random() > 0.3 ? `+44 ${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 9000) + 1000}` : 'N/A',
+            activitySummary: `${activity} in ${location}`,
+            location: location,
+            industry: industry
+        });
+    }
+    
+    return mockResults;
+}
+
+// Renders the generated company leads in the temporary output area
+function renderCompanyLeadResults(leads) {
+    const outputDiv = document.getElementById('aiCompanyOutput');
+    outputDiv.innerHTML = `
+        <h4 style="color: #F97316; border-bottom: 1px dashed #FCD34D; padding-bottom: 10px;">Newly Generated Company Leads (${leads.length} results)</h4>
+        <div style="max-height: 500px; overflow-y: auto;">
+            ${leads.map((lead, index) => `
+                <div class="ai-lead-item" style="border-left: 3px solid #F97316; padding: 15px; margin-bottom: 15px; background: #FFFBEB; border-radius: 8px;">
+                    <h5 style="margin-top: 0; margin-bottom: 5px; color: #0F172A;">${lead.company}</h5>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                        <span style="background: #FDE68A; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; color: #92400E;">
+                            <i data-feather="map-pin" style="width:12px; height:12px; margin-right: 3px;"></i> ${lead.location}
+                        </span>
+                        <span style="background: #D1FAE5; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; color: #065F46;">
+                            <i data-feather="briefcase" style="width:12px; height:12px; margin-right: 3px;"></i> ${lead.industry}
+                        </span>
+                    </div>
+                    <p style="font-size: 0.9em; margin: 5px 0; color: #4B5563;">
+                        <i data-feather="user" style="width:14px; height:14px; margin-right: 5px;"></i> <strong>Contact:</strong> ${lead.keyPersonRole}
+                    </p>
+                    <p style="font-size: 0.9em; margin: 5px 0; color: #4B5563;">
+                        <i data-feather="activity" style="width:14px; height:14px; margin-right: 5px;"></i> <strong>Activity:</strong> ${lead.activitySummary}
+                    </p>
+                    <p style="font-size: 0.9em; margin: 5px 0; color: #4B5563;">
+                        <i data-feather="mail" style="width:14px; height:14px; margin-right: 5px;"></i> <strong>Email:</strong> ${lead.contactEmail}
+                    </p>
+                    <p style="font-size: 0.9em; margin: 5px 0 10px; color: #4B5563;">
+                        <i data-feather="phone" style="width:14px; height:14px; margin-right: 5px;"></i> <strong>Phone:</strong> ${lead.contactPhone}
+                    </p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="saveCompanyLead(${index})" 
+                            style="padding: 5px 10px; font-size: 0.8em; background-color: #EF4444;">
+                            <i data-feather="save" style="width:12px; height:12px;"></i> Save to CRM
+                        </button>
+                        <button class="btn" onclick="showMessage('Added ${lead.company} to outreach list', 'Success')"
+                            style="padding: 5px 10px; font-size: 0.8em; background-color: #10B981;">
+                            <i data-feather="mail" style="width:12px; height:12px;"></i> Add to Outreach
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    feather.replace();
+    outputDiv.style.display = 'block';
+}
+
+// Save company lead to local storage
+function saveCompanyLead(index) {
+    const leads = JSON.parse(localStorage.getItem('companyLeads') || '[]');
+    // Get the lead data from the rendered content (simplified for demo)
+    const companyName = "Saved Company " + (leads.length + 1);
+    const newLead = {
+        id: Date.now(),
+        company: companyName,
+        contactRole: "Key Contact",
+        email: `contact@${companyName.toLowerCase().replace(/\s+/g, '')}.com`,
+        phone: "+44 " + Math.floor(Math.random() * 90 + 10) + " " + Math.floor(Math.random() * 9000 + 1000),
+        status: "New",
+        date: new Date().toISOString().split('T')[0]
+    };
+    
+    leads.push(newLead);
+    localStorage.setItem('companyLeads', JSON.stringify(leads));
+    showMessage(`Lead for ${companyName} saved to CRM!`, 'Success');
+    updateCompanyLeadsTable();
+}
+
+// Update company leads table
+function updateCompanyLeadsTable() {
+    const leads = JSON.parse(localStorage.getItem('companyLeads') || '[]');
+    const tbody = document.getElementById('company-leads-body');
+    
+    if (leads.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No company leads saved yet.</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = leads.map(lead => `
+        <tr>
+            <td>${lead.company}</td>
+            <td>${lead.contactRole}</td>
+            <td>${lead.email}</td>
+            <td>${lead.phone}</td>
+            <td><span style="color: #059669; font-weight: 600;">${lead.status}</span></td>
+            <td>
+                <button class="btn" onclick="showMessage('Contacting ${lead.company}', 'Info')" style="padding: 3px 8px; font-size: 0.8em;">
+                    <i data-feather="mail" style="width:12px; height:12px;"></i> Contact
+                </button>
+                <button class="btn" onclick="removeCompanyLead(${lead.id})" style="padding: 3px 8px; font-size: 0.8em; background-color: #EF4444; margin-left: 5px;">
+                    <i data-feather="trash-2" style="width:12px; height:12px;"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+    feather.replace();
+}
+
+// Remove company lead
+function removeCompanyLead(id) {
+    if (confirm("Are you sure you want to remove this company lead?")) {
+        let leads = JSON.parse(localStorage.getItem('companyLeads') || '[]');
+        leads = leads.filter(lead => lead.id !== id);
+        localStorage.setItem('companyLeads', JSON.stringify(leads));
+        updateCompanyLeadsTable();
+        showMessage('Company lead removed.', 'Success');
+    }
+}
+
+// --- CORE FUNCTIONS ---
+function viewCandidate(id) {
+    const candidate = candidatesData.find(c => c.id === id);
+    if (!candidate) return;
+    currentEditingId = id;
+
+    document.getElementById('modalName').innerText = candidate.name;
+    document.getElementById('modalEmail').innerText = candidate.email;
+    document.getElementById('modalRole').innerText = candidate.role;
+    document.getElementById('modalScore').innerText = candidate.score + "%";
+    document.getElementById('modalDate').innerText = candidate.date;
+    document.getElementById('statusSelect').value = candidate.status;
+    document.getElementById('emailLink').href = `mailto:${candidate.email}`;
+    document.getElementById('phoneLink').href = `tel:+440000000000`;
+    
+    document.getElementById('candidateModal').style.display = 'flex';
+}
+
+function updateCandidateStatus() {
+    const newStatus = document.getElementById('statusSelect').value;
+    const candidate = candidatesData.find(c => c.id === currentEditingId);
+    if (candidate) {
+        candidate.status = newStatus;
+        renderDashboardTable();
+        updateCandidatesStats();
+        showMessage(`Status updated to: ${newStatus}`, 'Success');
+    }
+}
+
+function toggleSelectAll() {
+    const master = document.getElementById('selectAll').checked;
+    document.querySelectorAll('.candidate-checkbox').forEach(cb => cb.checked = master);
+}
+
+function openBulkEmailModal() { 
+    document.getElementById('emailTemplateModal').style.display = 'flex'; 
+}
+
+function closeEmailModal() { 
+    document.getElementById('emailTemplateModal').style.display = 'none'; 
+}
+
+function closeModal() { 
+    document.getElementById('candidateModal').style.display = 'none'; 
+}
+
+function toggleAIChat() { 
+    const win = document.getElementById('ai-chat-window');
+    win.style.display = win.style.display === 'none' ? 'flex' : 'none'; 
+}
+
+function loadTemplate() {
+    const type = document.getElementById('templateSelect').value;
+    if (templates[type]) document.getElementById('emailBody').value = templates[type].body;
+}
+
+function sendFinalEmails() {
+    const selected = document.querySelectorAll('.candidate-checkbox:checked');
+    const templateType = document.getElementById('templateSelect').value;
+    
+    if (selected.length === 0) {
+        showMessage("Please select at least one candidate.", "Warning");
+        return;
+    }
+    
+    if (!templateType) {
+        showMessage("Please select an email template.", "Warning");
+        return;
+    }
+    
+    showMessage(`Sending bulk emails to ${selected.length} candidates using the ${templateType} template!`, 'Success');
+    closeEmailModal();
+}
+
+function deleteCandidate(id) {
+    if(confirm("Delete this candidate?")) {
+        const idx = candidatesData.findIndex(c => c.id === id);
+        if (idx !== -1) {
+            candidatesData.splice(idx, 1);
+            renderDashboardTable();
+            updateCandidatesStats();
+            showMessage("Candidate deleted.", "Success");
+        }
+    }
+}
+
+function bulkAnalyze() {
+    const count = candidatesData.length;
+    showMessage(`AI Analysis Engine Started... Processing ${count} candidates.`, 'AI');
+    
+    // Update AI Analysis content
+    const analysisContent = document.getElementById('aiAnalysisContent');
+    if (analysisContent) {
+        analysisContent.innerHTML = `
+            <h4 style="color: #3B82F6; margin-top: 0;">Analysis Results</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><strong>Total candidates analyzed:</strong> ${count}</li>
+                <li><strong>Average match score:</strong> ${Math.round(candidatesData.reduce((sum, c) => sum + c.score, 0) / count)}%</li>
+                <li><strong>Top skills identified:</strong> JavaScript, Python, React, Node.js, AWS</li>
+                <li><strong>Recommendation:</strong> Focus outreach on candidates with 90%+ match scores</li>
+                <li><strong>Estimated time savings:</strong> ${Math.round(count * 0.3)} hours</li>
+            </ul>
+            <p style="font-style: italic; color: #6B7280; margin-top: 10px;">
+                <i class="fas fa-lightbulb"></i> AI suggests prioritizing the top ${Math.min(5, count)} candidates for immediate outreach.
+            </p>
+        `;
+    }
+    
+    // Optional: Simulate a loading state on the button
+    const btn = document.querySelector('.btn-outline');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        showMessage("Analysis Complete! 100% of candidates processed.", 'Success');
+    }, 2000);
+}
+
+function exportToCSV() {
+    // Create CSV Header
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Name,Email,Job Role,Status,AI Score,Applied Date,Skills\n";
+
+    // Add Candidate Data rows
+    candidatesData.forEach(c => {
+        let row = `"${c.name}","${c.email}","${c.role}","${c.status}","${c.score}%","${c.date}","${c.skills.join(', ')}"`;
+        csvContent += row + "\n";
+    });
+
+    // Create a hidden download link and trigger it
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "active_skills_candidates.csv");
+    document.body.appendChild(link);
+
+    link.click(); // This starts the download
+    document.body.removeChild(link);
+    showMessage("CSV exported successfully!", "Success");
+}
+
+// --- Search & Filter Logic ---
+function filterCandidates() {
+    const searchTerm = document.getElementById('dashboardSearch').value.toLowerCase();
+    const tbody = document.getElementById('applications-body-dashboard');
+    
+    // We filter the original data array
+    const filteredData = candidatesData.filter(c => {
+        const nameMatch = c.name.toLowerCase().includes(searchTerm);
+        const roleMatch = c.role.toLowerCase().includes(searchTerm);
+        // Check if any skill in the array matches
+        const skillMatch = c.skills.some(s => s.toLowerCase().includes(searchTerm));
+        
+        return nameMatch || roleMatch || skillMatch;
+    });
+
+    // Re-render only the filtered results
+    renderFilteredTable(filteredData);
+}
+
+// Helper function to render specific data sets
+function renderFilteredTable(dataToDisplay) {
+    const tbody = document.getElementById('applications-body-dashboard');
+    if (dataToDisplay.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px; color: #999;">No candidates found matching your search.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = dataToDisplay.map(c => `
+        <tr>
+            <td><input type="checkbox" class="candidate-checkbox" data-id="${c.id}"></td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="background: ${c.color}; width: 30px; height: 30px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px;">${c.initial}</div>
+                    <div><strong>${c.name}</strong><br><small>${c.email}</small></div>
+                </div>
+            </td>
+            <td>${c.role}</td>
+            <td><span class="badge">${c.status}</span></td>
+            <td><strong style="color: ${c.score >= 90 ? '#27ae60' : '#f39c12'}">${c.score}%</strong></td>
+            <td>${c.skills.map(s => `<span class="skill-tag">${s}</span>`).join(' ')}</td>
+            <td>${c.date}</td>
+            <td>
+                <button onclick="viewCandidate(${c.id})" class="btn-icon"><i class="fas fa-eye"></i></button>
+                <button onclick="deleteCandidate(${c.id})" class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function resetSearch() {
+    document.getElementById('dashboardSearch').value = '';
+    renderDashboardTable(); // Back to original full list
+}
+
+// --- Dashboard Analytics Animation ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to metric cards
+    const metricCards = document.querySelectorAll('.metric-card');
+    metricCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.style.animation = 'fadeInUp 0.6s ease forwards';
+    });
+    
+    // Add click event to table rows
+    const tableRows = document.querySelectorAll('.pages-table tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('click', function() {
+            const pageTitle = this.querySelector('td:first-child').textContent;
+            showMessage(`Selected: ${pageTitle}\n\nClick the Google Analytics link to view detailed metrics for this page.`, 'Info');
+        });
+    });
+    
+    // Update timestamp with current time
+    const now = new Date();
+    const timeString = now.toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const timestampElement = document.querySelector('.timestamp p:first-child');
+    if (timestampElement) {
+        timestampElement.innerHTML = `<i class="fas fa-sync-alt"></i> Data fetched from Google Analytics | Last updated: ${timeString}`;
+    }
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .metric-card {
+            opacity: 0;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Initialize company leads table
+    updateCompanyLeadsTable();
+});
+
+// Sync dashboard stats (mock API call)
+async function syncGlobalDashboard() {
+    try {
+        // Mock API response
+        const mockData = {
+            candidates: '1,247',
+            jobs: '86',
+            applications: '342',
+            match_rate: '94'
+        };
+
+        // Update all dashboard elements
+        const mapping = {
+            'stat-candidates': mockData.candidates,
+            'total-candidates-count': mockData.candidates,
+            'stat-jobs': mockData.jobs,
+            'active-jobs-count': mockData.jobs,
+            'stat-applications': mockData.applications,
+            'stat-match-rate': mockData.match_rate + "%"
+        };
+
+        for (const [id, value] of Object.entries(mapping)) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = value;
+        }
+    } catch (e) { 
+        console.log("Syncing dashboard..."); 
+    }
+}
+// ===== LIVE DATA FUNCTIONS =====
+let liveDataInterval = null;
+let isLiveViewActive = false;
+
+// Initialize live data
+function initLiveData() {
+    console.log('Initializing live data connection...');
+    
+    // Load settings
+    const autoRefresh = localStorage.getItem('autoRefresh') !== 'false';
+    const refreshInterval = parseInt(localStorage.getItem('refreshInterval') || '60000');
+    
+    document.getElementById('auto-refresh').checked = autoRefresh;
+    document.getElementById('refresh-interval').value = refreshInterval;
+    
+    if (autoRefresh) {
+        startLiveDataRefresh(refreshInterval);
+    }
+    
+    // Load initial data
+    loadLiveData();
+}
+
+// Load live data from API
+async function loadLiveData() {
+    const container = document.getElementById('live-data-container');
+    const badge = document.getElementById('live-badge');
+    
+    try {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-spinner fa-spin"></i> Loading live candidates...
+            </div>
+        `;
+        
+        const response = await fetch('http://localhost:3001/api/candidates/live');
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Update badge
+        badge.innerHTML = `<i class="fas fa-circle" style="font-size: 0.6em;"></i> ${data.candidates.length} LIVE`;
+        badge.style.background = '#10B981';
+        
+        // Render the data
+        renderLiveData(data);
+        
+        // Update last refresh time
+        const now = new Date();
+        document.getElementById('last-refresh-time')?.remove();
+        
+        const timeEl = document.createElement('div');
+        timeEl.id = 'last-refresh-time';
+        timeEl.style.cssText = 'font-size: 0.8em; color: #6B7280; margin-top: 10px; text-align: center;';
+        timeEl.innerHTML = `<i class="fas fa-clock"></i> Last updated: ${now.toLocaleTimeString()}`;
+        container.appendChild(timeEl);
+        
+        console.log(`Loaded ${data.candidates.length} live candidates`);
+        
+    } catch (error) {
+        console.error('Failed to load live data:', error);
+        
+        badge.innerHTML = `<i class="fas fa-circle" style="font-size: 0.6em;"></i> OFFLINE`;
+        badge.style.background = '#EF4444';
+        
+        container.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: #EF4444;">
+                <i class="fas fa-exclamation-triangle fa-2x" style="margin-bottom: 15px;"></i>
+                <h4>Connection Failed</h4>
+                <p>Could not connect to live data server</p>
+                <small>${error.message}</small>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="loadLiveData()">
+                        <i class="fas fa-redo"></i> Retry
+                    </button>
+                    <button class="btn btn-outline" onclick="loadSampleData()" style="margin-left: 10px;">
+                        <i class="fas fa-database"></i> Use Sample Data
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Render live data
+function renderLiveData(data) {
+    const container = document.getElementById('live-data-container');
+    
+    if (!data.candidates || data.candidates.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: #6B7280;">
+                <i class="fas fa-database fa-2x" style="margin-bottom: 15px;"></i>
+                <p>No live candidates found</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Create stats summary
+    const statsHtml = `
+        <div class="stats-grid" style="margin-bottom: 20px;">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total</div>
+                    <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="stat-value">${data.total}</div>
+                <div class="stat-trend">Live from server</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Avg Score</div>
+                    <div class="stat-icon icon-score"><i class="fas fa-robot"></i></div>
+                </div>
+                <div class="stat-value">${data.averageScore}%</div>
+                <div class="stat-trend">Real-time AI analysis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Top Matches</div>
+                    <div class="stat-icon icon-top"><i class="fas fa-star"></i></div>
+                </div>
+                <div class="stat-value">${data.topMatches}</div>
+                <div class="stat-trend">90%+ AI score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">New Today</div>
+                    <div class="stat-icon icon-new"><i class="fas fa-calendar-day"></i></div>
+                </div>
+                <div class="stat-value">${data.newToday}</div>
+                <div class="stat-trend">Active pipeline</div>
+            </div>
+        </div>
+    `;
+    
+    // Create candidates table
+    const tableHtml = `
+        <div style="overflow-x: auto; margin-top: 20px;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Candidate</th>
+                        <th>Status</th>
+                        <th>AI Score</th>
+                        <th>Skills</th>
+                        <th>Applied</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.candidates.map((candidate, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="background: ${candidate.avatarColor}; width: 30px; height: 30px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                                        ${candidate.initial}
+                                    </div>
+                                    <div>
+                                        <strong>${candidate.name}</strong><br>
+                                        <small style="color: #6B7280;">${candidate.email}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: ${candidate.status === 'New' ? '#3B82F6' : candidate.status === 'Rejected' ? '#EF4444' : '#10B981'}">
+                                    ${candidate.status}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <div style="width: 60px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                                        <div style="width: ${candidate.aiScore}%; height: 100%; background: ${candidate.aiScore >= 90 ? '#10B981' : candidate.aiScore >= 80 ? '#F59E0B' : '#EF4444'};"></div>
+                                    </div>
+                                    <span style="font-weight: 600; color: ${candidate.aiScore >= 90 ? '#10B981' : candidate.aiScore >= 80 ? '#F59E0B' : '#EF4444'}">
+                                        ${candidate.aiScore}%
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                ${candidate.skills.map(skill => `
+                                    <span class="skill-tag">${skill}</span>
+                                `).join('')}
+                            </td>
+                            <td>${candidate.appliedDate}</td>
+                            <td>
+                                <button onclick="viewLiveCandidate(${candidate.id})" class="btn-icon" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="emailCandidate('${candidate.email}')" class="btn-icon" title="Email" style="margin-left: 5px;">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    container.innerHTML = statsHtml + tableHtml;
+}
+
+// Start auto-refresh
+function startLiveDataRefresh(interval = 60000) {
+    stopLiveDataRefresh();
+    
+    if (interval > 0) {
+        liveDataInterval = setInterval(() => {
+            if (isLiveViewActive) {
+                loadLiveData();
+            }
+        }, interval);
+        
+        console.log(`Auto-refresh started: ${interval}ms`);
+    }
+}
+
+// Stop auto-refresh
+function stopLiveDataRefresh() {
+    if (liveDataInterval) {
+        clearInterval(liveDataInterval);
+        liveDataInterval = null;
+    }
+}
+
+// Toggle live view
+function toggleLiveView() {
+    const btn = document.getElementById('live-view-btn');
+    isLiveViewActive = !isLiveViewActive;
+    
+    if (isLiveViewActive) {
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Pause Auto-Refresh';
+        btn.style.background = '#10B981';
+        startLiveDataRefresh(parseInt(document.getElementById('refresh-interval').value));
+    } else {
+        btn.innerHTML = '<i class="fas fa-eye"></i> Auto-Refresh';
+        btn.style.background = '';
+        stopLiveDataRefresh();
+    }
+}
+
+// Force refresh data
+function forceRefreshData() {
+    loadLiveData();
+    showMessage('Refreshing live data...', 'Info');
+}
+
+// Open data settings
+function openDataSettings() {
+    document.getElementById('data-settings-modal').style.display = 'flex';
+}
+
+// Close data settings
+function closeDataSettings() {
+    document.getElementById('data-settings-modal').style.display = 'none';
+}
+
+// Test API connection
+async function testConnection() {
+    const statusEl = document.getElementById('connection-status');
+    const url = document.getElementById('data-source-url').value;
+    
+    statusEl.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-spinner fa-spin"></i>
+            Testing connection to ${url}...
+        </div>
+    `;
+    statusEl.style.display = 'block';
+    statusEl.style.background = '#FEF3C7';
+    statusEl.style.color = '#92400E';
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        statusEl.innerHTML = `
+            <div style="color: #065F46;">
+                <i class="fas fa-check-circle"></i> Connection successful!
+            </div>
+            <div style="font-size: 0.9em; margin-top: 5px;">
+                Found ${data.total || data.candidates?.length || 0} candidates
+                ${data.lastUpdated ? `<br>Last updated: ${new Date(data.lastUpdated).toLocaleTimeString()}` : ''}
+            </div>
+        `;
+        statusEl.style.background = '#D1FAE5';
+        statusEl.style.color = '#065F46';
+        
+    } catch (error) {
+        statusEl.innerHTML = `
+            <div style="color: #B91C1C;">
+                <i class="fas fa-times-circle"></i> Connection failed
+            </div>
+            <div style="font-size: 0.9em; margin-top: 5px;">
+                ${error.message}
+            </div>
+        `;
+        statusEl.style.background = '#FEE2E2';
+        statusEl.style.color = '#B91C1C';
+    }
+}
+
+// Parse local file
+function parseLocalFile() {
+    showMessage('Parsing good1.htm file...', 'Info');
+    // This would call your server's parse endpoint
+    fetch('http://localhost:3001/api/candidates/refresh')
+        .then(response => response.json())
+        .then(data => {
+            showMessage(`Parsed ${data.data?.candidates?.length || 0} candidates from good1.htm`, 'Success');
+            loadLiveData();
+        })
+        .catch(error => {
+            showMessage('Failed to parse file: ' + error.message, 'Error');
+        });
+}
+
+// Save data settings
+function saveDataSettings() {
+    const autoRefresh = document.getElementById('auto-refresh').checked;
+    const refreshInterval = document.getElementById('refresh-interval').value;
+    
+    localStorage.setItem('autoRefresh', autoRefresh);
+    localStorage.setItem('refreshInterval', refreshInterval);
+    
+    if (autoRefresh) {
+        startLiveDataRefresh(parseInt(refreshInterval));
+    } else {
+        stopLiveDataRefresh();
+    }
+    
+    showMessage('Data settings saved', 'Success');
+    closeDataSettings();
+}
+
+// Load sample data (fallback)
+function loadSampleData() {
+    const sampleData = {
+        total: 6,
+        averageScore: 84,
+        topMatches: 2,
+        newToday: 6,
+        candidates: [
+            // Your 6 sample candidates
+        ]
+    };
+    
+    renderLiveData(sampleData);
+    showMessage('Loaded sample data', 'Warning');
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing initialization code ...
+    
+    // Initialize live data
+    setTimeout(() => {
+        initLiveData();
+    }, 2000);
+});
+
+// Auto-refresh every 10 seconds
+setInterval(syncGlobalDashboard, 10000);
+syncGlobalDashboard(); // Initial call
+
+</script>
+<!-- ===== FIXED LIVE DATA CONNECTION ===== -->
+<script>
+// Configuration
+const CRM_API_URL = 'http://localhost:3001/api/candidates/live';
+const CRM_HEALTH_URL = 'http://localhost:3001/api/health';
+
+// Global state
+let liveCandidates = [];
+let lastUpdate = null;
+let autoRefreshInterval = null;
+
+// ===== SAFE ELEMENT GETTERS =====
+function getElement(id) {
+    const el = document.getElementById(id);
+    if (!el) {
+        console.warn(`Element #${id} not found`);
+        return null;
+    }
+    return el;
+}
+
+function safeSetText(elementId, text) {
+    const el = getElement(elementId);
+    if (el) el.textContent = text;
+}
+
+function safeSetHTML(elementId, html) {
+    const el = getElement(elementId);
+    if (el) el.innerHTML = html;
+}
+
+// ===== INITIALIZATION =====
+function initLiveData() {
+    console.log('Initializing live data connection...');
+    
+    // Safely check for elements
+    const autoRefreshEl = document.getElementById('auto-refresh');
+    if (autoRefreshEl) {
+        autoRefreshEl.checked = localStorage.getItem('autoRefresh') === 'true';
+    }
+    
+    const refreshIntervalEl = document.getElementById('refresh-interval');
+    if (refreshIntervalEl) {
+        refreshIntervalEl.value = localStorage.getItem('refreshInterval') || '60000';
+    }
+    
+    // Add connection status indicator
+    addConnectionStatus();
+    
+    // Load initial data
+    loadLiveData();
+    
+    // Start auto-refresh
+    startAutoRefresh(30000);
+    
+    // Add refresh button
+    addRefreshButton();
+}
+
+// ===== LOAD LIVE DATA =====
+async function loadLiveData() {
+    console.log('Loading live data from:', CRM_API_URL);
+    
+    // Show loading state
+    showLoadingState(true);
+    
+    try {
+        const response = await fetch(CRM_API_URL);
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Live data loaded:', data);
+        
+        // Store data globally
+        liveCandidates = data.candidates || [];
+        lastUpdate = new Date();
+        
+        // Update UI safely
+        updateDashboardUI(data);
+        
+        // Update connection status
+        updateConnectionStatus('connected', `${liveCandidates.length} candidates loaded`);
+        
+        return data;
+        
+    } catch (error) {
+        console.error('Failed to load live data:', error);
+        
+        // Update connection status
+        updateConnectionStatus('error', error.message);
+        
+        // Show error in UI
+        showErrorState(error.message);
+        
+        return null;
+    } finally {
+        showLoadingState(false);
+    }
+}
+
+// ===== UPDATE DASHBOARD UI =====
+function updateDashboardUI(data) {
+    // 1. Update stats cards safely
+    updateStatsCards(data);
+    
+    // 2. Update applications table
+    updateApplicationsTable(data.candidates);
+    
+    // 3. Update last update time
+    updateLastUpdateTime();
+    
+    // 4. Show success notification
+    showNotification(`Loaded ${data.candidates.length} candidates`, 'success');
+}
+
+function updateStatsCards(data) {
+    // We use data.averageAiScore because that's what your server.js sends
+    const statsMap = {
+        'totalApplications': data.total || 0,
+        'stat-candidates': data.total || 0,
+        'avgScore': (data.averageAiScore || 0) + '%',
+        'stat-match-rate': (data.averageAiScore || 0) + '%',
+        'topMatches': data.topMatches || 0,
+        'newToday': data.newToday || 0,
+        'stat-applications': data.total || 0
+    };
+
+    // This part actually puts the numbers into your HTML boxes
+    Object.keys(statsMap).forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.innerText = statsMap[id];
+        }
+    });
+}
+    
+    // Try all possible element IDs
+    for (const [id, value] of Object.entries(statsMap)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+            console.log(`Updated #${id} with: ${value}`);
+        }
+    }
+    
+    // Also try class-based elements
+    const valueElements = document.querySelectorAll('.value');
+    if (valueElements.length > 0) {
+        valueElements[0].textContent = data.total; // Total candidates
+        if (valueElements[1]) valueElements[1].textContent = '0'; // Active jobs
+        if (valueElements[2]) valueElements[2].textContent = data.total; // Applications
+        if (valueElements[3]) valueElements[3].textContent = data.averageScore + '%'; // AI Match Rate
+    }
+}
+
+// Update applications table
+function updateApplicationsTable(candidates) {
+    // Try multiple possible table bodies
+    const tableSelectors = [
+        '#applications-body-dashboard',
+        '#live-applications-body',
+        '#applications-list',
+        '.table tbody',
+        'tbody'
+    ];
+    
+    let tableBody = null;
+    for (const selector of tableSelectors) {
+        tableBody = document.querySelector(selector);
+        if (tableBody) break;
+    }
+    
+    if (!tableBody) {
+        console.warn('No table body found for applications');
+        return;
+    }
+    
+    if (!candidates || candidates.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 30px; color: #6B7280;">
+                    <i class="fas fa-database"></i> No candidates found
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tableBody.innerHTML = candidates.map(candidate => {
+        // Determine colors based on status and score
+        const statusColor = candidate.status === 'New' ? '#3B82F6' : 
+                          candidate.status === 'Interview' ? '#F59E0B' : 
+                          candidate.status === 'Hired' ? '#10B981' : '#EF4444';
+        
+        const scoreColor = candidate.aiScore >= 90 ? '#10B981' : 
+                          candidate.aiScore >= 80 ? '#F59E0B' : '#EF4444';
+        
+        return `
+            <tr>
+                <td><input type="checkbox" class="candidate-checkbox" data-id="${candidate.id}"></td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="background: ${candidate.avatarColor || '#3B82F6'}; width: 36px; height: 36px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold;">
+                            ${candidate.initial || candidate.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: #1F2937;">${candidate.name}</div>
+                            <div style="font-size: 0.85em; color: #6B7280;">${candidate.email}</div>
+                            ${candidate.phone ? `<div style="font-size: 0.8em; color: #9CA3AF;"><i class="fas fa-phone"></i> ${candidate.phone}</div>` : ''}
+                        </div>
+                    </div>
+                </td>
+                <td><strong>${candidate.jobApplied}</strong></td>
+                <td>
+                    <span style="display: inline-block; padding: 4px 12px; background: ${statusColor}15; color: ${statusColor}; border-radius: 20px; font-size: 0.85em; font-weight: 600;">
+                        ${candidate.status}
+                    </span>
+                </td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 60px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden;">
+                            <div style="width: ${candidate.aiScore}%; height: 100%; background: ${scoreColor};"></div>
+                        </div>
+                        <span style="font-weight: 700; color: ${scoreColor};">${candidate.aiScore}%</span>
+                    </div>
+                </td>
+                <td>
+                    ${candidate.skills ? candidate.skills.map(skill => `
+                        <span style="display: inline-block; background: #EFF6FF; color: #1D4ED8; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; margin: 2px;">
+                            ${skill}
+                        </span>
+                    `).join('') : 'No skills'}
+                </td>
+                <td>${candidate.appliedDate}</td>
+                <td>
+                    <button onclick="viewCandidate(${candidate.id})" class="action-btn" title="View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="emailCandidate('${candidate.email}')" class="action-btn" title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                    ${candidate.phone ? `
+                    <button onclick="callCandidate('${candidate.phone}')" class="action-btn" title="Call">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    ` : ''}
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    console.log(`Updated table with ${candidates.length} candidates`);
+}
+
+// ===== CONNECTION STATUS =====
+function addConnectionStatus() {
+    // Check if already exists
+    if (document.getElementById('live-connection-status')) return;
+    
+    const statusHtml = `
+        <div id="live-connection-status" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-left: 4px solid #10B981;">
+                <div id="connection-dot" style="width: 10px; height: 10px; background: #10B981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9em;" id="connection-text">Connecting to CRM...</div>
+                    <div style="font-size: 0.8em; color: #6B7280;" id="connection-details">Port 3001</div>
+                </div>
+                <button onclick="refreshLiveData()" style="background: #3B82F6; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+        <style>
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
+            .action-btn {
+                background: none;
+                border: none;
+                color: #6B7280;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 4px;
+                transition: all 0.2s;
+            }
+            .action-btn:hover {
+                background: #F3F4F6;
+                color: #374151;
+            }
+        </style>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', statusHtml);
+}
+
+function updateConnectionStatus(status, message) {
+    const dot = document.getElementById('connection-dot');
+    const text = document.getElementById('connection-text');
+    const details = document.getElementById('connection-details');
+    
+    if (!dot || !text) return;
+    
+    const statusConfig = {
+        'connected': { color: '#10B981', icon: '✅' },
+        'error': { color: '#EF4444', icon: '❌' },
+        'loading': { color: '#F59E0B', icon: '🔄' }
+    };
+    
+    const config = statusConfig[status] || statusConfig.connected;
+    
+    dot.style.background = config.color;
+    text.innerHTML = `${config.icon} ${message}`;
+    
+    if (details && lastUpdate) {
+        details.textContent = `Last update: ${lastUpdate.toLocaleTimeString()}`;
+    }
+}
+
+// ===== REFRESH BUTTON =====
+function addRefreshButton() {
+    const headerSelectors = ['.header', 'header', 'h1', '#page-title'];
+    let header = null;
+    
+    for (const selector of headerSelectors) {
+        header = document.querySelector(selector);
+        if (header) break;
+    }
+    
+    if (!header || document.getElementById('refresh-live-btn')) return;
+    
+    const btn = document.createElement('button');
+    btn.id = 'refresh-live-btn';
+    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Live Data';
+    btn.style.cssText = 'margin-left: 10px; padding: 8px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);';
+    btn.onclick = () => {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        btn.disabled = true;
+        
+        loadLiveData().finally(() => {
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }, 1000);
+        });
+    };
+    
+    // Find a good place to insert the button
+    if (header.tagName === 'H1' || header.id === 'page-title') {
+        header.insertAdjacentElement('afterend', btn);
+    } else {
+        header.appendChild(btn);
+    }
+}
+
+// ===== AUTO-REFRESH =====
+function startAutoRefresh(interval = 30000) {
+    stopAutoRefresh();
+    autoRefreshInterval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+            loadLiveData();
+        }
+    }, interval);
+    
+    console.log(`Auto-refresh started: ${interval}ms`);
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+    }
+}
+
+// ===== UI STATES =====
+function showLoadingState(isLoading) {
+    const status = document.getElementById('live-connection-status');
+    if (status) {
+        if (isLoading) {
+            updateConnectionStatus('loading', 'Loading live data...');
+        }
+    }
+}
+
+function showErrorState(errorMessage) {
+    // Create error notification if not exists
+    let errorDiv = document.getElementById('live-data-error');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'live-data-error';
+        errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1001; max-width: 400px;';
+        document.body.appendChild(errorDiv);
+    }
+    
+    errorDiv.innerHTML = `
+        <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px; padding: 15px; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2);">
+            <div style="display: flex; align-items: flex-start; gap: 10px;">
+                <div style="color: #DC2626; font-size: 1.2em;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: #DC2626; margin-bottom: 5px;">Connection Error</div>
+                    <div style="color: #7F1D1D; font-size: 0.9em; margin-bottom: 10px;">${errorMessage}</div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="loadLiveData()" style="padding: 6px 12px; background: #DC2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em;">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.style.display='none'" style="padding: 6px 12px; background: #6B7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em;">
+                            Dismiss
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Auto-dismiss after 10 seconds
+    setTimeout(() => {
+        if (errorDiv) errorDiv.style.display = 'none';
+    }, 10000);
+}
+
+function showNotification(message, type = 'info') {
+    console.log(`${type}: ${message}`);
+    
+    // Find existing message box or create one
+    let messageBox = document.getElementById('messageBox');
+    if (!messageBox) {
+        messageBox = document.createElement('div');
+        messageBox.id = 'messageBox';
+        messageBox.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            font-weight: 600;
+        `;
+        document.body.appendChild(messageBox);
+    }
+    
+    const colors = {
+        'success': '#10B981',
+        'error': '#EF4444',
+        'info': '#3B82F6',
+        'warning': '#F59E0B'
+    };
+    
+    messageBox.style.backgroundColor = colors[type] || colors.info;
+    messageBox.textContent = message;
+    messageBox.style.display = 'block';
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        messageBox.style.display = 'none';
+    }, 3000);
+}
+
+function updateLastUpdateTime() {
+    if (!lastUpdate) return;
+    
+    // Update any element that shows last update time
+    const timeElements = document.querySelectorAll('[id*="update"], [id*="Update"], [id*="last"], .timestamp, .last-updated');
+    timeElements.forEach(el => {
+        el.textContent = lastUpdate.toLocaleTimeString();
+    });
+    
+    // Also update the connection details
+    const details = document.getElementById('connection-details');
+    if (details) {
+        details.textContent = `Last update: ${lastUpdate.toLocaleTimeString()}`;
+    }
+}
+
+// ===== HELPER FUNCTIONS =====
+function viewCandidate(id) {
+    const candidate = liveCandidates.find(c => c.id === id);
+    if (candidate) {
+        showNotification(`Viewing ${candidate.name}`, 'info');
+        // You can implement your modal here
+        console.log('View candidate:', candidate);
+    }
+}
+
+function emailCandidate(email) {
+    if (email) {
+        window.location.href = `mailto:${email}?subject=Regarding your application`;
+    } else {
+        showNotification('No email address available', 'error');
+    }
+}
+
+function callCandidate(phone) {
+    if (phone) {
+        window.location.href = `tel:${phone}`;
+    } else {
+        showNotification('No phone number available', 'error');
+    }
+}
+
+// ===== PUBLIC API =====
+function refreshLiveData() {
+    return loadLiveData();
+}
+
+// ===== INITIALIZE =====
+// Wait for page to load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLiveData);
+} else {
+    // DOM already loaded
+    setTimeout(initLiveData, 1000);
+}
+
+// Export for debugging
+window.liveData = {
+    refresh: refreshLiveData,
+    getCandidates: () => liveCandidates,
+    getLastUpdate: () => lastUpdate,
+    init: initLiveData
+};
+</script>
+<script>
+// Initialize Feather Icons
+if (typeof feather !== 'undefined') {
+  feather.replace();
+  console.log('Feather icons initialized');
+}
+
+// Email Tools Dropdown Functions
+let emailDropdownOpen = false;
+
+function toggleEmailDropdown() {
+  console.log('toggleEmailDropdown called');
+  const dropdown = document.getElementById('emailDropdown');
+  if (!dropdown) {
+    console.error('emailDropdown element not found!');
+    return;
+  }
+  
+  if (dropdown.style.display === 'block') {
+    dropdown.style.display = 'none';
+    emailDropdownOpen = false;
+    console.log('Dropdown hidden');
+  } else {
+    dropdown.style.display = 'block';
+    emailDropdownOpen = true;
+    console.log('Dropdown shown');
+  }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('emailDropdown');
+  const emailToolsBtn = event.target.closest('.email-tools-btn');
+  
+  if (dropdown && emailDropdownOpen && !dropdown.contains(event.target) && !emailToolsBtn) {
+    dropdown.style.display = 'none';
+    emailDropdownOpen = false;
+    console.log('Dropdown closed by clicking outside');
+  }
+});
+
+// API Modal Functions
+function openApiModal() {
+  console.log('openApiModal called');
+  const modal = document.getElementById('apiModal');
+  if (!modal) {
+    console.error('apiModal element not found!');
+    return;
+  }
+  
+  modal.style.display = 'flex';
+  
+  // Close email dropdown if open
+  const dropdown = document.getElementById('emailDropdown');
+  if (dropdown) {
+    dropdown.style.display = 'none';
+    emailDropdownOpen = false;
+  }
+  
+  console.log('API Modal opened');
+}
+
+function closeApiModal() {
+  console.log('closeApiModal called');
+  const modal = document.getElementById('apiModal');
+  if (modal) {
+    modal.style.display = 'none';
+    console.log('API Modal closed');
+  }
+}
+
+// Copy to clipboard function
+function copyToClipboard(text) {
+  console.log('copyToClipboard called with:', text);
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Copied to clipboard: ' + text);
+  }).catch(err => {
+    console.error('Clipboard API failed, using fallback:', err);
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert('✅ Copied to clipboard: ' + text);
+    } catch (e) {
+      console.error('Fallback also failed:', e);
+      alert('❌ Failed to copy. Please copy manually: ' + text);
+    }
+    document.body.removeChild(textArea);
+  });
+}
+
+// Close modal when clicking outside - Add event listener after DOM loads
+document.addEventListener('DOMContentLoaded', function() {
+  const apiModal = document.getElementById('apiModal');
+  if (apiModal) {
+    apiModal.addEventListener('click', function(event) {
+      if (event.target === this) {
+        console.log('Clicked outside modal, closing');
+        closeApiModal();
+      }
+    });
+  } else {
+    console.error('apiModal not found for click listener');
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    console.log('Escape key pressed, closing modal');
+    closeApiModal();
+  }
+});
+
+// Debug: Log when script loads
+console.log('Links script loaded successfully');
+</script>
+<script>
+// FIXED Dashboard Data Loader
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
+    setInterval(loadDashboardData, 5000); // Refresh every 5 seconds
+});
+
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+        
+        console.log('Dashboard Data:', data); // Debug log
+        
+        // Update Total Applications (12% is hardcoded in your dashboard)
+        const totalEl = document.querySelector('[data-stat="total"]') || 
+                       document.getElementById('totalApplications') ||
+                       document.querySelector('.total-applications');
+        if (totalEl) totalEl.textContent = data.totalApplications || '0';
+        
+        // Update Average AI Score - CRITICAL FIX!
+        const avgEl = document.querySelector('[data-stat="average"]') || 
+                     document.getElementById('averageScore') ||
+                     document.querySelector('.average-score');
+        if (avgEl) {
+            // Use averageAiScore OR averageScore (your API returns both)
+            const avgScore = data.averageAiScore || data.averageScore || '86';
+            avgEl.textContent = avgScore;
+            
+            // Update the percentage improvement (5.2% is hardcoded)
+            const improvementEl = avgEl.nextElementSibling || 
+                                document.getElementById('scoreImprovement') ||
+                                document.querySelector('.improvement-text');
+            if (improvementEl && improvementEl.textContent.includes('undefined')) {
+                improvementEl.textContent = '5.2% improvement';
+            }
+        }
+        
+        // Update Top Matches
+        const topEl = document.querySelector('[data-stat="top"]') || 
+                     document.getElementById('topMatches') ||
+                     document.querySelector('.top-matches');
+        if (topEl) topEl.textContent = data.topMatches || '0';
+        
+        // Update New Today
+        const newEl = document.querySelector('[data-stat="new"]') || 
+                     document.getElementById('newToday') ||
+                     document.querySelector('.new-today');
+        if (newEl) newEl.textContent = data.newToday || '0';
+        
+    } catch (error) {
+        console.error('Dashboard load error:', error);
+    }
+}
+async function loadLiveData() {
+    console.log("📡 Attempting to fetch live data...");
+    try {
+        const response = await fetch('http://localhost:3001/api/stats');
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        console.log("📥 Data received:", data);
+
+        // 1. Update Stat Cards (with safety checks)
+        const totalEl = document.getElementById('total-apps-count');
+        const avgEl = document.getElementById('avg-ai-score');
+        const topEl = document.getElementById('top-matches-count');
+
+        if (totalEl) totalEl.innerText = data.total || 0;
+        if (avgEl) avgEl.innerText = (data.averageAiScore || 0) + '%';
+        if (topEl) topEl.innerText = data.topMatches || 0;
+
+        // 2. Update the Global Candidates variable
+        // Make sure 'candidates' is defined globally at the top of your script
+        window.candidates = data.candidates; 
+
+        // 3. Trigger Re-renders safely
+        if (typeof renderCandidateTable === "function") {
+            renderCandidateTable(window.candidates);
+        } else if (typeof renderCandidates === "function") {
+            renderCandidates(window.candidates);
+        }
+
+        if (typeof updateCharts === "function") {
+            updateCharts(window.candidates);
+        }
+
+        console.log("✅ Analytics Dashboard Sync Complete");
+    } catch (err) {
+        console.error("❌ Connection to server failed. Is node server.js running?", err);
+    }
+}
+
+// Start the sync
+window.addEventListener('DOMContentLoaded', loadLiveData);
+</script>
+</div>
+</body>
+</html>
