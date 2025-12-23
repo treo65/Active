@@ -58,3 +58,24 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+// --- 4. SERVE STATIC FILES & DASHBOARD ---
+// This tells the server to look in the same folder for your HTML/CSS/JS
+app.use(express.static(__dirname));
+
+// This fixes the "Cannot GET /" error by pointing the home page to your dashboard
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/crm-dashboard.html");
+});
+
+// Explicit route for the dashboard
+app.get("/crm-dashboard.html", (req, res) => {
+  res.sendFile(__dirname + "/crm-dashboard.html");
+});
+
+// --- 5. START SERVER ---
+// Using 10000 or process.env.PORT is required for Render
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 API Stats: /api/stats`);
+});
