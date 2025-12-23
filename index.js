@@ -1,4 +1,4 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -26,7 +26,7 @@ const CandidateSchema = new mongoose.Schema({
 
 const Candidate = mongoose.model("Candidate", CandidateSchema);
 
-// --- 3. API ROUTES (Talking to the Database) ---
+// --- 3. API ROUTES ---
 app.get("/api/stats", async (req, res) => {
   try {
     const all = await Candidate.find();
@@ -46,36 +46,22 @@ app.get("/api/candidates", async (req, res) => {
 });
 
 app.post("/api/candidates", async (req, res) => {
-  const newCandidate = new Candidate(req.body);
-  await newCandidate.save();
-  res.json(newCandidate);
+  try {
+    const newCandidate = new Candidate(req.body);
+    await newCandidate.save();
+    res.json(newCandidate);
+  } catch (err) { res.status(400).json(err); }
 });
 
-// Serve static files
-app.use(express.static("."));
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
-// --- 4. SERVE STATIC FILES & DASHBOARD ---
-// This tells the server to look in the same folder for your HTML/CSS/JS
+// --- 4. SERVE DASHBOARD ---
 app.use(express.static(__dirname));
 
-// This fixes the "Cannot GET /" error by pointing the home page to your dashboard
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/crm-dashboard.html");
 });
 
-// Explicit route for the dashboard
-app.get("/crm-dashboard.html", (req, res) => {
-  res.sendFile(__dirname + "/crm-dashboard.html");
-});
-
 // --- 5. START SERVER ---
-// Using 10000 or process.env.PORT is required for Render
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 API Stats: /api/stats`);
 });
