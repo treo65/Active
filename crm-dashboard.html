@@ -4597,34 +4597,39 @@ async function loadDashboardData() {
         console.error('Dashboard load error:', error);
     }
 }
+// 1. Update the URL to include /api/stats
+const LIVE_API_URL = 'https://active-glya.onrender.com/api/stats'; 
+
+// 2. Update the loadLiveData function to handle the response correctly
 async function loadLiveData() {
-    console.log("📡 Attempting to fetch live data...");
+    console.log('Loading live data from:', LIVE_API_URL);
     try {
-        const response = await fetch('http://localhost:3001/api/stats');
-        if (!response.ok) throw new Error('Network response was not ok');
+        const response = await fetch(LIVE_API_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
-        console.log("📥 Data received:", data);
-
-        // 1. Update Stat Cards (with safety checks)
-        const totalEl = document.getElementById('total-apps-count');
-        const avgEl = document.getElementById('avg-ai-score');
-        const topEl = document.getElementById('top-matches-count');
-
-        if (totalEl) totalEl.innerText = data.total || 0;
-        if (avgEl) avgEl.innerText = (data.averageAiScore || 0) + '%';
-        if (topEl) topEl.innerText = data.topMatches || 0;
-
-        // 2. Update the Global Candidates variable
-        // Make sure 'candidates' is defined globally at the top of your script
-        window.candidates = data.candidates; 
-
-        // 3. Trigger Re-renders safely
-        if (typeof renderCandidateTable === "function") {
-            renderCandidateTable(window.candidates);
-        } else if (typeof renderCandidates === "function") {
-            renderCandidates(window.candidates);
+        
+        // Update the Total Applications box
+        const totalBox = document.getElementById('totalApplications');
+        if (totalBox) {
+            totalBox.innerText = data.total; // This sets it to 1
         }
+
+        // Update the New Today box
+        const newBox = document.getElementById('newApplications');
+        if (newBox) {
+            newBox.innerText = data.new; // This sets it to 1
+        }
+        
+        console.log('Data synced successfully:', data);
+        return data;
+    } catch (error) {
+        console.error('Failed to load live data:', error);
+    }
+}
+
+// 3. Make sure the function runs when the page opens
+window.addEventListener('DOMContentLoaded', loadLiveData);
 
         if (typeof updateCharts === "function") {
             updateCharts(window.candidates);
