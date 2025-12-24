@@ -65,3 +65,7 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+// Route for the Jobs page
+app.get("/asr-jobs.html", (req, res) => {
+  res.sendFile(__dirname + "/asr-jobs.html");
+});
