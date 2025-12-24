@@ -4597,39 +4597,7 @@ async function loadDashboardData() {
         console.error('Dashboard load error:', error);
     }
 }
-// 1. Update the URL to include /api/stats
-const LIVE_API_URL = 'https://active-glya.onrender.com/api/stats'; 
 
-// 2. Update the loadLiveData function to handle the response correctly
-async function loadLiveData() {
-    console.log('Loading live data from:', LIVE_API_URL);
-    try {
-        const response = await fetch(LIVE_API_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
-        const data = await response.json();
-        
-        // Update the Total Applications box
-        const totalBox = document.getElementById('totalApplications');
-        if (totalBox) {
-            totalBox.innerText = data.total; // This sets it to 1
-        }
-
-        // Update the New Today box
-        const newBox = document.getElementById('newApplications');
-        if (newBox) {
-            newBox.innerText = data.new; // This sets it to 1
-        }
-        
-        console.log('Data synced successfully:', data);
-        return data;
-    } catch (error) {
-        console.error('Failed to load live data:', error);
-    }
-}
-
-// 3. Make sure the function runs when the page opens
-window.addEventListener('DOMContentLoaded', loadLiveData);
 
         if (typeof updateCharts === "function") {
             updateCharts(window.candidates);
@@ -4649,6 +4617,36 @@ fetch('/api/stats')
   });
 // Start the sync
 window.addEventListener('DOMContentLoaded', loadLiveData);
+</script>
+<script>
+    // 1. Point exactly to your data endpoint
+    const LIVE_API_URL = '/api/stats'; 
+
+    async function loadLiveData() {
+        console.log('Fetching data from:', LIVE_API_URL);
+        try {
+            const response = await fetch(LIVE_API_URL);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            console.log('Success! Data received:', data);
+
+            // 2. Map the data to your Dashboard boxes
+            // Ensure these IDs match the ones in your HTML (e.g., <div id="totalApplications">)
+            if(document.getElementById('totalApplications')) {
+                document.getElementById('totalApplications').innerText = data.total;
+            }
+            if(document.getElementById('newApplications')) {
+                document.getElementById('newApplications').innerText = data.new;
+            }
+            
+        } catch (error) {
+            console.error('Dashboard sync failed:', error);
+        }
+    }
+
+    // 3. Run the function as soon as the page loads
+    window.addEventListener('DOMContentLoaded', loadLiveData);
 </script>
 </div>
 </body>
