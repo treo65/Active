@@ -4191,7 +4191,14 @@ function addConnectionStatus() {
     
     document.body.insertAdjacentHTML('beforeend', statusHtml);
 }
-
+// Example of how to add the button in your loop
+const resumeCell = `
+    <td>
+        ${candidate.resume_url ? 
+          `<a href="${candidate.resume_url}" target="_blank" style="color: #007bff; text-decoration: none; font-weight: bold;">?? View CV</a>` : 
+          `<span style="color: #ccc;">No CV</span>`}
+    </td>
+`;
 function updateConnectionStatus(status, message) {
     const dot = document.getElementById('connection-dot');
     const text = document.getElementById('connection-text');
