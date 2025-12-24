@@ -1,4 +1,4 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -26,7 +26,7 @@ const CandidateSchema = new mongoose.Schema({
 
 const Candidate = mongoose.model("Candidate", CandidateSchema);
 
-// --- 3. API ROUTES ---
+// --- 3. API ROUTES (Talking to the Database) ---
 app.get("/api/stats", async (req, res) => {
   try {
     const all = await Candidate.find();
@@ -46,26 +46,15 @@ app.get("/api/candidates", async (req, res) => {
 });
 
 app.post("/api/candidates", async (req, res) => {
-  try {
-    const newCandidate = new Candidate(req.body);
-    await newCandidate.save();
-    res.json(newCandidate);
-  } catch (err) { res.status(400).json(err); }
+  const newCandidate = new Candidate(req.body);
+  await newCandidate.save();
+  res.json(newCandidate);
 });
 
-// --- 4. SERVE DASHBOARD ---
-app.use(express.static(__dirname));
+// Serve static files
+app.use(express.static("."));
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/crm-dashboard.html");
-});
-
-// --- 5. START SERVER ---
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-});
-// Route for the Jobs page
-app.get("/asr-jobs.html", (req, res) => {
-  res.sendFile(__dirname + "/asr-jobs.html");
 });
