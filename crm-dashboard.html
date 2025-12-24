@@ -4635,7 +4635,13 @@ async function loadLiveData() {
         console.error("❌ Connection to server failed. Is node server.js running?", err);
     }
 }
-
+// Make sure it uses a relative path so it works on Render
+fetch('/api/stats')
+  .then(response => response.json())
+  .then(data => {
+      document.getElementById('total-apps').innerText = data.total;
+      document.getElementById('new-apps').innerText = data.new;
+  });
 // Start the sync
 window.addEventListener('DOMContentLoaded', loadLiveData);
 </script>
