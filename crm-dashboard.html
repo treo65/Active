@@ -4619,34 +4619,40 @@ fetch('/api/stats')
 window.addEventListener('DOMContentLoaded', loadLiveData);
 </script>
 <script>
-    // 1. Point exactly to your data endpoint
-    const LIVE_API_URL = '/api/stats'; 
+    const API_URL = 'https://active-glya.onrender.com/api/stats';
 
-    async function loadLiveData() {
-        console.log('Fetching data from:', LIVE_API_URL);
+    async function updateDashboard() {
         try {
-            const response = await fetch(LIVE_API_URL);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
+            const response = await fetch(API_URL);
             const data = await response.json();
-            console.log('Success! Data received:', data);
-
-            // 2. Map the data to your Dashboard boxes
-            // Ensure these IDs match the ones in your HTML (e.g., <div id="totalApplications">)
-            if(document.getElementById('totalApplications')) {
-                document.getElementById('totalApplications').innerText = data.total;
-            }
-            if(document.getElementById('newApplications')) {
-                document.getElementById('newApplications').innerText = data.new;
-            }
             
-        } catch (error) {
-            console.error('Dashboard sync failed:', error);
+            console.log("Live Sync:", data);
+
+            // Mapping the JSON to your HTML IDs
+            if(document.getElementById('totalCount')) 
+                document.getElementById('totalCount').innerText = data.total;
+                
+            if(document.getElementById('newCount')) 
+                document.getElementById('newCount').innerText = data.new;
+                
+            if(document.getElementById('interviewCount')) 
+                document.getElementById('interviewCount').innerText = data.interview;
+                
+            if(document.getElementById('hiredCount')) 
+                document.getElementById('hiredCount').innerText = data.hired;
+
+            // Optional: Update a "Last Updated" timestamp
+            if(document.getElementById('statusMessage'))
+                document.getElementById('statusMessage').innerText = data.message;
+
+        } catch (err) {
+            console.error("Dashboard failed to refresh:", err);
         }
     }
 
-    // 3. Run the function as soon as the page loads
-    window.addEventListener('DOMContentLoaded', loadLiveData);
+    // Refresh data every 30 seconds to keep it "Live"
+    setInterval(updateDashboard, 30000);
+    window.addEventListener('DOMContentLoaded', updateDashboard);
 </script>
 </div>
 </body>
