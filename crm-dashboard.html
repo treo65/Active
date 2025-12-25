@@ -13,7 +13,16 @@
   gtag('js', new Date());
   gtag('config', 'G-ZQKFN7G82E');
 </script>
-
+<script>
+    // Inside your loadCandidateTable function:
+    const summaryCell = `
+        <td style="font-size: 0.9em; color: #555; line-height: 1.4;">
+            ${candidate.ai_summary ? 
+              `<strong>Key Takeaway:</strong> ${candidate.ai_summary}` : 
+              `<em style="color: #999;">Awaiting AI analysis...</em>`}
+        </td>
+    `;
+</script>
 <title>AI-Powered Talent CRM</title>
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
@@ -4643,3 +4652,4 @@ window.addEventListener('DOMContentLoaded', loadLiveData);
 </div>
 </body>
 </html>
+
