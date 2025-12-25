@@ -100,4 +100,53 @@ function showMessage(msg, type) {
         box.style.display = 'block';
         setTimeout(() => box.style.display = 'none', 3000);
     }
+
+}
+function renderUI() {
+    const tbody = document.getElementById('applications-body-dashboard');
+    if (!tbody) return;
+
+    // 1. Calculate Totals
+    const total = candidatesData.length;
+    
+    // 2. Calculate Top Matches (Score 90 or above)
+    // We use parseInt to make sure "90" (text) is treated as 90 (number)
+    const topMatches = candidatesData.filter(c => {
+        const score = parseInt(c.ai_score || c.score);
+        return !isNaN(score) && score >= 90;
+    }).length;
+
+    // 3. Calculate New Today
+    // Checks if the candidate's date matches today's date
+    const todayStr = new Date().toISOString().split('T')[0]; 
+    const newToday = candidatesData.filter(c => {
+        const cDate = (c.timestamp || c.date || "").split('T')[0];
+        return cDate === todayStr;
+    }).length;
+
+    // 4. Calculate Average AI Score
+    const avgScore = total > 0 
+        ? Math.round(candidatesData.reduce((sum, c) => sum + (parseInt(c.ai_score || c.score) || 0), 0) / total) 
+        : 0;
+
+    // 5. Push the numbers to your HTML IDs
+    document.getElementById('totalApplications').innerText = total;
+    document.getElementById('avgScore').innerText = avgScore + '%';
+    document.getElementById('topMatches').innerText = topMatches;
+    document.getElementById('newToday').innerText = newToday;
+
+    // 6. Update the Table Rows
+    tbody.innerHTML = candidatesData.map(c => `
+        <tr>
+            <td><strong>${c.name}</strong><br><small>${c.email}</small></td>
+            <td>${c.job_title || c.role || 'N/A'}</td>
+            <td><span class="badge ${c.status?.toLowerCase()}">${c.status || 'New'}</span></td>
+            <td><strong style="color: ${parseInt(c.ai_score) >= 90 ? '#10b981' : '#f59e0b'}">${c.ai_score || 0}%</strong></td>
+            <td>
+                <button onclick="deleteCand('${c._id || c.id}')" class="btn-delete" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
 }
