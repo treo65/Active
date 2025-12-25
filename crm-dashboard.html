@@ -4637,167 +4637,93 @@ fetch('/api/stats')
 window.addEventListener('DOMContentLoaded', loadLiveData);
 </script>
 <script>
-    const API_URL = 'https://active-glya.onrender.com/api/stats';
+    // 1. CONFIGURATION
+    const API_BASE = 'https://active-glya.onrender.com';
+    let liveCandidates = [];
 
-    async function updateDashboard() {
+    // 2. THE MAIN LOADER
+    async function initDashboard() {
+        console.log("📡 Connecting to Render...");
         try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
+            // Fetch stats and candidates in one go or separately
+            const [statsRes, candidatesRes] = await Promise.all([
+                fetch(`${API_BASE}/api/stats`),
+                fetch(`${API_BASE}/api/candidates`)
+            ]);
+
+            const stats = await statsRes.json();
+            const candidates = await candidatesRes.json();
             
-            console.log("Live Sync:", data);
+            liveCandidates = Array.isArray(candidates) ? candidates : (candidates.candidates || []);
+            
+            console.log("✅ Data Received:", { stats, count: liveCandidates.length });
 
-            // Mapping the JSON to your HTML IDs
-            if(document.getElementById('totalCount')) 
-                document.getElementById('totalCount').innerText = data.total;
-                
-            if(document.getElementById('newCount')) 
-                document.getElementById('newCount').innerText = data.new;
-                
-            if(document.getElementById('interviewCount')) 
-                document.getElementById('interviewCount').innerText = data.interview;
-                
-            if(document.getElementById('hiredCount')) 
-                document.getElementById('hiredCount').innerText = data.hired;
-
-            // Optional: Update a "Last Updated" timestamp
-            if(document.getElementById('statusMessage'))
-                document.getElementById('statusMessage').innerText = data.message;
-
+            updateStatsUI(stats);
+            updateTableUI(liveCandidates);
+            
         } catch (err) {
-            console.error("Dashboard failed to refresh:", err);
+            console.error("❌ Sync Error:", err);
+            // Show error on the total apps card so you know it failed
+            const errEl = document.getElementById('totalApplications') || document.getElementById('totalCount');
+            if(errEl) errEl.innerText = "Err";
         }
     }
-// --- LIVE DATA FETCHING ---
-async function renderDashboardTable() {
-    const listBody = document.getElementById('listBody'); // Ensure this ID exists in your HTML
-    if (!listBody) return;
 
-    try {
-        // 1. Fetch live data from your Render Backend
-        const response = await fetch('https://active-glya.onrender.com/api/candidates');
-        const liveApplications = await response.json();
+    // 3. UPDATE THE BOXES (STATS)
+    function updateStatsUI(data) {
+        const mapping = {
+            'totalApplications': data.total || data.totalApplications,
+            'totalCount': data.total,
+            'avgScore': (data.averageAiScore || data.averageScore || 0) + '%',
+            'averageScore': (data.averageAiScore || 0),
+            'newToday': data.newToday || data.new,
+            'newCount': data.new,
+            'hiredCount': data.hired || 0,
+            'interviewCount': data.interview || 0
+        };
 
-        if (liveApplications.length === 0) {
-            listBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No candidates found.</td></tr>';
+        for (const [id, value] of Object.entries(mapping)) {
+            const el = document.getElementById(id);
+            if (el && value !== undefined) el.innerText = value;
+        }
+    }
+
+    // 4. UPDATE THE TABLE
+    function updateTableUI(candidates) {
+        const tableBody = document.getElementById('listBody') || 
+                          document.getElementById('applications-body-dashboard') ||
+                          document.querySelector('tbody');
+        
+        if (!tableBody) return;
+
+        if (candidates.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No candidates found.</td></tr>';
             return;
         }
 
-        // 2. Map the live data to your table rows
-        listBody.innerHTML = liveApplications.map(app => {
-            const statusColor = app.status === 'New' ? '#10B981' : 
-                               (app.status === 'Interview' ? '#3B82F6' : 
-                               (app.status === 'Reviewing' ? '#F59E0B' : '#EF4444'));
-            
-            const actionText = app.status === 'Interview' ? 'Schedule' : 
-                              (app.status === 'New' ? 'Process' : 'View');
-            
-            // Format the date (Submitted)
-            const dateDisplay = new Date(app.timestamp || app.date).toLocaleDateString();
-
-            return `
-                <tr>
-                    <td>
-                        <strong>${app.name}</strong><br>
-                        <small style="color:#6B7280;">${app.email}</small>
-                    </td>
-                    <td>${app.job_title || app.role}</td>
-                    <td style="color:${statusColor}; font-weight:bold;">${app.status}</td>
-                    <td>${dateDisplay}</td>
-                    <td><span class="score-badge">${app.ai_score || 'N/A'}%</span></td>
-                    <td>
-                        <div style="display:flex; gap:5px;">
-                            <button class="btn" onclick="showMessage('${actionText}ing ${app.name}.')">${actionText}</button>
-                            ${app.resume_url ? `<a href="${app.resume_url}" target="_blank" class="btn btn-secondary">CV</a>` : ''}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="6" style="padding: 0 15px 15px 15px; border-top:none; font-size:0.85em; color:#4B5563;">
-                        <i class="fas fa-robot"></i> <strong>AI Summary:</strong> ${app.ai_summary || 'Analysis pending...'}
-                    </td>
-                </tr>
-            `;
-        }).join('');
-
-        updateCandidatesStats(liveApplications); // Update top counters
-    } catch (error) {
-        console.error("Failed to load live data:", error);
-        showMessage("Offline: Showing local data only.", "Error");
+        tableBody.innerHTML = candidates.map(app => `
+            <tr>
+                <td><strong>${app.name}</strong><br><small>${app.email}</small></td>
+                <td>${app.job_title || app.role || 'N/A'}</td>
+                <td><span style="font-weight:bold;">${app.status}</span></td>
+                <td>${new Date(app.timestamp || app.date || Date.now()).toLocaleDateString()}</td>
+                <td><span class="score-badge">${app.ai_score || app.aiScore || 0}%</span></td>
+                <td>
+                    <button class="btn" onclick="alert('Processing ${app.name}')">View</button>
+                </td>
+            </tr>
+        `).join('');
     }
-}
-async function addCandidate() {
-    const name = document.getElementById('candidateName').value;
-    const position = document.getElementById('candidatePosition').value;
-    const email = document.getElementById('candidateEmail')?.value; // Add this ID to your HTML form
 
-    if (name && position) {
-        const payload = {
-            name: name,
-            email: email || `${name.toLowerCase().replace(/\s+/g, '.')}@example.com`,
-            job_title: position,
-            status: "New",
-            source: "Manual Entry"
-        };
-
-        try {
-            const response = await fetch('https://active-glya.onrender.com/api/candidates', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (response.ok) {
-                showMessage(`Candidate ${name} saved to Cloud!`, 'Success');
-                closeAddCandidateModal();
-                renderDashboardTable(); // Refresh the table from live data
-            }
-        } catch (error) {
-            showMessage('Server Error: Could not save candidate.', 'Error');
-        }
-    } else {
-        showMessage('Please fill in Name and Position.', 'Error');
-    }
-}
-function updateDashboardStats() {
-    if (!candidatesData || candidatesData.length === 0) return;
-
-    // 1. Calculate Live Metrics
-    const total = candidatesData.length;
-    
-    // Count "Hired" candidates
-    const hired = candidatesData.filter(c => 
-        c.status && c.status.toLowerCase() === 'hired'
-    ).length;
-
-    // Count "New" candidates
-    const newCount = candidatesData.filter(c => 
-        c.status && c.status.toLowerCase() === 'new'
-    ).length;
-
-    // Calculate Average AI Score
-    const avg = Math.round(
-        candidatesData.reduce((sum, c) => sum + (parseInt(c.ai_score) || 0), 0) / total
-    );
-
-    // 2. Update UI Elements
-    const elements = {
-        'totalApplications': total,
-        'stat-candidates': total,
-        'hiredCount': hired,
-        'avgScore': avg + '%',
-        'newToday': newCount
-    };
-
-    for (const [id, value] of Object.entries(elements)) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    }
-}
-    // Refresh data every 30 seconds to keep it "Live"
-    setInterval(updateDashboard, 30000);
-    window.addEventListener('DOMContentLoaded', updateDashboard);
+    // 5. START UP
+    document.addEventListener('DOMContentLoaded', () => {
+        initDashboard();
+        // Auto-refresh every 30 seconds
+        setInterval(initDashboard, 30000);
+    });
 </script>
 </div>
 <script src="dashboard.js"></script>
 </body>
 </html>
+
