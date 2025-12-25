@@ -13,18 +13,7 @@
   gtag('js', new Date());
   gtag('config', 'G-ZQKFN7G82E');
 </script>
-<th style="width: 25%;">AI Summary</th>
 
-<script>
-    // Inside your loadCandidateTable function:
-    const summaryCell = `
-        <td style="font-size: 0.9em; color: #555; line-height: 1.4;">
-            ${candidate.ai_summary ? 
-              `<strong>Key Takeaway:</strong> ${candidate.ai_summary}` : 
-              `<em style="color: #999;">Awaiting AI analysis...</em>`}
-        </td>
-    `;
-</script>
 <title>AI-Powered Talent CRM</title>
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
@@ -1356,8 +1345,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- Live Data Connection -->
 <script>
     // API Configuration
-    const LIVE_API_URL = 'https://active-glya.onrender.com';
-    const API_BASE_URL = 'https://active-glya.onrender.com/api/v1';
+    const LIVE_API_URL = 'http://localhost:3001/api/candidates/live';
+    const API_BASE_URL = 'http://localhost:3001';
     
     // Global state
     window.liveCandidates = [];
@@ -4202,14 +4191,7 @@ function addConnectionStatus() {
     
     document.body.insertAdjacentHTML('beforeend', statusHtml);
 }
-// Example of how to add the button in your loop
-const resumeCell = `
-    <td>
-        ${candidate.resume_url ? 
-          `<a href="${candidate.resume_url}" target="_blank" style="color: #007bff; text-decoration: none; font-weight: bold;">?? View CV</a>` : 
-          `<span style="color: #ccc;">No CV</span>`}
-    </td>
-`;
+
 function updateConnectionStatus(status, message) {
     const dot = document.getElementById('connection-dot');
     const text = document.getElementById('connection-text');
@@ -4562,88 +4544,13 @@ document.addEventListener('keydown', function(event) {
 console.log('Links script loaded successfully');
 </script>
 <script>
-// FIXED Dashboard Data Loader
-document.addEventListener('DOMContentLoaded', function() {
-    loadDashboardData();
-    setInterval(loadDashboardData, 5000); // Refresh every 5 seconds
-});
-
-async function loadDashboardData() {
-    try {
-        const response = await fetch('/api/stats');
-        const data = await response.json();
-        
-        console.log('Dashboard Data:', data); // Debug log
-        
-        // Update Total Applications (12% is hardcoded in your dashboard)
-        const totalEl = document.querySelector('[data-stat="total"]') || 
-                       document.getElementById('totalApplications') ||
-                       document.querySelector('.total-applications');
-        if (totalEl) totalEl.textContent = data.totalApplications || '0';
-        
-        // Update Average AI Score - CRITICAL FIX!
-        const avgEl = document.querySelector('[data-stat="average"]') || 
-                     document.getElementById('averageScore') ||
-                     document.querySelector('.average-score');
-        if (avgEl) {
-            // Use averageAiScore OR averageScore (your API returns both)
-            const avgScore = data.averageAiScore || data.averageScore || '86';
-            avgEl.textContent = avgScore;
-            
-            // Update the percentage improvement (5.2% is hardcoded)
-            const improvementEl = avgEl.nextElementSibling || 
-                                document.getElementById('scoreImprovement') ||
-                                document.querySelector('.improvement-text');
-            if (improvementEl && improvementEl.textContent.includes('undefined')) {
-                improvementEl.textContent = '5.2% improvement';
-            }
-        }
-        
-        // Update Top Matches
-        const topEl = document.querySelector('[data-stat="top"]') || 
-                     document.getElementById('topMatches') ||
-                     document.querySelector('.top-matches');
-        if (topEl) topEl.textContent = data.topMatches || '0';
-        
-        // Update New Today
-        const newEl = document.querySelector('[data-stat="new"]') || 
-                     document.getElementById('newToday') ||
-                     document.querySelector('.new-today');
-        if (newEl) newEl.textContent = data.newToday || '0';
-        
-    } catch (error) {
-        console.error('Dashboard load error:', error);
-    }
-}
-
-
-        if (typeof updateCharts === "function") {
-            updateCharts(window.candidates);
-        }
-
-        console.log("✅ Analytics Dashboard Sync Complete");
-    } catch (err) {
-        console.error("❌ Connection to server failed. Is node server.js running?", err);
-    }
-}
-// Make sure it uses a relative path so it works on Render
-fetch('/api/stats')
-  .then(response => response.json())
-  .then(data => {
-      document.getElementById('total-apps').innerText = data.total;
-      document.getElementById('new-apps').innerText = data.new;
-  });
-// Start the sync
-window.addEventListener('DOMContentLoaded', loadLiveData);
-</script>
-<script>
     // 1. CONFIGURATION
     const API_BASE = 'https://active-glya.onrender.com';
     let liveCandidates = [];
 
     // 2. THE MAIN LOADER
     async function initDashboard() {
-        console.log("📡 Connecting to Render...");
+        console.log("?? Connecting to Render...");
         try {
             // Fetch stats and candidates in one go or separately
             const [statsRes, candidatesRes] = await Promise.all([
@@ -4656,13 +4563,13 @@ window.addEventListener('DOMContentLoaded', loadLiveData);
             
             liveCandidates = Array.isArray(candidates) ? candidates : (candidates.candidates || []);
             
-            console.log("✅ Data Received:", { stats, count: liveCandidates.length });
+            console.log("? Data Received:", { stats, count: liveCandidates.length });
 
             updateStatsUI(stats);
             updateTableUI(liveCandidates);
             
         } catch (err) {
-            console.error("❌ Sync Error:", err);
+            console.error("? Sync Error:", err);
             // Show error on the total apps card so you know it failed
             const errEl = document.getElementById('totalApplications') || document.getElementById('totalCount');
             if(errEl) errEl.innerText = "Err";
@@ -4722,8 +4629,7 @@ window.addEventListener('DOMContentLoaded', loadLiveData);
         setInterval(initDashboard, 30000);
     });
 </script>
-</div>
 <script src="dashboard.js"></script>
+</div>
 </body>
 </html>
-
