@@ -1,0 +1,106 @@
+/* Add to your dashboard CSS */
+.candidate-card {
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.candidate-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.candidate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.ai-score {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.skills {
+    margin: 12px 0;
+}
+
+.skill-tag {
+    display: inline-block;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 12px;
+    border-radius: 16px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.source {
+    color: #666;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.status-new { color: #4caf50; font-weight: bold; }
+.status-rejected { color: #f44336; font-weight: bold; }
+.status-interview { color: #2196f3; font-weight: bold; }
+
+.cv-actions {
+    margin: 12px 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.btn-view-cv, .btn-download-cv {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.btn-download-cv {
+    background: #4caf50;
+}
+
+.actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+}
+
+.btn-email, .btn-call, .btn-schedule {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.btn-email { background: #ff9800; color: white; }
+.btn-call { background: #4caf50; color: white; }
+.btn-schedule { background: #9c27b0; color: white; }
+
+.refresh-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
