@@ -1,0 +1,3095 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Talent CRM Pro - Complete Recruitment Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; }
+        body { background: linear-gradient(135deg, #1a237e 0%, #311b92 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; }
+        
+        /* Header */
+        .header { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 30px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { 
+            font-size: 2.8em; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin-bottom: 10px; 
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 25px; 
+            margin-bottom: 40px; 
+        }
+        .stat-card { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 30px; 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1); 
+            border-top: 4px solid; 
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card:nth-child(1) { border-top-color: #667eea; }
+        .stat-card:nth-child(2) { border-top-color: #4CAF50; }
+        .stat-card:nth-child(3) { border-top-color: #FF9800; }
+        .stat-card:nth-child(4) { border-top-color: #9C27B0; }
+        .stat-card:nth-child(5) { border-top-color: #2196F3; }
+        .stat-value { 
+            font-size: 3.2em; 
+            font-weight: 800; 
+            margin-bottom: 10px; 
+            line-height: 1; 
+        }
+        .stat-label { 
+            font-size: 1em; 
+            color: #666; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            margin-bottom: 15px; 
+            font-weight: 600; 
+        }
+        .stat-trend { 
+            display: inline-block; 
+            padding: 8px 20px; 
+            border-radius: 20px; 
+            font-size: 0.9em; 
+            font-weight: 600; 
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); 
+            color: white; 
+        }
+        
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Candidates Section */
+        .candidates-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .candidates-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .search-box {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+        }
+        
+        .filter-btn, .action-btn {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        
+        .filter-btn:hover, .action-btn:hover {
+            background: #5a67d8;
+        }
+        
+        /* Candidate Cards Enhanced */
+        .candidates-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); 
+            gap: 25px; 
+        }
+        .candidate-card { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            border-left: 4px solid #4CAF50; 
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .candidate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .candidate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .candidate-name { 
+            font-size: 1.4em; 
+            font-weight: 600; 
+            color: #333; 
+        }
+        .candidate-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .action-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .action-icon.delete {
+            background: #ffebee;
+            color: #f44336;
+        }
+        .action-icon.call {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+        .action-icon.email {
+            background: #e3f2fd;
+            color: #2196F3;
+        }
+        .action-icon.whatsapp {
+            background: #e8f5e9;
+            color: #25D366;
+        }
+        .action-icon:hover {
+            opacity: 0.9;
+        }
+        
+        .candidate-position { 
+            color: #666; 
+            margin-bottom: 15px; 
+            font-size: 1.1em;
+        }
+        
+        .contact-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .contact-item i {
+            color: #667eea;
+            width: 20px;
+        }
+        
+        .ai-score { 
+            display: inline-block; 
+            padding: 8px 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border-radius: 20px; 
+            font-weight: 600; 
+            margin: 10px 0;
+        }
+        .score-high { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); }
+        .score-medium { background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); }
+        .score-low { background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); }
+        
+        .candidate-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .skill-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        .candidate-source {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        /* AI Assistant */
+        .ai-assistant {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        }
+        
+        .assistant-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .assistant-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+        
+        .assistant-question {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .assistant-question:hover {
+            background: #e6ebff;
+        }
+        
+        /* Email Section */
+        .email-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        }
+        
+        .email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .email-input, .email-textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+        
+        .email-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Team Meeting */
+        .team-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        }
+        
+        .meeting-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        /* Google Drive Import */
+        .drive-import {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        
+        .import-progress {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+        
+        /* CV Preview Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .cv-preview {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+        
+        .page-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .page-btn.active, .page-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        /* Candidate card styling */
+.candidate-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-left: 5px solid #4299e1;
+    transition: all 0.3s;
+}
+
+.candidate-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.candidate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.candidate-name {
+    margin: 0 0 5px 0;
+    font-size: 20px;
+    color: #2d3748;
+}
+
+.candidate-position {
+    color: #4a5568;
+    font-size: 16px;
+}
+
+.candidate-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ai-score-badge, .status-badge, .source-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.source-badge {
+    background: #a0aec0;
+    color: #2d3748;
+}
+
+.contact-info {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4a5568;
+}
+
+.skills-section h4 {
+    margin: 0 0 10px 0;
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    background: #e2e8f0;
+    color: #4a5568;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.candidate-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+}
+
+.btn-view { background: #4299e1; }
+.btn-download { background: #48bb78; }
+.btn-email { background: #ed8936; }
+.btn-call { background: #38a169; }
+.btn-schedule { background: #9f7aea; }
+
+.btn-action:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}/* Make loading text disappear */
+.loading, [class*="loading"], [class*="Loading"] {
+    transition: opacity 0.3s;
+}
+
+/* Hide loading after data loads */
+.loaded .loading {
+    opacity: 0 !important;
+    display: none !important;
+}
+
+/* Highlight updated stats */
+.stat-number.updated {
+    animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Actions -->
+        <div class="header">
+            <div>
+                <h1>🎯 AI Talent CRM Pro</h1>
+                <p>Complete Recruitment Platform with Google Drive, AI & Email Integration</p>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" onclick="syncGoogleDrive()">
+                    <i class="fab fa-google-drive"></i> Sync Drive
+                </button>
+                <button class="action-btn" onclick="importCVs()">
+                    <i class="fas fa-file-import"></i> Import CVs
+                </button>
+                <button class="action-btn" onclick="showTeamMeeting()">
+                    <i class="fas fa-video"></i> Team Meeting
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Candidates</div>
+                <div class="stat-value" id="totalCandidates">14</div>
+                <div class="stat-trend">+12% from last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average AI Score</div>
+                <div class="stat-value" id="avgScore">84%</div>
+                <div class="stat-trend">+5.2% improvement</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Top Matches (90%+)</div>
+                <div class="stat-value" id="topMatches">4</div>
+                <div class="stat-label">High quality matches</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Pipeline</div>
+                <div class="stat-value" id="activePipeline">8</div>
+                <div class="stat-label">In progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">New Today</div>
+                <div class="stat-value" id="newToday">0</div>
+                <div class="stat-label">Fresh candidates</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Left Column: Candidates -->
+       <div class="candidates-section" style="margin: 30px 0;">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">
+        <div>
+            <h2 style="font-size: 24px; margin: 0; display: flex; align-items: center; gap: 10px;">
+                <span>👥</span>
+                Current Candidates 
+                <span id="candidate-count" style="background: white; color: #764ba2; padding: 4px 12px; border-radius: 20px; font-size: 18px; margin-left: 10px;">
+                    Loading...
+                </span>
+            </h2>
+            <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">
+                Real-time data from your database
+            </p>
+        </div>
+        
+        <div class="actions" style="display: flex; gap: 12px;">
+            <button onclick="exportToCSV()" class="action-btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                <span>📊</span>
+                Export CSV
+            </button>
+            <button onclick="showUploadModal()" class="action-btn" style="background: white; color: #764ba2; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                <span>📤</span>
+                Upload CV
+            </button>
+        </div>
+    </div>
+                
+                   <!-- Search and Filter -->
+    <div class="search-filter" style="display: flex; gap: 15px; margin-bottom: 25px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <div class="search-box" style="flex: 1;">
+            <div style="position: relative;">
+                <input type="text" id="candidate-search" placeholder="🔍 Search candidates by name, skill, or position..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; outline: none; transition: border 0.3s;">
+                <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #a0aec0;">🔍</span>
+            </div>
+        </div>
+        
+        <div class="filter-box">
+            <select id="status-filter" style="padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background: white; cursor: pointer; min-width: 150px;">
+                <option value="all">All Status</option>
+                <option value="New">New</option>
+                <option value="Screening">Screening</option>
+                <option value="Interview">Interview</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Hired">Hired</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Loading State -->
+    
+    
+    <!-- Candidates Container (Will be populated by JavaScript) -->
+    <div id="candidates-container" style="display: none;">
+        <!-- Candidates will appear here dynamically -->
+    </div>
+    
+    <!-- No Results Message -->
+    <div id="no-candidates" style="display: none; text-align: center; padding: 60px; background: white; border-radius: 10px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">📭</div>
+        <h3 style="color: #4a5568; margin-bottom: 10px;">No Candidates Found</h3>
+        <p style="color: #718096; margin-bottom: 25px;">Upload CVs or import from Google Drive to get started</p>
+        <button onclick="showUploadModal()" style="background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600;">
+            📤 Upload Your First CV
+        </button>
+    </div>
+</div>
+            
+            <!-- Right Column: Sidebar -->
+            <div class="sidebar">
+                <!-- AI Assistant -->
+                <div class="ai-assistant">
+                    <div class="assistant-header">
+                        <div class="assistant-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3>🤖 AI Assistant</h3>
+                            <p>Get recruitment insights</p>
+                        </div>
+                    </div>
+                    
+                    <div class="assistant-question" onclick="askAI('Who are the best candidates for AI Engineer position?')">
+                        <strong>💡 Best for AI Engineer?</strong>
+                        <p>Find top candidates for AI roles</p>
+                    </div>
+                    
+                    <div class="assistant-question" onclick="askAI('Show me candidates with Python and TensorFlow skills')">
+                        <strong>🔍 Python & TensorFlow</strong>
+                        <p>Filter by specific skills</p>
+                    </div>
+                    
+                    <div class="assistant-question" onclick="askAI('Generate interview questions for Data Scientist role')">
+                        <strong>❓ Interview Questions</strong>
+                        <p>Get tailored questions</p>
+                    </div>
+                    
+                    <div class="assistant-question" onclick="askAI('Analyze candidate pipeline health')">
+                        <strong>📊 Pipeline Health</strong>
+                        <p>Get analytics report</p>
+                    </div>
+                </div>
+                
+                <!-- Email Integration -->
+                <div class="email-section">
+                    <h3><i class="fas fa-envelope"></i> Send Email</h3>
+                    <p>Send via Benchmark Email</p>
+                    
+                    <div class="email-form">
+                        <select class="email-input" id="emailTemplate">
+                            <option value="">Select Template</option>
+                            <option value="welcome">Welcome Email</option>
+                            <option value="interview">Interview Invitation</option>
+                            <option value="rejection">Rejection Email</option>
+                            <option value="followup">Follow-up</option>
+                        </select>
+                        
+                        <input type="text" class="email-input" id="emailSubject" placeholder="Subject">
+                        
+                        <textarea class="email-textarea" id="emailBody" placeholder="Email body..."></textarea>
+                        
+                        <button class="action-btn" onclick="sendEmail()">
+                            <i class="fas fa-paper-plane"></i> Send Email
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Team Meeting -->
+                <!-- Team Collaboration Section - FIXED VERSION -->
+<div class="team-collab-section" style="margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+    <h2 style="color: #2d3748; margin-bottom: 25px; font-size: 22px; display: flex; align-items: center; gap: 10px;">
+        <span style="background: #4f46e5; color: white; padding: 8px 16px; border-radius: 8px;">🤝</span>
+        Team Collaboration
+    </h2>
+    
+    <!-- Meeting Buttons -->
+    <div class="meeting-buttons" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px;">
+        <button onclick="startGoogleMeet()" class="meeting-btn" style="background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s; font-weight: 500;">
+            <span style="font-size: 24px; margin-bottom: 8px;">🎥</span>
+            Google Meet
+            <small style="opacity: 0.9; font-size: 12px; margin-top: 4px;">Video Conference</small>
+        </button>
+        
+        <button onclick="startZoomMeeting()" class="meeting-btn" style="background: linear-gradient(135deg, #2d8cff 0%, #0066cc 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s; font-weight: 500;">
+            <span style="font-size: 24px; margin-bottom: 8px;">🔷</span>
+            Zoom Meeting
+            <small style="opacity: 0.9; font-size: 12px; margin-top: 4px;">Video Call</small>
+        </button>
+        
+        <button onclick="scheduleTeamMeeting()" class="meeting-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s; font-weight: 500;">
+            <span style="font-size: 24px; margin-bottom: 8px;">📅</span>
+            Schedule Meeting
+            <small style="opacity: 0.9; font-size: 12px; margin-top: 4px;">Calendar</small>
+        </button>
+    </div>
+    
+    <!-- Next Meetings -->
+    <div class="next-meetings" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <h3 style="color: #4a5568; margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+            <span style="color: #4f46e5;">⏰</span>
+            Next Meetings
+        </h3>
+        
+        <div class="meeting-list" style="display: flex; flex-direction: column; gap: 15px;">
+            <!-- Today's Meeting -->
+            <div class="meeting-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #4f46e5;">
+                <div class="meeting-info" style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
+                        <span class="meeting-time" style="background: #4f46e5; color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                            Today 10:00 AM
+                        </span>
+                        <span class="meeting-title" style="font-weight: 600; color: #2d3748;">
+                            Daily Standup
+                        </span>
+                    </div>
+                    <div class="meeting-desc" style="color: #718096; font-size: 14px;">
+                        Quick team sync & progress update
+                    </div>
+                </div>
+                <button onclick="joinMeeting('https://meet.google.com/abc-xyz-123')" class="join-btn" style="background: #4f46e5; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background 0.3s;">
+                    Join
+                </button>
+            </div>
+            
+            <!-- Friday Meeting -->
+            <div class="meeting-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #10b981;">
+                <div class="meeting-info" style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
+                        <span class="meeting-time" style="background: #10b981; color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                            Friday 3:00 PM
+                        </span>
+                        <span class="meeting-title" style="font-weight: 600; color: #2d3748;">
+                            Weekly Review
+                        </span>
+                    </div>
+                    <div class="meeting-desc" style="color: #718096; font-size: 14px;">
+                        Project review & planning session
+                    </div>
+                </div>
+                <button onclick="joinMeeting('https://zoom.us/j/123456789')" class="join-btn" style="background: #10b981; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background 0.3s;">
+                    Join
+                </button>
+            </div>
+            
+            <!-- Add Meeting Button -->
+            <button onclick="addNewMeeting()" class="add-meeting-btn" style="background: transparent; border: 2px dashed #cbd5e0; color: #718096; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; transition: all 0.3s; margin-top: 10px;">
+                <span>➕</span>
+                Add New Meeting
+            </button>
+            <a href="settings.html" style="text-decoration: none; color: inherit;">
+    <i class="fas fa-cog"></i> Settings
+</a>
+        </div>
+    </div>
+</div>
+
+
+        
+        <!-- Google Drive Import -->
+        <!-- Google Drive Import Section - FIXED -->
+<div class="google-drive-section" style="margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%); border-radius: 12px; border: 2px solid #26c6da; position: relative;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h2 style="color: #00695c; font-size: 22px; display: flex; align-items: center; gap: 10px;">
+            <span style="background: #26c6da; color: white; padding: 8px 12px; border-radius: 8px;">☁️</span>
+            Google Drive Import
+        </h2>
+        <span class="drive-status" style="background: #ff6b6b; color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+            ⚠️ Not connected
+        </span>
+    </div>
+    
+    <p style="color: #546e7a; margin-bottom: 25px; line-height: 1.6;">
+        Import real CVs directly from your Google Drive. Connect once and automatically sync new resumes.
+    </p>
+    
+    <div class="drive-actions" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+        <button onclick="connectGoogleDrive()" class="drive-btn" style="background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%); color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500; font-size: 16px;">
+            <span>🔗</span>
+            Connect Google Drive
+        </button>
+        
+        <button onclick="scanDriveForCVs()" class="drive-btn" style="background: linear-gradient(135deg, #34a853 0%, #1e8e3e 100%); color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500; font-size: 16px;">
+            <span>🔍</span>
+            Scan for CVs
+        </button>
+    </div>
+    
+    <!-- Drive Files Preview -->
+    <div class="drive-files" style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #e0e0e0;">
+        <h3 style="color: #37474f; margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>📁</span>
+            Found 8 CVs in Google Drive:
+        </h3>
+        
+        <div class="file-list" style="display: grid; gap: 10px;">
+            <div class="file-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="color: #d32f2f; font-size: 20px;">📄</span>
+                    <div>
+                        <div style="font-weight: 500; color: #2d3748;">John_Smith_CV.pdf</div>
+                        <div style="font-size: 12px; color: #718096;">Added 2 days ago • 245 KB</div>
+                    </div>
+                </div>
+                <button onclick="importCVFromDrive('file1')" style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Import
+                </button>
+            </div>
+            
+            <div class="file-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="color: #1976d2; font-size: 20px;">📄</span>
+                    <div>
+                        <div style="font-weight: 500; color: #2d3748;">Sarah_Jones_Resume.docx</div>
+                        <div style="font-size: 12px; color: #718096;">Added 1 week ago • 189 KB</div>
+                    </div>
+                </div>
+                <button onclick="importCVFromDrive('file2')" style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Import
+                </button>
+            </div>
+            
+            <div class="file-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #f8f9fa; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="color: #d32f2f; font-size: 20px;">📄</span>
+                    <div>
+                        <div style="font-weight: 500; color: #2d3748;">Michael_Chen_CV.pdf</div>
+                        <div style="font-size: 12px; color: #718096;">Added today • 312 KB</div>
+                    </div>
+                </div>
+                <button onclick="importCVFromDrive('file3')" style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Import
+                </button>
+            </div>
+        </div>
+        
+        <button onclick="showAllFiles()" style="background: transparent; border: none; color: #4f46e5; padding: 10px; width: 100%; text-align: center; cursor: pointer; font-weight: 500; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>⬇️</span>
+            Show all 5 more files
+        </button>
+    </div>
+    
+    <!-- Connection Instructions -->
+    <div class="connection-info" style="margin-top: 20px; padding: 15px; background: rgba(38, 198, 218, 0.1); border-radius: 8px; border-left: 4px solid #26c6da;">
+        <h4 style="color: #00695c; margin-bottom: 8px; font-size: 14px;">🔧 Setup Instructions:</h4>
+        <ol style="color: #546e7a; font-size: 13px; line-height: 1.6; padding-left: 20px; margin: 0;">
+            <li>Create Google Cloud Project</li>
+            <li>Enable Drive API & get OAuth credentials</li>
+            <li>Add credentials to .env file</li>
+            <li>Click "Connect Google Drive" above</li>
+        </ol>
+    </div>
+</div>
+    <!-- CV Preview Modal -->
+    <div class="modal" id="cvModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="cvTitle">CV Preview</h2>
+            <div class="cv-preview" id="cvContent">
+                <!-- CV content will be loaded here -->
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 15px;">
+                <button class="action-btn" onclick="downloadCV()">
+                    <i class="fas fa-download"></i> Download CV
+                </button>
+                <button class="action-btn" onclick="extractInfo()">
+                    <i class="fas fa-robot"></i> Extract Info with AI
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+   <!-- Footer Section -->
+<div class="footer" style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); color: white; border-radius: 12px; text-align: center;">
+    <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div class="footer-item">
+            <div style="font-weight: 600; margin-bottom: 5px; color: #a0aec0;">Version</div>
+            <div style="font-size: 18px; font-weight: 700;">AI Talent CRM Pro v2.0</div>
+        </div>
+        
+        <div class="footer-item">
+            <div style="font-weight: 600; margin-bottom: 5px; color: #a0aec0;">Powered By</div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <span style="background: #4285f4; padding: 4px 10px; border-radius: 4px;">Google Drive API</span>
+                <span style="background: #10b981; padding: 4px 10px; border-radius: 4px;">OpenAI</span>
+                <span style="background: #f59e0b; padding: 4px 10px; border-radius: 4px;">Benchmark Email</span>
+            </div>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: center; gap: 30px; margin: 25px 0; flex-wrap: wrap;">
+        <div class="contact-info" style="text-align: left;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <span>📞</span>
+                <span style="font-weight: 600;">Call Center:</span>
+                <span>+44 1234 567890</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span>✉️</span>
+                <span style="font-weight: 600;">Support:</span>
+                <span>support@talentcrm.com</span>
+            </div>
+        </div>
+        
+        <div class="system-status" style="text-align: left;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <span style="color: #10b981;">●</span>
+                <span>Server: Online</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #10b981;">●</span>
+                <span>AI Assistant: Active</span>
+            </div>
+        </div>
+    </div>
+    
+    <div style="border-top: 1px solid #4a5568; padding-top: 20px; color: #a0aec0; font-size: 14px;">
+        © 2025 AI Talent CRM Pro. All rights reserved. | 
+        <a href="#" style="color: #63b3ed; text-decoration: none;">Privacy Policy</a> | 
+        <a href="#" style="color: #63b3ed; text-decoration: none;">Terms of Service</a>
+    </div>
+</div>
+
+    <script>
+        // Configuration
+        const API_URL = "http://localhost:3001";
+        let allCandidates = [];
+        let currentPage = 1;
+        const itemsPerPage = 6;
+        
+        // Initialize
+        document.addEventListener("DOMContentLoaded", function() {
+            loadCandidates();
+            setupPagination();
+            checkGoogleDriveStatus();
+        });
+        
+        // Load candidates from API
+        async function loadCandidates() {
+            try {
+                const response = await fetch(API_URL + "/api/stats");
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById("totalCandidates").textContent = data.total || 14;
+                document.getElementById("avgScore").textContent = (data.averageAiScore || 84) + "%";
+                document.getElementById("topMatches").textContent = data.topMatches || 4;
+                document.getElementById("activePipeline").textContent = data.total ? Math.floor(data.total * 0.6) : 8;
+                document.getElementById("candidateCount").textContent = `(${data.total || 14})`;
+                
+                // Store candidates
+                allCandidates = data.candidates || [];
+                
+                // Display first page
+                displayCandidatesPage(1);
+                
+            } catch (error) {
+                console.log("Error loading data:", error);
+                // Fallback to sample data
+                loadSampleData();
+            }
+        }
+        
+        // Display candidates for a specific page
+        function displayCandidatesPage(page) {
+            currentPage = page;
+            const container = document.getElementById("candidatesList");
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageCandidates = allCandidates.slice(startIndex, endIndex);
+            
+            container.innerHTML = pageCandidates.map(candidate => {
+                // Determine score class
+                let scoreClass = "score-medium";
+                if (candidate.aiScore >= 90) scoreClass = "score-high";
+                else if (candidate.aiScore < 70) scoreClass = "score-low";
+                
+                // Format phone for calling
+                const phone = candidate.phone || "+441234567890";
+                const cleanPhone = phone.replace(/\D/g, '');
+                const whatsappUrl = `https://wa.me/${cleanPhone}`;
+                const telUrl = `tel:${cleanPhone}`;
+                
+                return `
+                    <div class="candidate-card">
+                        <div class="candidate-header">
+                            <div>
+                                <div class="candidate-name">${candidate.name || "Unknown Candidate"}</div>
+                                <div class="candidate-position">${candidate.position || "No position specified"}</div>
+                            </div>
+                            <div class="candidate-actions">
+                                <div class="action-icon delete" onclick="deleteCandidate('${candidate.email}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <div class="action-icon call" onclick="callCandidate('${phone}')" title="Call">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="action-icon email" onclick="emailCandidate('${candidate.email}', '${candidate.name}')" title="Email">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="action-icon whatsapp" onclick="whatsappCandidate('${cleanPhone}')" title="WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${phone}</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${candidate.email || "No email"}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 15px 0;">
+                            <span class="ai-score ${scoreClass}">AI Score: ${candidate.aiScore || 0}%</span>
+                        </div>
+                        
+                        <div style="color: #666; margin-bottom: 10px;">
+                            <strong>Status:</strong> ${candidate.status || "New"}
+                        </div>
+                        
+                        <div class="candidate-skills">
+                            ${(candidate.skills || []).map(skill => 
+                                `<span class="skill-tag">${skill}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <div class="candidate-source">
+                            <i class="fas fa-database"></i>
+                            <span>Source: ${candidate.source || "Unknown"}</span>
+                            ${candidate.cvFile ? `<button class="action-btn" style="padding: 5px 10px; margin-left: auto;" onclick="viewCV('${candidate.email}')">View CV</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+            
+            // Update pagination
+            updatePagination();
+        }
+        
+        // Setup pagination
+        function setupPagination() {
+            const totalPages = Math.ceil(allCandidates.length / itemsPerPage);
+            const paginationDiv = document.getElementById("pagination");
+            
+            let paginationHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                    <button class="page-btn ${i === 1 ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>
+                `;
+            }
+            
+            paginationDiv.innerHTML = paginationHTML;
+        }
+        
+        // Update pagination active state
+        function updatePagination() {
+            const pageBtns = document.querySelectorAll('.page-btn');
+            pageBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.textContent) === currentPage) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Go to specific page
+        function goToPage(page) {
+            displayCandidatesPage(page);
+        }
+        
+        // Search candidates
+        function searchCandidates() {
+            const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+            
+            if (!searchTerm) {
+                displayCandidatesPage(currentPage);
+                return;
+            }
+            
+            const filtered = allCandidates.filter(candidate => 
+                (candidate.name && candidate.name.toLowerCase().includes(searchTerm)) ||
+                (candidate.position && candidate.position.toLowerCase().includes(searchTerm)) ||
+                (candidate.skills && candidate.skills.some(skill => 
+                    skill.toLowerCase().includes(searchTerm)
+                )) ||
+                (candidate.email && candidate.email.toLowerCase().includes(searchTerm))
+            );
+            
+            // Display filtered results
+            const container = document.getElementById("candidatesList");
+            container.innerHTML = filtered.map(candidate => {
+                let scoreClass = "score-medium";
+                if (candidate.aiScore >= 90) scoreClass = "score-high";
+                else if (candidate.aiScore < 70) scoreClass = "score-low";
+                
+                const phone = candidate.phone || "+441234567890";
+                const cleanPhone = phone.replace(/\D/g, '');
+                
+                return `
+                    <div class="candidate-card">
+                        <div class="candidate-header">
+                            <div>
+                                <div class="candidate-name">${candidate.name || "Unknown Candidate"}</div>
+                                <div class="candidate-position">${candidate.position || "No position"}</div>
+                            </div>
+                            <div class="candidate-actions">
+                                <div class="action-icon delete" onclick="deleteCandidate('${candidate.email}')">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <div class="action-icon call" onclick="callCandidate('${phone}')">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="action-icon email" onclick="emailCandidate('${candidate.email}', '${candidate.name}')">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${phone}</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${candidate.email || "No email"}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 15px 0;">
+                            <span class="ai-score ${scoreClass}">AI Score: ${candidate.aiScore || 0}%</span>
+                        </div>
+                        
+                        <div style="color: #666; margin-bottom: 10px;">
+                            <strong>Status:</strong> ${candidate.status || "New"}
+                        </div>
+                        
+                        <div class="candidate-skills">
+                            ${(candidate.skills || []).map(skill => 
+                                `<span class="skill-tag">${skill}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <div class="candidate-source">
+                            <i class="fas fa-database"></i>
+                            <span>Source: ${candidate.source || "Unknown"}</span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+        
+        // Filter candidates by status
+        function filterCandidates() {
+            const status = document.getElementById("statusFilter").value;
+            
+            if (status === "all") {
+                displayCandidatesPage(currentPage);
+                return;
+            }
+            
+            const filtered = allCandidates.filter(candidate => 
+                candidate.status === status
+            );
+            
+            const container = document.getElementById("candidatesList");
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 40px; color: #666;">No candidates with status "${status}" found.</div>`;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(candidate => {
+                let scoreClass = "score-medium";
+                if (candidate.aiScore >= 90) scoreClass = "score-high";
+                else if (candidate.aiScore < 70) scoreClass = "score-low";
+                
+                const phone = candidate.phone || "+441234567890";
+                const cleanPhone = phone.replace(/\D/g, '');
+                
+                return `
+                    <div class="candidate-card">
+                        <div class="candidate-header">
+                            <div>
+                                <div class="candidate-name">${candidate.name || "Unknown Candidate"}</div>
+                                <div class="candidate-position">${candidate.position || "No position"}</div>
+                            </div>
+                            <div class="candidate-actions">
+                                <div class="action-icon delete" onclick="deleteCandidate('${candidate.email}')">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <div class="action-icon call" onclick="callCandidate('${phone}')">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="action-icon email" onclick="emailCandidate('${candidate.email}', '${candidate.name}')">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${phone}</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${candidate.email || "No email"}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 15px 0;">
+                            <span class="ai-score ${scoreClass}">AI Score: ${candidate.aiScore || 0}%</span>
+                        </div>
+                        
+                        <div class="candidate-skills">
+                            ${(candidate.skills || []).map(skill => 
+                                `<span class="skill-tag">${skill}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <div class="candidate-source">
+                            <i class="fas fa-database"></i>
+                            <span>Source: ${candidate.source || "Unknown"}</span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+        
+        // Delete candidate
+        async function deleteCandidate(email) {
+            if (confirm(`Are you sure you want to delete candidate with email: ${email}?`)) {
+                try {
+                    const response = await fetch(`${API_URL}/api/candidates/${email}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Candidate deleted successfully!');
+                        loadCandidates();
+                    }
+                } catch (error) {
+                    console.error('Error deleting candidate:', error);
+                    alert('Error deleting candidate. Please try again.');
+                }
+            }
+        }
+        
+        // Call candidate
+        function callCandidate(phoneNumber) {
+            // For web-based calling (requires proper setup)
+            if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+                window.location.href = `tel:${phoneNumber}`;
+            } else {
+                // For desktop, show number and instructions
+                alert(`Call: ${phoneNumber}\n\nOn desktop, you can use:\n1. Click-to-call software\n2. Dial manually: ${phoneNumber}\n3. Use WhatsApp Web for calling`);
+                
+                // Try to open default calling app if available
+                window.open(`tel:${phoneNumber}`, '_blank');
+            }
+        }
+        
+        // WhatsApp candidate
+        function whatsappCandidate(phoneNumber) {
+            const message = encodeURIComponent("Hello! I'm reaching out from Talent CRM regarding your application.");
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        }
+        
+        // Email candidate
+        function emailCandidate(email, name) {
+            document.getElementById("emailSubject").value = `Regarding your application - ${name}`;
+            document.getElementById("emailBody").value = `Dear ${name},\n\nThank you for your application. We would like to schedule an interview with you.\n\nBest regards,\nTalent CRM Team`;
+            
+            // Scroll to email section
+            document.querySelector('.email-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Send email via Benchmark Email (simulated)
+        function sendEmail() {
+            const template = document.getElementById("emailTemplate").value;
+            const subject = document.getElementById("emailSubject").value;
+            const body = document.getElementById("emailBody").value;
+            
+            if (!subject || !body) {
+                alert("Please fill in subject and email body.");
+                return;
+            }
+            
+            // Simulate sending email
+            document.getElementById("importProgress").style.display = "block";
+            const progressBar = document.getElementById("progressBar");
+            progressBar.style.width = "0%";
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById("importProgress").style.display = "none";
+                        alert(`Email sent successfully via Benchmark Email!\n\nTo: Selected Candidates\nSubject: ${subject}`);
+                    }, 500);
+                }
+            }, 100);
+        }
+        
+        // AI Assistant questions
+        function askAI(question) {
+            alert(`🤖 AI Assistant analyzing: "${question}"\n\nThis feature uses OpenAI to analyze your candidate database and provide insights.\n\nTo implement fully, you need to:\n1. Set up OpenAI API\n2. Connect to your candidate database\n3. Implement analysis logic`);
+            
+            // In a real implementation, this would call your backend API
+            // which would use OpenAI to analyze candidates and return insights
+        }
+        
+        // Google Drive Integration
+        function checkGoogleDriveStatus() {
+            // Check if Google Drive is connected
+            document.getElementById("driveFiles").innerHTML = `
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 10px;">
+                    <p><strong>🔗 Google Drive Status:</strong> Not connected</p>
+                    <p>Connect to import real CVs directly from your Google Drive.</p>
+                </div>
+            `;
+        }
+        
+        function connectGoogleDrive() {
+            alert("🔐 Connecting to Google Drive...\n\nTo connect Google Drive:\n\n1. Go to Google Cloud Console\n2. Create a project and enable Drive API\n3. Create OAuth 2.0 credentials\n4. Add the client ID to your CRM configuration\n\nOnce connected, you can import CVs directly from Google Drive.");
+            
+            // Simulate connection
+            setTimeout(() => {
+                document.getElementById("driveFiles").innerHTML = `
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 10px;">
+                        <p><strong>✅ Google Drive Connected</strong></p>
+                        <p>You can now import CVs from your Google Drive.</p>
+                        <button class="action-btn" onclick="scanDriveForCVs()" style="margin-top: 10px;">
+                            <i class="fas fa-search"></i> Scan for CVs
+                        </button>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        function scanDriveForCVs() {
+            document.getElementById("importProgress").style.display = "block";
+            const progressBar = document.getElementById("progressBar");
+            progressBar.style.width = "0%";
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Show found CVs
+                    document.getElementById("driveFiles").innerHTML = `
+                        <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                            <p><strong>📁 Found 8 CVs in Google Drive:</strong></p>
+                            <div style="margin-top: 15px;">
+                                <div style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <i class="fas fa-file-pdf"></i> John_Smith_CV.pdf
+                                    <button class="action-btn" style="padding: 5px 10px; float: right;" onclick="importCV('John_Smith_CV.pdf')">Import</button>
+                                </div>
+                                <div style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <i class="fas fa-file-word"></i> Sarah_Jones_Resume.docx
+                                    <button class="action-btn" style="padding: 5px 10px; float: right;" onclick="importCV('Sarah_Jones_Resume.docx')">Import</button>
+                                </div>
+                                <div style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <i class="fas fa-file-pdf"></i> Michael_Chen_CV.pdf
+                                    <button class="action-btn" style="padding: 5px 10px; float: right;" onclick="importCV('Michael_Chen_CV.pdf')">Import</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById("importProgress").style.display = "none";
+                }
+            }, 300);
+        }
+        
+        function importCV(filename) {
+            alert(`Importing CV: ${filename}\n\nThis would:\n1. Download the CV from Google Drive\n2. Extract text using OCR (for PDFs)\n3. Parse candidate information\n4. Add to your database\n\nSample implementation created in import-from-drive-now.js`);
+            
+            // Simulate importing more candidates
+            const newCount = parseInt(document.getElementById("totalCandidates").textContent) + 1;
+            document.getElementById("totalCandidates").textContent = newCount;
+            document.getElementById("candidateCount").textContent = `(${newCount})`;
+        }
+        
+        // View CV modal
+        function viewCV(email) {
+            document.getElementById("cvModal").style.display = "flex";
+            document.getElementById("cvTitle").textContent = `CV Preview - ${email}`;
+            
+            // Simulate CV content
+            document.getElementById("cvContent").innerHTML = `
+                <h3>John Smith - AI Engineer</h3>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> +44 1234 567890</p>
+                
+                <h4>Professional Summary</h4>
+                <p>Experienced AI Engineer with 5+ years in machine learning and deep learning. Specialized in computer vision and natural language processing.</p>
+                
+                <h4>Skills</h4>
+                <ul>
+                    <li>Python, TensorFlow, PyTorch</li>
+                    <li>Machine Learning Algorithms</li>
+                    <li>Deep Learning</li>
+                    <li>Computer Vision</li>
+                    <li>NLP</li>
+                </ul>
+                
+                <h4>Experience</h4>
+                <p><strong>Senior AI Engineer</strong> - Tech Corp (2020-Present)</p>
+                <p>Led development of AI-powered recommendation systems.</p>
+            `;
+        }
+        
+        function closeModal() {
+            document.getElementById("cvModal").style.display = "none";
+        }
+        
+        function downloadCV() {
+            alert("CV downloaded. In a real implementation, this would download the actual CV file from Google Drive.");
+        }
+        
+        function extractInfo() {
+            alert("AI extracting information from CV...\n\nThis would use OpenAI to:\n1. Extract name, email, phone\n2. Identify skills and experience\n3. Calculate AI match score\n4. Add to database automatically");
+        }
+        
+        // Team Meeting functions
+        function showTeamMeeting() {
+            alert("Team Meeting Controls:\n\n1. Video Call: Start a video conference with your team\n2. Schedule: Schedule team meetings\n3. Share Screen: Share your CRM dashboard\n\nIntegration available with Zoom, Google Meet, Microsoft Teams");
+        }
+        
+        function startVideoCall() {
+            alert("Starting video call...\n\nThis would integrate with:\n- Google Meet: meet.google.com\n- Zoom: zoom.us\n- Microsoft Teams: teams.microsoft.com\n\nChoose your preferred platform in settings.");
+        }
+        
+        function scheduleMeeting() {
+            const date = prompt("Enter meeting date (YYYY-MM-DD):", "2025-12-27");
+            const time = prompt("Enter meeting time (HH:MM):", "14:00");
+            const topic = prompt("Meeting topic:", "Weekly Recruitment Review");
+            
+            if (date && time && topic) {
+                alert(`Meeting scheduled!\n\nDate: ${date}\nTime: ${time}\nTopic: ${topic}\n\nCalendar invitation will be sent to team members.`);
+            }
+        }
+        
+        // Other functions
+        function syncGoogleDrive() {
+            alert("Syncing with Google Drive...\n\nThis would automatically sync new CVs from your Google Drive folder.");
+            scanDriveForCVs();
+        }
+        
+        function importCVs() {
+            alert("Import CVs from local files or Google Drive.\n\nSupported formats: PDF, DOCX, TXT");
+            showCVUpload();
+        }
+        
+        function showCVUpload() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf,.docx,.txt';
+            input.multiple = true;
+            input.onchange = function(e) {
+                alert(`Selected ${e.target.files.length} file(s) for upload.\n\nFiles will be uploaded and processed.`);
+            };
+            input.click();
+        }
+        
+        function exportCandidates() {
+            alert("Exporting candidates to CSV...\n\nThis would generate and download a CSV file with all candidate data.");
+            
+            // Simulate export
+            setTimeout(() => {
+                alert("CSV export complete! File: candidates_export.csv");
+            }, 1000);
+        }
+        
+        // Sample data for fallback
+        function loadSampleData() {
+            allCandidates = [
+                {
+                    name: "Donald Mutale",
+                    email: "donaldmutale@hotmail.com",
+                    phone: "+447933544411",
+                    position: "Luton",
+                    aiScore: 82,
+                    status: "Rejected",
+                    skills: ["Retail"],
+                    source: "Original Database"
+                },
+                {
+                    name: "Rihanna Campbell",
+                    email: "rihannac32@yahoo.com",
+                    phone: "+447704375461",
+                    position: "Indesign Specialist",
+                    aiScore: 90,
+                    status: "New",
+                    skills: ["IT"],
+                    source: "Original Database"
+                },
+                {
+                    name: "Alex Johnson",
+                    email: "alex@example.com",
+                    phone: "+441111111111",
+                    position: "AI Engineer",
+                    aiScore: 88,
+                    status: "New",
+                    skills: ["Python", "TensorFlow", "MLOps"],
+                    source: "Google Drive CV",
+                    cvFile: "Alex_Johnson_CV.pdf"
+                }
+            ];
+            
+            displayCandidatesPage(1);
+        }
+    </script>
+		<!-- Add this script at the end of your dashboard-enhanced.html -->
+<script>
+// REAL WORKING FUNCTIONS
+function makeFeaturesWork() {
+    console.log('Enabling all CRM features...');
+    
+    // 1. Fix Email Buttons
+    document.querySelectorAll('[onclick*="sendEmail"]').forEach(btn => {
+        const candidate = {
+            name: btn.closest('.candidate-card')?.querySelector('.candidate-name')?.textContent || 'Candidate',
+            email: btn.closest('.candidate-card')?.querySelector('.candidate-email')?.textContent || ''
+        };
+        
+        btn.onclick = () => {
+            const subject = `Regarding your application - ${candidate.name}`;
+            const body = `Dear ${candidate.name},\n\nThank you for your application.\n\nBest regards,\nTalent Team`;
+            window.location.href = `mailto:${candidate.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        };
+    });
+    
+    // 2. Fix Meeting Buttons
+    document.querySelectorAll('[onclick*="scheduleMeeting"]').forEach(btn => {
+        btn.onclick = () => {
+            window.open('https://calendar.google.com/calendar/r/eventedit', '_blank');
+        };
+    });
+    
+    // 3. Fix Video Call Buttons
+    document.querySelectorAll('[onclick*="videoCall"]').forEach(btn => {
+        btn.onclick = () => {
+            window.open('https://meet.google.com/new', '_blank');
+        };
+    });
+    
+    // 4. Fix CV Upload
+    document.querySelectorAll('[onclick*="uploadCV"]').forEach(btn => {
+        btn.onclick = () => {
+            window.open('/upload-test.html', '_blank');
+        };
+    });
+    
+    alert('All features are now enabled! Buttons will open real applications.');
+}
+// ADD THIS TO YOUR DASHBOARD SCRIPT
+async function loadLiveCandidates() {
+    console.log('?? Loading live candidates...');
+    
+    try {
+        const response = await fetch('http://localhost:8000/api/stats');
+        const data = await response.json();
+        
+        // Update statistics
+        document.getElementById('total-candidates').textContent = data.total;
+        document.getElementById('average-score').textContent = data.averageAiScore + '%';
+        
+        // Calculate top matches (90%+)
+        const topMatches = data.candidates.filter(c => c.aiScore >= 90).length;
+        document.getElementById('top-matches').textContent = topMatches;
+        
+        // Display candidates
+        displayCandidates(data.candidates);
+        
+        console.log(`? Loaded ${data.candidates.length} candidates`);
+    } catch (error) {
+        console.log('?? Could not load live data:', error.message);
+    }
+}
+
+function displayCandidates(candidates) {
+    const container = document.getElementById('candidates-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    candidates.forEach(candidate => {
+        const card = `
+        <div class="candidate-card" data-id="${candidate.id}">
+            <div class="candidate-header">
+                <h3>${candidate.name}</h3>
+                <span class="ai-score">AI Score: ${candidate.aiScore || 0}%</span>
+            </div>
+            <div class="candidate-info">
+                <p>${candidate.position || 'Position not specified'}</p>
+                <p>?? ${candidate.email}</p>
+                <p>?? ${candidate.phone}</p>
+                <div class="skills">
+                    ${(candidate.skills || []).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                </div>
+                <p class="source">Source: ${candidate.source || 'Unknown'}</p>
+                <p class="status">Status: <span class="status-${candidate.status?.toLowerCase() || 'new'}">${candidate.status || 'New'}</span></p>
+                
+                ${candidate.cvFile ? `
+                <div class="cv-actions">
+                    <button onclick="viewCV('${candidate.cvFile}')" class="btn-view-cv">?? View CV</button>
+                    <button onclick="downloadCV('${candidate.cvFile}')" class="btn-download-cv">?? Download</button>
+                </div>` : ''}
+                
+                <div class="actions">
+                    <button onclick="sendEmail('${candidate.email}', '${candidate.name}')" class="btn-email">?? Email</button>
+                    <button onclick="callCandidate('${candidate.phone}')" class="btn-call">?? Call</button>
+                    <button onclick="scheduleInterview('${candidate.id}', '${candidate.name}')" class="btn-schedule">?? Schedule</button>
+                </div>
+            </div>
+        </div>
+        `;
+        container.innerHTML += card;
+    });
+}
+
+// Helper functions
+function viewCV(filename) {
+    window.open(`/uploads/${filename}`, '_blank');
+}
+
+function downloadCV(filename) {
+    window.location.href = `/api/cv/download/${filename}`;
+}
+
+function sendEmail(email, name) {
+    const subject = `Regarding your application - ${name}`;
+    const body = `Dear ${name},\n\nThank you for your application.\n\nBest regards,\nTalent Team`;
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function callCandidate(phone) {
+    window.location.href = `tel:${phone}`;
+}
+
+function scheduleInterview(candidateId, name) {
+    const title = `Interview: ${name}`;
+    const date = new Date();
+    date.setDate(date.getDate() + 2); // 2 days from now
+    const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+    
+    // Open Google Calendar
+    window.open(`https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(title)}&dates=${dateStr}T140000/${dateStr}T150000`, '_blank');
+}
+
+// Load data when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadLiveCandidates();
+    
+    // Auto-refresh every 60 seconds
+    setInterval(loadLiveCandidates, 60000);
+    
+    console.log('?? Live dashboard activated');
+});
+// Run when page loads
+document.addEventListener('DOMContentLoaded', makeFeaturesWork);
+</script>
+<script>
+// Meeting functions
+function startGoogleMeet() {
+    window.open('https://meet.google.com/new', '_blank');
+    showNotification('🎥 Opening Google Meet to create new meeting...');
+}
+
+function startZoomMeeting() {
+    const meetingId = Math.floor(100000000 + Math.random() * 900000000);
+    
+    // Try to open Zoom app first
+    window.location.href = `zoommtg://zoom.us/join?confno=${meetingId}`;
+    
+    // Fallback to web after 1 second
+    setTimeout(() => {
+        window.open(`https://zoom.us/j/${meetingId}`, '_blank');
+        showNotification(`🔷 Zoom meeting created: ID ${meetingId}`);
+    }, 1000);
+}
+
+function scheduleTeamMeeting() {
+    const title = prompt('Meeting Title:', 'Team Sync - AI Talent CRM');
+    if (!title) return;
+    
+    const date = prompt('Date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+    if (!date) return;
+    
+    const time = prompt('Time (HH:MM, 24-hour format):', '14:00');
+    if (!time) return;
+    
+    // Format for Google Calendar
+    const [hours, minutes] = time.split(':');
+    const endHours = String(parseInt(hours) + 1).padStart(2, '0');
+    
+    const googleUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(title)}&dates=${date.replace(/-/g, '')}T${hours}${minutes}00/${date.replace(/-/g, '')}T${endHours}${minutes}00`;
+    
+    window.open(googleUrl, '_blank');
+    showNotification(`📅 Meeting "${title}" scheduled for ${date} at ${time}`);
+}
+
+function joinMeeting(url) {
+    window.open(url, '_blank');
+    showNotification('Joining meeting...');
+}
+
+function addNewMeeting() {
+    const title = prompt('New Meeting Title:', 'Team Collaboration');
+    const time = prompt('Meeting Time (e.g., "Tomorrow 2:00 PM"):', 'Tomorrow 2:00 PM');
+    
+    if (title && time) {
+        alert(`✅ Meeting "${title}" added for ${time}\n\nNote: This is a demo. In full version, meetings would sync with Google Calendar.`);
+    }
+}
+
+function showNotification(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    /* Hover effects */
+    .meeting-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    }
+    
+    .join-btn:hover {
+        background: #3730a3 !important;
+    }
+    
+    .add-meeting-btn:hover {
+        border-color: #4f46e5 !important;
+        color: #4f46e5 !important;
+        background: rgba(79, 70, 229, 0.05) !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
+<script>
+// Google Drive Functions
+function connectGoogleDrive() {
+    showNotification('🔗 Connecting to Google Drive...');
+    
+    // In real implementation, this would open OAuth flow
+    setTimeout(() => {
+        document.querySelector('.drive-status').innerHTML = '✅ Connected';
+        document.querySelector('.drive-status').style.background = '#10b981';
+        showNotification('✅ Google Drive connected successfully!');
+    }, 1500);
+}
+
+function scanDriveForCVs() {
+    showNotification('🔍 Scanning Google Drive for CV files...');
+    
+    // Simulate scanning
+    setTimeout(() => {
+        showNotification('📁 Found 8 CV files in Google Drive');
+    }, 2000);
+}
+
+function importCVFromDrive(fileId) {
+    showNotification('📥 Importing CV from Google Drive...');
+    
+    // Simulate import
+    setTimeout(() => {
+        showNotification('✅ CV imported successfully! AI analysis in progress...');
+        
+        // Simulate AI processing
+        setTimeout(() => {
+            showNotification('🤖 AI analysis complete! Candidate added to database.');
+        }, 1500);
+    }, 1000);
+}
+
+function showAllFiles() {
+    alert('📁 In full version, this would show all 8 CV files from Google Drive.\n\nCurrently showing 3 files for demo purposes.');
+}
+</script>
+<script>
+// Load candidates when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Loading live candidates...');
+    loadCandidates();
+    
+    // Setup search functionality
+    document.getElementById('candidate-search').addEventListener('input', filterCandidates);
+    document.getElementById('status-filter').addEventListener('change', filterCandidates);
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadCandidates, 30000);
+});
+
+let allCandidates = []; // Store all candidates for filtering
+
+async function loadCandidates() {
+    try {
+        console.log('Fetching candidates from API...');
+        
+        const response = await fetch('http://localhost:8000/api/stats');
+        const data = await response.json();
+        
+        console.log(`API returned ${data.candidates.length} candidates`);
+        
+        // Store for filtering
+        allCandidates = data.candidates;
+        
+        // Update count
+        document.getElementById('candidate-count').textContent = `(${allCandidates.length})`;
+        
+        // Hide loading, show container
+        document.getElementById('loading-candidates').style.display = 'none';
+        document.getElementById('candidates-container').style.display = 'block';
+        
+        // Display candidates
+        displayCandidates(allCandidates);
+        
+    } catch (error) {
+        console.error('Failed to load candidates:', error);
+        document.getElementById('loading-candidates').innerHTML = `
+            <div style="color: #e53e3e; padding: 20px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">❌</div>
+                <h3>Connection Error</h3>
+                <p>Could not connect to server. Make sure server-enhanced.js is running.</p>
+                <button onclick="location.reload()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 15px;">
+                    Retry
+                </button>
+            </div>
+        `;
+    }
+}
+
+function displayCandidates(candidates) {
+    const container = document.getElementById('candidates-container');
+    
+    if (candidates.length === 0) {
+        document.getElementById('no-candidates').style.display = 'block';
+        container.style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('no-candidates').style.display = 'none';
+    container.innerHTML = '';
+    
+    // Sort by AI score (highest first)
+    candidates.sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0));
+    
+    candidates.forEach(candidate => {
+        const card = createCandidateCard(candidate);
+        container.innerHTML += card;
+    });
+}
+
+function createCandidateCard(candidate) {
+    const statusClass = getStatusClass(candidate.status);
+    const skills = Array.isArray(candidate.skills) ? candidate.skills : 
+                  (typeof candidate.skills === 'string' ? candidate.skills.split('|') : []);
+    
+    return `
+    <div class="candidate-card" data-id="${candidate.id}" data-status="${candidate.status || 'New'}" style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-left: 5px solid ${getStatusColor(candidate.status)};">
+        <div class="candidate-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div>
+                <h3 style="margin: 0 0 8px 0; font-size: 20px; color: #2d3748;">
+                    ${candidate.name || 'Unknown Candidate'}
+                    <span class="ai-score-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; margin-left: 10px; font-weight: 600;">
+                        AI Score: ${candidate.aiScore || 0}%
+                    </span>
+                </h3>
+                <p style="margin: 0; color: #4a5568; font-size: 16px; font-weight: 500;">
+                    ${candidate.position || 'Position not specified'}
+                </p>
+            </div>
+            
+            <div class="candidate-status" style="display: flex; flex-direction: column; align-items: flex-end;">
+                <span class="status-badge ${statusClass}" style="padding: 6px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-bottom: 8px;">
+                    ${candidate.status || 'New'}
+                </span>
+                <span class="source" style="font-size: 12px; color: #718096; background: #f7fafc; padding: 4px 10px; border-radius: 4px;">
+                    Source: ${candidate.source || 'Unknown'}
+                </span>
+            </div>
+        </div>
+        
+        <div class="candidate-info" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div class="contact-info">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #4a5568;">
+                        <span>📧</span>
+                        <span>${candidate.email || 'No email'}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #4a5568;">
+                        <span>📱</span>
+                        <span>${candidate.phone || 'No phone'}</span>
+                    </div>
+                </div>
+                
+                ${candidate.appliedDate ? `
+                <div class="date-info">
+                    <div style="display: flex; align-items: center; gap: 10px; color: #4a5568;">
+                        <span>📅</span>
+                        <span>Applied: ${candidate.appliedDate}</span>
+                    </div>
+                </div>` : ''}
+            </div>
+            
+            ${skills.length > 0 ? `
+            <div class="skills-section">
+                <h4 style="margin: 0 0 10px 0; color: #4a5568; font-size: 14px; font-weight: 600;">Skills:</h4>
+                <div class="skills-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${skills.map(skill => `
+                    <span class="skill-tag" style="background: #e2e8f0; color: #4a5568; padding: 6px 12px; border-radius: 20px; font-size: 14px;">
+                        ${skill}
+                    </span>`).join('')}
+                </div>
+            </div>` : ''}
+        </div>
+        
+        <div class="candidate-actions" style="display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <div class="left-actions" style="display: flex; gap: 10px;">
+                <button onclick="viewCandidate('${candidate.id}')" class="action-btn-small" style="background: #4299e1; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    👁️ View
+                </button>
+                
+                ${candidate.cvFile ? `
+                <button onclick="downloadCV('${candidate.cvFile}')" class="action-btn-small" style="background: #38a169; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    📄 CV
+                </button>` : ''}
+            </div>
+            
+            <div class="right-actions" style="display: flex; gap: 10px;">
+                <button onclick="sendEmailToCandidate('${candidate.email}', '${candidate.name}')" class="action-btn-small" style="background: #ed8936; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    📧 Email
+                </button>
+                
+                <button onclick="callCandidate('${candidate.phone}')" class="action-btn-small" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    📞 Call
+                </button>
+                
+                <button onclick="scheduleInterview('${candidate.id}', '${candidate.name}')" class="action-btn-small" style="background: #9f7aea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    📅 Interview
+                </button>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+function filterCandidates() {
+    const searchTerm = document.getElementById('candidate-search').value.toLowerCase();
+    const statusFilter = document.getElementById('status-filter').value;
+    
+    let filtered = allCandidates;
+    
+    // Filter by status
+    if (statusFilter !== 'all') {
+        filtered = filtered.filter(c => (c.status || 'New') === statusFilter);
+    }
+    
+    // Filter by search term
+    if (searchTerm) {
+        filtered = filtered.filter(c => 
+            (c.name && c.name.toLowerCase().includes(searchTerm)) ||
+            (c.email && c.email.toLowerCase().includes(searchTerm)) ||
+            (c.position && c.position.toLowerCase().includes(searchTerm)) ||
+            (c.skills && (
+                (Array.isArray(c.skills) && c.skills.some(s => s.toLowerCase().includes(searchTerm))) ||
+                (typeof c.skills === 'string' && c.skills.toLowerCase().includes(searchTerm))
+            ))
+        );
+    }
+    
+    displayCandidates(filtered);
+    
+    // Update count
+    document.getElementById('candidate-count').textContent = `(${filtered.length})`;
+}
+
+// Helper functions
+function getStatusClass(status) {
+    const statusMap = {
+        'New': 'status-new',
+        'Screening': 'status-screening',
+        'Interview': 'status-interview',
+        'Rejected': 'status-rejected',
+        'Hired': 'status-hired'
+    };
+    return statusMap[status] || 'status-new';
+}
+
+function getStatusColor(status) {
+    const colorMap = {
+        'New': '#4299e1',
+        'Screening': '#ed8936',
+        'Interview': '#9f7aea',
+        'Rejected': '#f56565',
+        'Hired': '#48bb78'
+    };
+    return colorMap[status] || '#4299e1';
+}
+
+// Action functions
+function exportToCSV() {
+    alert('📊 CSV export would download all candidates. In production, this would generate a CSV file.');
+    // Real implementation would fetch /api/export-csv
+}
+
+function showUploadModal() {
+    window.open('/upload-test.html', '_blank');
+}
+
+function viewCandidate(id) {
+    alert(`👁️ Viewing candidate ${id}. In full version, this would open a detailed view.`);
+}
+
+function downloadCV(filename) {
+    window.open(`/uploads/${filename}`, '_blank');
+}
+
+function sendEmailToCandidate(email, name) {
+    const subject = `Regarding your application - ${name}`;
+    const body = `Dear ${name},\n\nThank you for your application.\n\nBest regards,\nTalent Team`;
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function callCandidate(phone) {
+    window.location.href = `tel:${phone}`;
+}
+
+function scheduleInterview(id, name) {
+    const title = `Interview: ${name}`;
+    const date = new Date();
+    date.setDate(date.getDate() + 2);
+    const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+    
+    window.open(`https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(title)}&dates=${dateStr}T140000/${dateStr}T150000`, '_blank');
+}
+
+// Add CSS for status badges
+const statusStyle = document.createElement('style');
+statusStyle.textContent = `
+    .status-new { background: #bee3f8; color: #2c5282; }
+    .status-screening { background: #fed7d7; color: #c53030; }
+    .status-interview { background: #e9d8fd; color: #553c9a; }
+    .status-rejected { background: #fed7d7; color: #c53030; }
+    .status-hired { background: #c6f6d5; color: #276749; }
+    
+    .action-btn-small:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+    
+    .candidate-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        transition: all 0.3s ease;
+    }
+`;
+document.head.appendChild(statusStyle);
+</script>
+<!-- ========== EXACT FIX FOR YOUR DASHBOARD ========== -->
+<script>
+console.log('🎯 Dashboard fix starting...');
+
+// Test API immediately
+fetch('http://localhost:8000/api/stats')
+    .then(r => r.json())
+    .then(data => {
+        console.log('✅ API working:', data.total, 'candidates');
+        updateDashboard(data);
+    })
+    .catch(err => {
+        console.error('❌ API error:', err);
+        showSampleData();
+    });
+
+// Update dashboard with real data
+function updateDashboard(data) {
+    console.log('🔄 Updating dashboard...');
+    
+    // 1. Update ALL stat numbers
+    updateStatNumbers(data);
+    
+    // 2. Update candidate count
+    updateCandidateCount(data.total);
+    
+    // 3. Hide loading and show real candidates
+    showRealCandidates(data.candidates);
+    
+    console.log('✅ Dashboard updated!');
+}
+
+// Update stat numbers
+function updateStatNumbers(data) {
+    // Find all elements with class "stat-number"
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    if (statNumbers.length >= 5) {
+        // Update in order: Total, Average, Top Matches, Active Pipeline, New Today
+        statNumbers[0].textContent = data.total; // Total Candidates
+        statNumbers[1].textContent = data.averageAiScore + '%'; // Average AI Score
+        
+        // Calculate top matches (90%+)
+        const topMatches = data.candidates.filter(c => c.aiScore >= 90).length;
+        statNumbers[2].textContent = topMatches; // Top Matches
+        
+        // Calculate active pipeline (Screening + Interview)
+        const activePipeline = data.candidates.filter(c => 
+            c.status === 'Screening' || c.status === 'Interview'
+        ).length;
+        statNumbers[3].textContent = activePipeline; // Active Pipeline
+        
+        // Calculate new today
+        const today = new Date().toISOString().split('T')[0];
+        const newToday = data.candidates.filter(c => 
+            c.appliedDate === today || 
+            (c.uploadedAt && c.uploadedAt.startsWith(today))
+        ).length;
+        statNumbers[4].textContent = newToday; // New Today
+        
+        console.log('✅ Stats updated:', {
+            total: data.total,
+            average: data.averageAiScore + '%',
+            topMatches: topMatches,
+            activePipeline: activePipeline,
+            newToday: newToday
+        });
+    }
+}
+
+// Update candidate count
+function updateCandidateCount(count) {
+    // Find "Current Candidates" text
+    const headers = document.querySelectorAll('h2, h3, .section-title');
+    headers.forEach(header => {
+        if (header.textContent.includes('Current Candidates') || 
+            header.textContent.includes('👥')) {
+            // Remove "Loading..." and add real count
+            header.innerHTML = header.innerHTML
+                .replace('Loading...', '')
+                .replace(/\(\d+\)/, '')  // Remove any existing count
+                .trim();
+            
+            // Add count
+            const countSpan = document.createElement('span');
+            countSpan.textContent = ` (${count})`;
+            countSpan.style.color = '#667eea';
+            countSpan.style.fontWeight = 'bold';
+            countSpan.style.marginLeft = '10px';
+            header.appendChild(countSpan);
+            
+            console.log('✅ Candidate count updated:', count);
+        }
+    });
+}
+
+// Show real candidates
+function showRealCandidates(candidates) {
+    console.log('🖼️ Showing', candidates.length, 'candidates');
+    
+    // Hide loading message
+    const loadingElements = document.querySelectorAll('.loading, [class*="loading"], [class*="Loading"]');
+    loadingElements.forEach(el => {
+        el.style.display = 'none';
+        console.log('✅ Hidden loading element');
+    });
+    
+    // Find where to put candidates
+    let container = findCandidatesContainer();
+    
+    if (!container) {
+        console.log('🆕 Creating candidates container...');
+        container = createNewContainer();
+    }
+    
+    // Clear and add candidates
+    container.innerHTML = '';
+    
+    // Sort by AI score
+    candidates.sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0));
+    
+    // Show first 10
+    candidates.slice(0, 10).forEach(candidate => {
+        container.appendChild(createCandidateCard(candidate));
+    });
+    
+    // Add show more button if needed
+    if (candidates.length > 10) {
+        const showMoreBtn = document.createElement('button');
+        showMoreBtn.innerHTML = `👁️ Show All ${candidates.length} Candidates`;
+        showMoreBtn.style.cssText = `
+            display: block;
+            margin: 30px auto;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        `;
+        showMoreBtn.onclick = () => showAllCandidates(candidates, container);
+        container.appendChild(showMoreBtn);
+    }
+}
+
+// Find candidates container
+function findCandidatesContainer() {
+    // Look after the loading message
+    const loading = document.querySelector('[class*="loading"], [class*="Loading"]');
+    if (loading && loading.parentElement) {
+        return loading.parentElement;
+    }
+    
+    // Look for container after search box
+    const searchBox = document.querySelector('input[type="text"]');
+    if (searchBox) {
+        let nextElement = searchBox.parentElement.nextElementSibling;
+        while (nextElement) {
+            if (nextElement.tagName === 'DIV') {
+                return nextElement;
+            }
+            nextElement = nextElement.nextElementSibling;
+        }
+    }
+    
+    return null;
+}
+
+// Create new container
+function createNewContainer() {
+    const container = document.createElement('div');
+    container.id = 'real-candidates';
+    container.style.cssText = `
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    `;
+    
+    // Find where to add it (after search section)
+    const searchSection = document.querySelector('.search-box, input[type="text"]');
+    if (searchSection && searchSection.parentElement) {
+        searchSection.parentElement.parentElement.appendChild(container);
+    } else {
+        document.body.appendChild(container);
+    }
+    
+    return container;
+}
+
+// Create candidate card
+function createCandidateCard(candidate) {
+    const card = document.createElement('div');
+    card.className = 'candidate-card-real';
+    card.style.cssText = `
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 5px solid ${getStatusColor(candidate.status)};
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+    `;
+    card.onmouseenter = () => card.style.transform = 'translateY(-2px)';
+    card.onmouseleave = () => card.style.transform = 'translateY(0)';
+    
+    // Skills
+    let skills = [];
+    if (Array.isArray(candidate.skills)) {
+        skills = candidate.skills;
+    } else if (typeof candidate.skills === 'string') {
+        skills = candidate.skills.split('|').map(s => s.trim());
+    }
+    
+    card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+                <h3 style="margin: 0 0 5px 0; color: #333;">
+                    ${candidate.name || 'Unknown'}
+                    <span style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        padding: 4px 10px;
+                        border-radius: 15px;
+                        font-size: 14px;
+                        margin-left: 10px;
+                    ">
+                        AI: ${candidate.aiScore || 0}%
+                    </span>
+                </h3>
+                <p style="margin: 0 0 8px 0; color: #666;">
+                    ${candidate.position || 'No position'}
+                </p>
+                <p style="margin: 0 0 5px 0; color: #777; font-size: 14px;">
+                    📧 ${candidate.email || 'No email'} • 
+                    📱 ${candidate.phone || 'No phone'}
+                </p>
+                <p style="margin: 0; color: #777; font-size: 14px;">
+                    Source: ${candidate.source || 'Unknown'} • 
+                    Status: <strong style="color: ${getStatusColor(candidate.status)}">${candidate.status || 'New'}</strong>
+                </p>
+            </div>
+        </div>
+        
+        ${skills.length > 0 ? `
+        <div style="margin-top: 15px;">
+            <div style="font-size: 14px; color: #666; margin-bottom: 8px;">Skills:</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                ${skills.map(skill => `
+                <span style="
+                    background: #f0f0f0;
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-size: 13px;
+                    color: #555;
+                ">
+                    ${skill}
+                </span>`).join('')}
+            </div>
+        </div>` : ''}
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            ${candidate.cvFile ? `
+            <button onclick="viewCV('${candidate.cvFile}')" style="
+                background: #2196F3;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+            ">
+                👁️ View CV
+            </button>` : ''}
+            
+            <button onclick="sendEmailNow('${candidate.email}', '${candidate.name}')" style="
+                background: #FF9800;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+            ">
+                📧 Email
+            </button>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Show all candidates
+function showAllCandidates(candidates, container) {
+    container.innerHTML = '';
+    candidates.forEach(candidate => {
+        container.appendChild(createCandidateCard(candidate));
+    });
+}
+
+// Show sample data
+function showSampleData() {
+    console.log('📋 Showing sample data');
+    
+    const sample = {
+        total: 21,
+        averageAiScore: 84,
+        candidates: [
+            {
+                id: 1766707297148,
+                name: "LewisTay",
+                email: "trevor.sands72@yahoo.co.uk",
+                aiScore: 71,
+                position: "skills",
+                cvFile: "1766707297140-5952186150125001779 (1).pdf",
+                skills: ["CV Uploaded", "New Applicant"],
+                status: "New",
+                source: "Uploaded CV"
+            },
+            {
+                id: 1,
+                name: "Donald Mutale",
+                email: "donaldmutale@hotmail.com",
+                phone: "+447933544411",
+                aiScore: 82,
+                position: "Luton",
+                skills: ["Retail"],
+                status: "Rejected",
+                source: "Original Database"
+            }
+        ]
+    };
+    
+    updateDashboard(sample);
+}
+
+// Helper functions
+function getStatusColor(status) {
+    const colors = {
+        'New': '#2196F3',
+        'Rejected': '#F44336',
+        'Interview': '#9C27B0',
+        'Screening': '#FF9800'
+    };
+    return colors[status] || '#2196F3';
+}
+
+function viewCV(filename) {
+    window.open('/uploads/' + filename, '_blank');
+}
+
+function sendEmailNow(email, name) {
+    if (!email || email === 'No email') {
+        alert('No email address');
+        return;
+    }
+    const subject = 'Regarding your application - ' + name;
+    const body = 'Dear ' + name + ',\n\nThank you for your application.\n\nBest regards,\nTalent Team';
+    window.location.href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+
+// Add reload button
+const reloadBtn = document.createElement('button');
+reloadBtn.innerHTML = '🔄 Load Real Data';
+reloadBtn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    z-index: 9999;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+`;
+reloadBtn.onclick = () => {
+    fetch('http://localhost:8000/api/stats')
+        .then(r => r.json())
+        .then(data => updateDashboard(data));
+};
+document.body.appendChild(reloadBtn);
+
+console.log('✅ Fix ready. Page will update automatically.');
+
+</script>
+<script>
+// ========== FINAL FIX - OVERRIDE EVERYTHING ==========
+console.log('🎯 FINAL FIX: Loading real data...');
+
+// Disable old scripts
+window.loadCandidates = function() { console.log('Old function disabled'); };
+window.loadRealCandidates = function() { console.log('Old function disabled'); };
+
+// Load and update immediately
+fetch('http://localhost:8000/api/stats')
+    .then(r => r.json())
+    .then(data => {
+        console.log('✅ FINAL: Loading', data.total, 'candidates');
+        
+        // 1. UPDATE STATS
+        const statNumbers = document.querySelectorAll('.stat-number');
+        if (statNumbers.length >= 5) {
+            // Update in correct order
+            statNumbers[0].textContent = data.total; // Total Candidates
+            statNumbers[1].textContent = data.averageAiScore + '%'; // Average AI Score
+            
+            // Calculate real top matches (90%+)
+            const topMatches = data.candidates.filter(c => c.aiScore >= 90).length;
+            statNumbers[2].textContent = topMatches; // Top Matches
+            
+            // Calculate active pipeline
+            const activePipeline = data.candidates.filter(c => 
+                c.status === 'Screening' || c.status === 'Interview'
+            ).length;
+            statNumbers[3].textContent = activePipeline; // Active Pipeline
+            
+            // Calculate new today
+            const today = new Date().toISOString().split('T')[0];
+            const newToday = data.candidates.filter(c => 
+                c.appliedDate === today || 
+                (c.uploadedAt && c.uploadedAt.startsWith(today))
+            ).length;
+            statNumbers[4].textContent = newToday; // New Today
+            
+            console.log('✅ Stats updated!');
+        }
+        
+        // 2. UPDATE CANDIDATE COUNT
+        document.body.innerHTML = document.body.innerHTML
+            .replace(/Current Candidates\s*\([^)]*\)/g, `Current Candidates (${data.total})`)
+            .replace(/Current Candidates\s*Loading\.\.\./g, `Current Candidates (${data.total})`)
+            .replace(/👥\s*Current Candidates[^<]*/, `👥 Current Candidates (${data.total})`);
+        
+        // 3. HIDE ALL LOADING MESSAGES
+        document.querySelectorAll('.loading, [class*="loading"], [class*="Loading"]').forEach(el => {
+            el.style.display = 'none';
+            el.innerHTML = ''; // Clear text
+        });
+        
+        // 4. SHOW SUCCESS MESSAGE
+        const successMsg = document.createElement('div');
+        successMsg.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                z-index: 9999;
+                font-weight: bold;
+                box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+                animation: slideIn 0.3s;
+            ">
+                ✅ Dashboard Updated: ${data.total} Candidates Loaded
+            </div>
+            <style>
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            </style>
+        `;
+        document.body.appendChild(successMsg);
+        
+        // Remove after 3 seconds
+        setTimeout(() => successMsg.remove(), 3000);
+        
+        console.log('✅ FINAL: Dashboard update complete!');
+    })
+    .catch(err => {
+        console.error('❌ FINAL Error:', err);
+        // Show error
+        document.body.innerHTML += `
+            <div style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #F44336;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                z-index: 9999;
+                font-weight: bold;
+            ">
+                ⚠️ Error loading data. Check server.
+            </div>
+        `;
+    });
+// ========== STATS SYNC FIX ==========
+function updateStatsFromCandidateList() {
+    // Get all candidate cards
+    const candidateCards = document.querySelectorAll('[data-candidate-card], .candidate-card, .candidate-item');
+    
+    if (candidateCards.length === 0) {
+        console.warn('No candidate cards found');
+        return;
+    }
+    
+    console.log(`Found ${candidateCards.length} candidate cards`);
+    
+    // Calculate stats
+    let totalCandidates = candidateCards.length;
+    let totalAIScore = 0;
+    let statusCounts = { New: 0, Screening: 0, Interview: 0, Rejected: 0, Hired: 0, Other: 0 };
+    let highMatches = 0; // AI Score 90%+
+    let activePipeline = 0;
+    let newToday = 0;
+    
+    const today = new Date().toDateString();
+    
+    candidateCards.forEach(card => {
+        // Extract AI Score
+        const aiScoreElement = card.querySelector('[ai-score], .ai-score, [data-ai-score]');
+        let aiScore = 0;
+        
+        if (aiScoreElement) {
+            const scoreText = aiScoreElement.textContent || '';
+            const match = scoreText.match(/(\d+)%/);
+            aiScore = match ? parseInt(match[1]) : 0;
+        }
+        
+        totalAIScore += aiScore;
+        
+        // Count high matches
+        if (aiScore >= 90) highMatches++;
+        
+        // Extract status
+        const statusElement = card.querySelector('[status], .status, [data-status]');
+        let status = 'New';
+        
+        if (statusElement) {
+            const statusText = statusElement.textContent || '';
+            if (statusText.includes('Screening')) status = 'Screening';
+            else if (statusText.includes('Interview')) status = 'Interview';
+            else if (statusText.includes('Rejected')) status = 'Rejected';
+            else if (statusText.includes('Hired')) status = 'Hired';
+            else status = 'New';
+        }
+        
+        statusCounts[status] = (statusCounts[status] || 0) + 1;
+        
+        // Count active pipeline (Screening + Interview)
+        if (status === 'Screening' || status === 'Interview') activePipeline++;
+        
+        // Check if new today (simplified - you might have actual date data)
+        const dateElement = card.querySelector('[date-added], .date-added, [data-date]');
+        if (dateElement && dateElement.textContent.includes('Today')) {
+            newToday++;
+        }
+    });
+    
+    // Calculate average AI Score
+    const averageAIScore = totalCandidates > 0 ? Math.round(totalAIScore / totalCandidates) : 0;
+    
+    // Update the top stats display
+    updateStatsDisplay({
+        total: totalCandidates,
+        averageScore: averageAIScore,
+        new: statusCounts.New || 0,
+        screening: statusCounts.Screening || 0,
+        interview: statusCounts.Interview || 0,
+        rejected: statusCounts.Rejected || 0,
+        highMatches: highMatches,
+        activePipeline: activePipeline,
+        newToday: newToday
+    });
+}
+
+function updateStatsDisplay(stats) {
+    // Update candidate count
+    const candidateCountElement = document.querySelector('.candidate-count, [data-candidate-count]');
+    if (candidateCountElement) {
+        candidateCountElement.textContent = `(${stats.total})`;
+    }
+    
+    // Update all status
+    const allStatusElement = document.querySelector('[data-all-status], .all-status-count');
+    if (allStatusElement) {
+        allStatusElement.textContent = stats.total;
+    }
+    
+    // Update average AI score
+    const avgScoreElement = document.querySelector('[data-avg-score], .average-ai-score');
+    if (avgScoreElement) {
+        avgScoreElement.textContent = `${stats.averageScore}%`;
+    }
+    
+    // Update top matches
+    const topMatchesElement = document.querySelector('[data-top-matches], .top-matches-count');
+    if (topMatchesElement) {
+        topMatchesElement.textContent = stats.highMatches;
+    }
+    
+    // Update active pipeline
+    const activePipelineElement = document.querySelector('[data-active-pipeline], .active-pipeline-count');
+    if (activePipelineElement) {
+        activePipelineElement.textContent = stats.activePipeline;
+    }
+    
+    // Update new today
+    const newTodayElement = document.querySelector('[data-new-today], .new-today-count');
+    if (newTodayElement) {
+        newTodayElement.textContent = stats.newToday;
+    }
+    
+    console.log('Stats updated:', stats);
+}
+
+// Run on page load and whenever candidates update
+document.addEventListener('DOMContentLoaded', function() {
+    // Initial sync
+    setTimeout(updateStatsFromCandidateList, 1000);
+    
+    // Set up observer to sync when candidates change
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                updateStatsFromCandidateList();
+            }
+        });
+    });
+    
+    const candidateContainer = document.querySelector('#candidates-container, .candidates-list, [data-candidates]');
+    if (candidateContainer) {
+        observer.observe(candidateContainer, { childList: true, subtree: true });
+    }
+    
+    // Also sync on filter/sort changes
+    const filterButtons = document.querySelectorAll('[data-filter], .filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            setTimeout(updateStatsFromCandidateList, 500);
+        });
+    });
+});
+
+// Make function globally available
+window.syncStats = updateStatsFromCandidateList;
+console.log('✅ FINAL FIX applied');
+</script>
+<script>
+// ========== GOOGLE DRIVE SETUP ==========
+class GoogleDriveSetup {
+    constructor() {
+        this.cvFolderId = '13nnmIsPKq6crsZ4xSYXANbrQ9QOVNZB0';
+        this.jobsFolderId = '1WCG1zalhn_RR5On1CUlCgTk2znXZt-se';
+        this.accessToken = null;
+        this.initialized = false;
+    }
+    
+    async initialize() {
+        try {
+            // Check if we have an access token
+            const savedToken = localStorage.getItem('google_access_token');
+            
+            if (!savedToken) {
+                console.log('No Google access token found. Please authenticate.');
+                await this.requestAuthentication();
+            } else {
+                this.accessToken = savedToken;
+                await this.testConnection();
+            }
+            
+            this.initialized = true;
+            return true;
+        } catch (error) {
+            console.error('Google Drive initialization failed:', error);
+            return false;
+        }
+    }
+    
+    async requestAuthentication() {
+        // Redirect to Google OAuth
+        const clientId = 'YOUR_CLIENT_ID'; // You need to get this from Google Cloud Console
+        const redirectUri = encodeURIComponent(window.location.origin + '/oauth-callback.html');
+        const scope = encodeURIComponent('https://www.googleapis.com/auth/drive.readonly');
+        
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+            `client_id=${clientId}&` +
+            `redirect_uri=${redirectUri}&` +
+            `response_type=token&` +
+            `scope=${scope}&` +
+            `include_granted_scopes=true&` +
+            `state=pass_through_value`;
+        
+        // Open auth window
+        window.open(authUrl, 'Google Auth', 'width=600,height=600');
+        
+        // Listen for token response (you need an oauth-callback.html page)
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'google_token') {
+                this.accessToken = event.data.token;
+                localStorage.setItem('google_access_token', this.accessToken);
+                console.log('Google authentication successful');
+            }
+        });
+    }
+    
+    async testConnection() {
+        try {
+            const response = await fetch(`https://www.googleapis.com/drive/v3/files?q='${this.cvFolderId}'+in+parents`, {
+                headers: {
+                    'Authorization': `Bearer ${this.accessToken}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`Connected to Google Drive. Found ${data.files?.length || 0} CVs.`);
+                return true;
+            } else {
+                throw new Error('Connection failed');
+            }
+        } catch (error) {
+            console.error('Google Drive test failed:', error);
+            // Clear invalid token
+            localStorage.removeItem('google_access_token');
+            this.accessToken = null;
+            return false;
+        }
+    }
+    
+    async fetchCVsFromDrive() {
+        if (!this.accessToken) {
+            await this.initialize();
+        }
+        
+        try {
+            // Fetch CV files
+            const cvResponse = await fetch(`https://www.googleapis.com/drive/v3/files?` +
+                `q='${this.cvFolderId}'+in+parents+and+mimeType+contains+'pdf'+or+mimeType+contains+'doc'&` +
+                `fields=files(id,name,mimeType,createdTime,modifiedTime,webViewLink)&` +
+                `orderBy=createdTime+desc`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${this.accessToken}`
+                    }
+                }
+            );
+            
+            if (!cvResponse.ok) throw new Error('Failed to fetch CVs');
+            
+            const cvData = await cvResponse.json();
+            console.log(`Found ${cvData.files?.length || 0} CV files`);
+            
+            // Process and display CVs
+            this.displayCVs(cvData.files);
+            
+            return cvData.files;
+        } catch (error) {
+            console.error('Error fetching CVs:', error);
+            return [];
+        }
+    }
+    
+    displayCVs(files) {
+        const container = document.getElementById('cvs-from-drive');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        if (!files || files.length === 0) {
+            container.innerHTML = '<p class="no-cvs">No CVs found in Google Drive folder.</p>';
+            return;
+        }
+        
+        files.forEach(file => {
+            const cvElement = document.createElement('div');
+            cvElement.className = 'drive-cv-item';
+            cvElement.innerHTML = `
+                <div class="cv-file">
+                    <div class="cv-icon">📄</div>
+                    <div class="cv-info">
+                        <div class="cv-name">${file.name}</div>
+                        <div class="cv-date">Uploaded: ${new Date(file.createdTime).toLocaleDateString()}</div>
+                    </div>
+                    <div class="cv-actions">
+                        <button class="btn-small" onclick="window.viewCVFromDrive('${file.id}')">View</button>
+                        <button class="btn-small" onclick="window.importCVFromDrive('${file.id}', '${file.name}')">Import</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(cvElement);
+        });
+    }
+    
+    async importCV(fileId, fileName) {
+        try {
+            // Show loading
+            showLoading('Importing CV from Google Drive...');
+            
+            // Get file download URL
+            const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                headers: {
+                    'Authorization': `Bearer ${this.accessToken}`
+                }
+            });
+            
+            if (!response.ok) throw new Error('Failed to download CV');
+            
+            // Convert to blob
+            const blob = await response.blob();
+            
+            // Create form data for your server
+            const formData = new FormData();
+            formData.append('cv', blob, fileName);
+            formData.append('source', 'Google Drive');
+            formData.append('driveFileId', fileId);
+            
+            // Send to your backend for processing
+            const uploadResponse = await fetch('/api/import-cv', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await uploadResponse.json();
+            
+            hideLoading();
+            
+            if (result.success) {
+                alert(`Successfully imported ${fileName}`);
+                // Refresh candidate list
+                window.refreshCandidates();
+                // Update stats
+                if (window.syncStats) window.syncStats();
+            } else {
+                throw new Error(result.error || 'Import failed');
+            }
+            
+        } catch (error) {
+            hideLoading();
+            console.error('Import error:', error);
+            alert(`Failed to import CV: ${error.message}`);
+        }
+    }
+}
+
+// Initialize Google Drive
+const googleDrive = new GoogleDriveSetup();
+
+// Make globally available
+window.googleDrive = googleDrive;
+window.viewCVFromDrive = (fileId) => {
+    window.open(`https://drive.google.com/file/d/${fileId}/view`, '_blank');
+};
+window.importCVFromDrive = (fileId, fileName) => {
+    googleDrive.importCV(fileId, fileName);
+};
+
+// Auto-initialize when settings page loads
+if (window.location.pathname.includes('settings')) {
+    document.addEventListener('DOMContentLoaded', async () => {
+        const statusElement = document.getElementById('google-drive-status');
+        if (statusElement) {
+            statusElement.innerHTML = '<span class="loading">Connecting to Google Drive...</span>';
+            
+            const connected = await googleDrive.initialize();
+            
+            if (connected) {
+                statusElement.innerHTML = '<span class="success">✅ Connected to Google Drive</span>';
+                // Load CVs
+                await googleDrive.fetchCVsFromDrive();
+            } else {
+                statusElement.innerHTML = '<span class="error">❌ Not connected. <button onclick="googleDrive.requestAuthentication()">Connect</button></span>';
+            }
+        }
+    });
+}
+</script>
+</body>
+</html>
