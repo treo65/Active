@@ -1,0 +1,17 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head><title>CV Upload Test</title></head>
+    <body>
+        <h1>Test CV Upload</h1>
+        <form action="/api/upload-cv" method="POST" enctype="multipart/form-data">
+            <input type="file" name="cv" accept=".pdf,.doc,.docx,.txt" required><br><br>
+            <input type="text" name="name" placeholder="Candidate Name" required><br><br>
+            <input type="email" name="email" placeholder="Email"><br><br>
+            <input type="text" name="phone" placeholder="Phone"><br><br>
+            <input type="text" name="position" placeholder="Position"><br><br>
+            <button type="submit">Upload CV</button>
+        </form>
+        <p><a href="/dashboard-enhanced.html">Back to Dashboard</a></p>
+    </body>
+    </html>

@@ -1,0 +1,4 @@
+name,email,phone,position,skills,status,source
+Alex Johnson,alex@example.com,+441111111111,AI Engineer,Python|TensorFlow,New,Google Drive
+Sarah Chen,sarah@example.com,+442222222222,Data Scientist,R|SQL,Interview,Google Drive
+Mike Wilson,mike@example.com,+443333333333,ML Engineer,AWS|Docker,Screening,Google Drive

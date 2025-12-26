@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Talent CRM - Live Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        :root {
+            --primary: #3B82F6;
+            --secondary: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+            --sidebar-width: 250px;
+            --sidebar-collapsed: 70px;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: var(--light);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #E5E7EB;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-weight: bold;
+            color: var(--dark);
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.1rem;
+        }
+
+        .toggle-sidebar {
+            background: none;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            padding: 5px;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+        .nav {
+            list-style: none;
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav li {
+            padding: 12px 20px;
+            color: #4B5563;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav li:hover {
+            background: #F3F4F6;
+            color: var(--primary);
+        }
+
+        .nav li.active {
+            background: #EFF6FF;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .nav li i {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .sidebar.collapsed .nav li span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav li i {
+            margin-right: 0;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s;
+            min-height: 100vh;
+        }
+
+        .main.sidebar-collapsed {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #4B5563;
+            cursor: pointer;
+        }
+
+        #page-title {
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #6B7280;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 10px 0;
+        }
+
+        /* Dashboard Menu */
+        .dashboard-menu {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #E5E7EB;
+            flex-wrap: wrap;
+        }
+
+        .dashboard-menu-item {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .dashboard-menu-item:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .dashboard-menu-item.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .section-title {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Workflow Status */
+        .workflow-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .workflow-step {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        /* Applicant List */
+        .applicant-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .applicant-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s;
+        }
+
+        .applicant-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+        }
+
+        .applicant-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .applicant-info {
+            flex: 1;
+        }
+
+        .applicant-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .applicant-role {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        .applicant-score {
+            font-weight: bold;
+            font-size: 1.3rem;
+            padding: 10px 15px;
+            border-radius: 8px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .score-high {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .score-medium {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .score-low {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6B7280;
+        }
+
+        .btn-success {
+            background: var(--secondary);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Message Box */
+        #messageBox {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #D1FAE5;
+            color: #065F46;
+            border-left: 4px solid #10B981;
+        }
+
+        .alert-info {
+            background: #DBEAFE;
+            color: #1E40AF;
+            border-left: 4px solid #3B82F6;
+        }
+
+        .alert-warning {
+            background: #FEF3C7;
+            color: #92400E;
+            border-left: 4px solid #F59E0B;
+        }
+
+        .alert-danger {
+            background: #FEE2E2;
+            color: #991B1B;
+            border-left: 4px solid #EF4444;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .workflow-status {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #E5E7EB;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #6B7280;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E5E7EB;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-error {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Message Box -->
+    <div id="messageBox"></div>
+
+    <!-- Mobile overlay for sidebar -->
+    <div class="overlay" id="mobileOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 99;"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>AI Talent CRM</span>
+            <button class="toggle-sidebar" id="toggleSidebar">
+                <i data-feather="chevron-left"></i>
+            </button>
+        </div>
+        <ul class="nav"> 
+            <li onclick="showPage('dashboard', this)" class="active">
+                <i data-feather="bar-chart-2"></i><span>Dashboard</span>
+            </li> 
+            <li onclick="showPage('applicants', this)">
+                <i data-feather="users"></i><span>Applicants</span>
+            </li>
+            <li onclick="showPage('workflow', this)">
+                <i data-feather="git-merge"></i><span>n8n Workflow</span>
+            </li>
+            <li onclick="showPage('jobs', this)">
+                <i data-feather="briefcase"></i><span>Live Jobs</span>
+            </li> 
+            <li onclick="showPage('leads', this)">
+                <i data-feather="target"></i><span>Company Leads</span>
+            </li>
+            <li onclick="showPage('analytics', this)">
+                <i data-feather="pie-chart"></i><span>Analytics</span>
+            </li> 
+            <li onclick="showPage('integrations', this)">
+                <i data-feather="tool"></i><span>Integrations</span>
+            </li>
+            <li onclick="showPage('email-templates', this)">
+                <i data-feather="mail"></i><span>Email Templates</span>
+            </li>
+            <li onclick="showPage('automations', this)">
+                <i data-feather="zap"></i><span>Automations</span>
+            </li>
+            <li onclick="showPage('settings', this)">
+                <i data-feather="settings"></i><span>Settings</span>
+            </li> 
+        </ul>
+        
+        <!-- Platform Connectors -->
+        <div style="margin-top: auto; padding: 20px; border-top: 1px solid #E5E7EB;">
+            <h4 style="margin-bottom: 10px; font-size: 0.9rem;">Platform Connectors</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn" onclick="connectBrevo()" style="background-color: #1E40AF; font-size: 0.9rem;">
+                    <i data-feather="link"></i> Brevo CRM
+                </button>
+                <button class="btn" onclick="connectLinkedIn()" style="background-color: #0E7490; font-size: 0.9rem;">
+                    <i data-feather="link"></i> LinkedIn
+                </button>
+                <button class="btn" onclick="connectFirebase()" style="background-color: #F97316; font-size: 0.9rem;">
+                    <i data-feather="link"></i> Firebase
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main" id="main">
+        <!-- Header -->
+        <div class="header">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i data-feather="menu"></i>
+            </button>
+            <h1 id="page-title">Dashboard</h1>
+            <div id="auth-status" style="display: flex; align-items: center; gap: 10px;">
+                <div id="workflow-status" class="status-badge status-success">n8n Active</div>
+                <div style="font-size: 0.8em; color: #6B7280;">
+                    <i data-feather="user" style="width:14px; height:14px;"></i> 
+                    <span id="user-id-display">Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content" id="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <!-- Dashboard Menu -->
+                <div class="dashboard-menu">
+                    <div class="dashboard-menu-item active" onclick="showDashboardSection('overview', this)">
+                        <i data-feather="activity"></i> Overview
+                    </div>
+                    <div class="dashboard-menu-item" onclick="showDashboardSection('quick-actions', this)">
+                        <i data-feather="zap"></i> Quick Actions
+                    </div>
+                    <div class="dashboard-menu-item" onclick="showDashboardSection('recent-activity', this)">
+                        <i data-feather="clock"></i> Recent Activity
+                    </div>
+                    <div class="dashboard-menu-item" onclick="showDashboardSection('performance', this)">
+                        <i data-feather="trending-up"></i> Performance
+                    </div>
+                </div>
+                
+                <!-- Dashboard Overview Section -->
+                <div id="dashboard-overview" class="dashboard-section active">
+                    <!-- Stats cards -->
+                    <section class="cards">
+                        <div class="card">
+                            <h3>Total Candidates</h3>
+                            <p class="value" id="stat-candidates">1,248</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>AI Scored Today</h3>
+                            <p class="value" id="stat-ai-scored">42</p>
+                            <div style="font-size: 0.9rem; color: #10B981;">
+                                <i data-feather="trending-up"></i> +12% from yesterday
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>High Match Rate</h3>
+                            <p class="value" id="stat-match-rate">68%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 68%"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>Fast-Tracked</h3>
+                            <p class="value" id="stat-fast-tracked">29</p>
+                            <div style="font-size: 0.9rem; color: #EF4444;">
+                                <i data-feather="alert-circle"></i> 7 need review
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Live Workflow Status -->
+                    <section class="section">
+                        <h2 class="section-title">
+                            <i data-feather="git-merge"></i> Live n8n Workflow Status
+                        </h2>
+                        <div class="workflow-status">
+                            <div class="workflow-step">
+                                <div class="step-icon" style="background: #3B82F6;">1</div>
+                                <div class="step-content">
+                                    <div class="step-title">Trigger: New Applicant</div>
+                                    <div class="step-description">Listening for webhook events</div>
+                                    <div class="status-badge status-success">Active</div>
+                                </div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-icon" style="background: #10B981;">2</div>
+                                <div class="step-content">
+                                    <div class="step-title">AI Analysis</div>
+                                    <div class="step-description">OpenAI GPT-4 processing</div>
+                                    <div class="status-badge status-success">Running</div>
+                                </div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-icon" style="background: #8B5CF6;">3</div>
+                                <div class="step-content">
+                                    <div class="step-title">Firebase Storage</div>
+                                    <div class="step-description">Storing applicant data</div>
+                                    <div class="status-badge status-success">Connected</div>
+                                </div>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-icon" style="background: #F59E0B;">4</div>
+                                <div class="step-content">
+                                    <div class="step-title">Notifications</div>
+                                    <div class="step-description">Slack/Email alerts</div>
+                                    <div class="status-badge status-success">Ready</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recent AI-Scored Applicants -->
+                    <section class="section">
+                        <h2 class="section-title">
+                            <i data-feather="star"></i> Recent High-Score Applicants
+                        </h2>
+                        <div class="applicant-list" id="recent-applicants">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Quick Actions Section -->
+                <div id="dashboard-quick-actions" class="dashboard-section" style="display: none;">
+                    <section class="section">
+                        <h2 class="section-title">
+                            <i data-feather="zap"></i> Quick Actions
+                        </h2>
+                        <div class="cards">
+                            <div class="card" onclick="searchCandidates()" style="cursor: pointer;">
+                                <h3>Find Candidates</h3>
+                                <p style="color: #6B7280; margin: 10px 0;">Search database for matching criteria</p>
+                                <button class="btn">Search Candidates</button>
+                            </div>
+                            <div class="card" onclick="postJob()" style="cursor: pointer;">
+                                <h3>Post a Job</h3>
+                                <p style="color: #6B7280; margin: 10px 0;">Create and publish new job listing</p>
+                                <button class="btn btn-success">Post Job</button>
+                            </div>
+                            <div class="card" onclick="sendCampaign()" style="cursor: pointer;">
+                                <h3>Send Campaign</h3>
+                                <p style="color: #6B7280; margin: 10px 0;">Email campaign to selected candidates</p>
+                                <button class="btn btn-warning">Create Campaign</button>
+                            </div>
+                            <div class="card" onclick="generateReport()" style="cursor: pointer;">
+                                <h3>Generate Report</h3>
+                                <p style="color: #6B7280; margin: 10px 0;">Custom recruitment metrics report</p>
+                                <button class="btn btn-secondary">Create Report</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div id="dashboard-recent-activity" class="dashboard-section" style="display: none;">
+                    <section class="section">
+                        <h2 class="section-title">
+                            <i data-feather="clock"></i> Recent Activity
+                        </h2>
+                        <div id="activity-feed">
+                            <!-- Activity items will be added here -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Performance Section -->
+                <div id="dashboard-performance" class="dashboard-section" style="display: none;">
+                    <section class="section">
+                        <h2 class="section-title">
+                            <i data-feather="trending-up"></i> Performance Metrics
+                        </h2>
+                        <div class="cards">
+                            <div class="card">
+                                <h3>AI Accuracy</h3>
+                                <p class="value">92%</p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <h3>Time Saved</h3>
+                                <p class="value">156 hrs</p>
+                                <div style="font-size: 0.9rem; color: #10B981;">
+                                    <i data-feather="check-circle"></i> This month
+                                </div>
+                            </div>
+                            <div class="card">
+                                <h3>Cost Reduction</h3>
+                                <p class="value">$12.8k</p>
+                                <div style="font-size: 0.9rem; color: #EF4444;">
+                                    <i data-feather="dollar-sign"></i> 34% savings
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Applicants Page -->
+            <div id="applicants" class="page" style="display: none;">
+                <section class="section">
+                    <h2 class="section-title">
+                        <i data-feather="users"></i> AI-Scored Applicants
+                    </h2>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn" onclick="loadApplicants('all')">
+                            <i data-feather="users"></i> All Applicants
+                        </button>
+                        <button class="btn btn-success" onclick="loadApplicants('fast-track')">
+                            <i data-feather="zap"></i> Fast Track (=80)
+                        </button>
+                        <button class="btn btn-warning" onclick="loadApplicants('review')">
+                            <i data-feather="eye"></i> Manual Review
+                        </button>
+                        <button class="btn" onclick="testAIWorkflow()" style="background-color: #8B5CF6;">
+                            <i data-feather="play"></i> Test AI Workflow
+                        </button>
+                    </div>
+
+                    <div class="applicant-list" id="applicants-list">
+                        <!-- Applicants will be loaded here -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- n8n Workflow Page -->
+            <div id="workflow" class="page" style="display: none;">
+                <section class="section">
+                    <h2 class="section-title">
+                        <i data-feather="git-merge"></i> n8n Workflow Configuration
+                    </h2>
+                    
+                    <!-- Workflow Visualizer -->
+                    <div style="background: #F8FAFC; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                            <h3 style="color: #1F2937;">Workflow Visualization</h3>
+                            <button class="btn" onclick="exportWorkflow()">
+                                <i data-feather="download"></i> Export JSON
+                            </button>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: relative;">
+                            <!-- Workflow Steps -->
+                            <div class="workflow-step" style="grid-column: 1;">
+                                <div class="step-icon" style="background: #3B82F6;">
+                                    <i data-feather="radio"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-title">Webhook Trigger</div>
+                                    <div class="step-description">/api/webhook/new-applicant</div>
+                                </div>
+                            </div>
+                            
+                            <div style="grid-column: 2; display: flex; align-items: center; justify-content: center;">
+                                <i data-feather="arrow-right" style="color: #9CA3AF;"></i>
+                            </div>
+                            
+                            <div class="workflow-step" style="grid-column: 3;">
+                                <div class="step-icon" style="background: #10B981;">
+                                    <i data-feather="cpu"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-title">AI Analysis</div>
+                                    <div class="step-description">GPT-4 Resume Scoring</div>
+                                </div>
+                            </div>
+                            
+                            <div style="grid-column: 4; display: flex; align-items: center; justify-content: center;">
+                                <i data-feather="arrow-right" style="color: #9CA3AF;"></i>
+                            </div>
+                            
+                            <div class="workflow-step" style="grid-column: 5;">
+                                <div class="step-icon" style="background: #8B5CF6;">
+                                    <i data-feather="database"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-title">Firebase Store</div>
+                                    <div class="step-description">/applicants/{id}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Webhook Configuration -->
+                    <div class="section">
+                        <h3 style="margin-bottom: 20px;">
+                            <i data-feather="link"></i> Webhook Endpoint
+                        </h3>
+                        <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <code style="font-family: monospace; color: #1F2937;">
+                                POST https://your-domain.com/api/webhook/new-applicant
+                            </code>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Webhook Secret</label>
+                            <input type="text" class="form-control" id="webhook-secret" value="sk_live_1234567890abcdef" readonly>
+                            <button class="btn btn-secondary" onclick="copyToClipboard('webhook-secret')" style="margin-top: 10px;">
+                                <i data-feather="copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI Configuration -->
+                    <div class="section">
+                        <h3 style="margin-bottom: 20px;">
+                            <i data-feather="cpu"></i> AI Configuration
+                        </h3>
+                        <div class="form-group">
+                            <label class="form-label">OpenAI API Key</label>
+                            <input type="password" class="form-control" id="openai-key" value="sk-proj-...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Scoring Threshold</label>
+                            <input type="range" class="form-control" id="score-threshold" min="0" max="100" value="80" 
+                                   oninput="document.getElementById('threshold-value').textContent = this.value + '%'">
+                            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                                <span>0%</span>
+                                <span id="threshold-value">80%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="saveAIConfig()">
+                            <i data-feather="save"></i> Save AI Settings
+                        </button>
+                    </div>
+
+                    <!-- Test Workflow -->
+                    <div class="section">
+                        <h3 style="margin-bottom: 20px;">
+                            <i data-feather="play-circle"></i> Test Workflow
+                        </h3>
+                        <button class="btn" onclick="triggerTestApplicant()" style="margin-bottom: 10px;">
+                            <i data-feather="user-plus"></i> Simulate New Applicant
+                        </button>
+                        <button class="btn btn-warning" onclick="viewWorkflowLogs()" style="margin-left: 10px;">
+                            <i data-feather="file-text"></i> View Logs
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Other pages (Jobs, Leads, Analytics, etc.) would be similar -->
+            <!-- For brevity, I'm focusing on the core workflow functionality -->
+
+        </div>
+    </div>
+
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Global variables
+        let applicants = [];
+        let currentPage = 'dashboard';
+        let sidebarCollapsed = false;
+
+        // Sample applicant data (in production, this would come from Firebase)
+        const sampleApplicants = [
+            {
+                id: 1,
+                name: "Sarah Johnson",
+                email: "sarah@example.com",
+                role: "Senior Frontend Developer",
+                score: 92,
+                status: "fast-track",
+                skills: ["React", "TypeScript", "Node.js", "AWS"],
+                experience: "8 years",
+                source: "LinkedIn",
+                date: "2024-01-15"
+            },
+            {
+                id: 2,
+                name: "Michael Chen",
+                email: "michael@example.com",
+                role: "DevOps Engineer",
+                score: 85,
+                status: "fast-track",
+                skills: ["Kubernetes", "Docker", "AWS", "Terraform"],
+                experience: "6 years",
+                source: "Brevo",
+                date: "2024-01-14"
+            },
+            {
+                id: 3,
+                name: "Emma Wilson",
+                email: "emma@example.com",
+                role: "UX Designer",
+                score: 78,
+                status: "review",
+                skills: ["Figma", "Adobe XD", "User Research", "Prototyping"],
+                experience: "4 years",
+                source: "Facebook Jobs",
+                date: "2024-01-14"
+            },
+            {
+                id: 4,
+                name: "David Brown",
+                email: "david@example.com",
+                role: "Backend Developer",
+                score: 88,
+                status: "fast-track",
+                skills: ["Python", "Django", "PostgreSQL", "Redis"],
+                experience: "7 years",
+                source: "Apollo",
+                date: "2024-01-13"
+            },
+            {
+                id: 5,
+                name: "Lisa Martinez",
+                email: "lisa@example.com",
+                role: "Product Manager",
+                score: 65,
+                status: "review",
+                skills: ["Agile", "Scrum", "Product Strategy", "Analytics"],
+                experience: "5 years",
+                source: "Direct Application",
+                date: "2024-01-13"
+            }
+        ];
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            loadRecentApplicants();
+            setupEventListeners();
+            simulateLiveData();
+        });
+
+        function initializeDashboard() {
+            // Set initial stats
+            updateDashboardStats();
+            
+            // Show welcome message
+            showMessage('Welcome to AI Talent CRM! n8n workflow is active and monitoring for new applicants.', 'success');
+            
+            // Check n8n connection
+            checkN8NConnection();
+        }
+
+        function setupEventListeners() {
+            // Toggle sidebar
+            document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
+            document.getElementById('mobileMenuToggle').addEventListener('click', toggleMobileMenu);
+            document.getElementById('mobileOverlay').addEventListener('click', toggleMobileMenu);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main');
+            
+            sidebar.classList.toggle('collapsed');
+            main.classList.toggle('sidebar-collapsed');
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            // Update chevron icon
+            const icon = document.querySelector('#toggleSidebar i');
+            icon.setAttribute('data-feather', sidebarCollapsed ? 'chevron-right' : 'chevron-left');
+            feather.replace();
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+        }
+
+        function showPage(pageId, element) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+                page.style.display = 'none';
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav li').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            const page = document.getElementById(pageId);
+            if (page) {
+                page.classList.add('active');
+                page.style.display = 'block';
+                
+                // Update page title
+                document.getElementById('page-title').textContent = 
+                    element ? element.querySelector('span').textContent : 
+                    pageId.charAt(0).toUpperCase() + pageId.slice(1);
+                
+                // Set active nav item
+                if (element) {
+                    element.classList.add('active');
+                }
+                
+                // Load page-specific data
+                loadPageData(pageId);
+            }
+            
+            currentPage = pageId;
+            
+            // Close mobile menu if open
+            if (window.innerWidth <= 768) {
+                toggleMobileMenu();
+            }
+        }
+
+        function showDashboardSection(sectionId, element) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.dashboard-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            const section = document.getElementById('dashboard-' + sectionId);
+            if (section) {
+                section.classList.add('active');
+                section.style.display = 'block';
+                element.classList.add('active');
+            }
+        }
+
+        function loadPageData(pageId) {
+            switch(pageId) {
+                case 'applicants':
+                    loadApplicants('all');
+                    break;
+                case 'workflow':
+                    loadWorkflowStatus();
+                    break;
+                case 'dashboard':
+                    updateDashboardStats();
+                    loadRecentApplicants();
+                    break;
+            }
+        }
+
+        function loadRecentApplicants() {
+            const container = document.getElementById('recent-applicants');
+            if (!container) return;
+            
+            // Sort by score (highest first) and take top 5
+            const recent = [...sampleApplicants]
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+            
+            container.innerHTML = recent.map(applicant => `
+                <div class="applicant-card">
+                    <div class="applicant-avatar" style="background: ${getColorFromScore(applicant.score)};">
+                        ${applicant.name.charAt(0)}
+                    </div>
+                    <div class="applicant-info">
+                        <div class="applicant-name">${applicant.name}</div>
+                        <div class="applicant-role">${applicant.role}</div>
+                        <div style="font-size: 0.8rem; color: #6B7280; margin-top: 5px;">
+                            <i data-feather="${getSourceIcon(applicant.source)}" style="width: 12px; height: 12px;"></i>
+                            ${applicant.source} • ${applicant.experience} experience
+                        </div>
+                    </div>
+                    <div class="applicant-score ${getScoreClass(applicant.score)}">
+                        ${applicant.score}
+                    </div>
+                </div>
+            `).join('');
+            
+            feather.replace();
+        }
+
+        function loadApplicants(filter) {
+            const container = document.getElementById('applicants-list');
+            if (!container) return;
+            
+            let filtered = sampleApplicants;
+            
+            if (filter === 'fast-track') {
+                filtered = sampleApplicants.filter(a => a.score >= 80);
+            } else if (filter === 'review') {
+                filtered = sampleApplicants.filter(a => a.score < 80);
+            }
+            
+            container.innerHTML = filtered.map(applicant => `
+                <div class="applicant-card">
+                    <div class="applicant-avatar" style="background: ${getColorFromScore(applicant.score)};">
+                        ${applicant.name.charAt(0)}
+                    </div>
+                    <div class="applicant-info">
+                        <div class="applicant-name">${applicant.name}</div>
+                        <div class="applicant-role">${applicant.role}</div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            ${applicant.skills.slice(0, 3).map(skill => `
+                                <span style="background: #E5E7EB; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
+                                    ${skill}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                        <div class="applicant-score ${getScoreClass(applicant.score)}">
+                            ${applicant.score}
+                        </div>
+                        <div class="status-badge ${applicant.status === 'fast-track' ? 'status-success' : 'status-warning'}">
+                            ${applicant.status === 'fast-track' ? 'Fast Track' : 'Review'}
+                        </div>
+                        <button class="btn" onclick="viewApplicantDetails(${applicant.id})" style="padding: 5px 10px; font-size: 0.8rem;">
+                            <i data-feather="eye"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            feather.replace();
+            
+            // Update stats
+            updateDashboardStats();
+        }
+
+        function getScoreClass(score) {
+            if (score >= 80) return 'score-high';
+            if (score >= 60) return 'score-medium';
+            return 'score-low';
+        }
+
+        function getColorFromScore(score) {
+            if (score >= 80) return '#10B981';
+            if (score >= 60) return '#F59E0B';
+            return '#EF4444';
+        }
+
+        function getSourceIcon(source) {
+            const icons = {
+                'LinkedIn': 'linkedin',
+                'Brevo': 'mail',
+                'Facebook Jobs': 'facebook',
+                'Apollo': 'target',
+                'Direct Application': 'user'
+            };
+            return icons[source] || 'link';
+        }
+
+        function updateDashboardStats() {
+            const highScoreCount = sampleApplicants.filter(a => a.score >= 80).length;
+            const totalScore = sampleApplicants.reduce((sum, a) => sum + a.score, 0);
+            const avgScore = Math.round(totalScore / sampleApplicants.length);
+            
+            document.getElementById('stat-candidates').textContent = sampleApplicants.length;
+            document.getElementById('stat-ai-scored').textContent = sampleApplicants.length;
+            document.getElementById('stat-match-rate').textContent = Math.round((highScoreCount / sampleApplicants.length) * 100) + '%';
+            document.getElementById('stat-fast-tracked').textContent = highScoreCount;
+        }
+
+        function testAIWorkflow() {
+            showMessage('Simulating n8n workflow with test applicant...', 'info');
+            
+            // Simulate API call to n8n webhook
+            setTimeout(() => {
+                const testApplicant = {
+                    id: Date.now(),
+                    name: "Test Candidate",
+                    email: "test@example.com",
+                    role: "AI Engineer",
+                    score: Math.floor(Math.random() * 40) + 60, // Random score 60-100
+                    skills: ["AI", "Machine Learning", "Python", "TensorFlow"],
+                    source: "Test"
+                };
+                
+                sampleApplicants.unshift(testApplicant);
+                loadApplicants('all');
+                loadRecentApplicants();
+                updateDashboardStats();
+                
+                showMessage(`AI workflow completed! Score: ${testApplicant.score}/100. ${testApplicant.score >= 80 ? 'Fast-tracked!' : 'Sent for review.'}`, 
+                           testApplicant.score >= 80 ? 'success' : 'warning');
+                
+                // Simulate notification for high scores
+                if (testApplicant.score >= 80) {
+                    simulateNotification(testApplicant);
+                }
+            }, 2000);
+        }
+
+        function simulateNotification(applicant) {
+            // In production, this would call Slack/Email API
+            const notification = {
+                type: 'high-score',
+                applicant: applicant.name,
+                score: applicant.score,
+                role: applicant.role,
+                time: new Date().toLocaleTimeString()
+            };
+            
+            console.log('Notification sent:', notification);
+            
+            // Add to activity feed
+            addActivityItem({
+                type: 'zap',
+                title: 'High-Score Alert',
+                description: `${applicant.name} scored ${applicant.score}/100`,
+                time: 'Just now'
+            });
+        }
+
+        function triggerTestApplicant() {
+            // Simulate webhook trigger
+            const testData = {
+                name: "Alex Turner",
+                email: "alex.turner@example.com",
+                resume: "Senior Software Engineer with 10+ years experience in React, Node.js, and cloud technologies.",
+                source: "LinkedIn",
+                timestamp: new Date().toISOString()
+            };
+            
+            showMessage('Sending test applicant to n8n workflow...', 'info');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 30) + 70; // 70-100
+                
+                showMessage(`AI analysis complete! Score: ${score}/100. ${score >= 80 ? 'Fast-track activated.' : 'Manual review required.'}`, 
+                           score >= 80 ? 'success' : 'warning');
+                
+                // Add to activity log
+                addActivityItem({
+                    type: 'user-plus',
+                    title: 'New Applicant Processed',
+                    description: `Alex Turner scored ${score}/100 via LinkedIn`,
+                    time: 'Just now'
+                });
+            }, 3000);
+        }
+
+        function addActivityItem(activity) {
+            const feed = document.getElementById('activity-feed');
+            if (!feed) return;
+            
+            const item = document.createElement('div');
+            item.className = 'applicant-card';
+            item.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center; color: #3B82F6;">
+                        <i data-feather="${activity.type}"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600;">${activity.title}</div>
+                        <div style="color: #6B7280; font-size: 0.9rem;">${activity.description}</div>
+                    </div>
+                    <div style="color: #9CA3AF; font-size: 0.8rem;">${activity.time}</div>
+                </div>
+            `;
+            
+            feed.insertBefore(item, feed.firstChild);
+            feather.replace();
+        }
+
+        function checkN8NConnection() {
+            // Simulate n8n health check
+            setTimeout(() => {
+                const statusBadge = document.querySelector('#workflow-status');
+                if (statusBadge) {
+                    statusBadge.className = 'status-badge status-success';
+                    statusBadge.textContent = 'n8n Active';
+                }
+                
+                // Simulate periodic updates
+                setInterval(() => {
+                    // Update stats randomly
+                    const currentCandidates = parseInt(document.getElementById('stat-candidates').textContent);
+                    document.getElementById('stat-candidates').textContent = currentCandidates + Math.floor(Math.random() * 3);
+                    
+                    // Simulate new applicants occasionally
+                    if (Math.random() > 0.7) {
+                        simulateLiveApplicant();
+                    }
+                }, 10000);
+            }, 1000);
+        }
+
+        function simulateLiveApplicant() {
+            const names = ["James Wilson", "Maria Garcia", "Robert Lee", "Patricia Taylor", "William Clark"];
+            const roles = ["Full Stack Developer", "Data Scientist", "Mobile Developer", "QA Engineer", "System Architect"];
+            const sources = ["LinkedIn", "Brevo", "Facebook Jobs", "Apollo", "Direct"];
+            
+            const name = names[Math.floor(Math.random() * names.length)];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            const source = sources[Math.floor(Math.random() * sources.length)];
+            const score = Math.floor(Math.random() * 40) + 60;
+            
+            const newApplicant = {
+                id: Date.now(),
+                name,
+                email: name.toLowerCase().replace(' ', '.') + "@example.com",
+                role,
+                score,
+                status: score >= 80 ? 'fast-track' : 'review',
+                skills: ["JavaScript", "React", "Node.js", "AWS"].sort(() => Math.random() - 0.5).slice(0, 3),
+                experience: `${Math.floor(Math.random() * 10) + 2} years`,
+                source,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            sampleApplicants.unshift(newApplicant);
+            
+            if (currentPage === 'dashboard' || currentPage === 'applicants') {
+                loadRecentApplicants();
+                if (currentPage === 'applicants') {
+                    loadApplicants('all');
+                }
+                updateDashboardStats();
+            }
+            
+            // Show notification for high scores
+            if (score >= 80) {
+                showMessage(`?? New high-score applicant: ${name} (${score}/100)`, 'success');
+            }
+        }
+
+        function simulateLiveData() {
+            // Update Google Analytics-like data periodically
+            setInterval(() => {
+                const traffic = document.getElementById('ga-visitor-traffic');
+                if (traffic) {
+                    const current = parseInt(traffic.textContent) || 1250;
+                    traffic.textContent = (current + Math.floor(Math.random() * 10)).toLocaleString();
+                }
+            }, 5000);
+        }
+
+        function showMessage(text, type = 'info') {
+            const messageBox = document.getElementById('messageBox');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i data-feather="${type === 'success' ? 'check-circle' : type === 'warning' ? 'alert-triangle' : 'info'}"></i>
+                <span>${text}</span>
+            `;
+            
+            messageBox.appendChild(alert);
+            feather.replace();
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                alert.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            navigator.clipboard.writeText(element.value).then(() => {
+                showMessage('Copied to clipboard!', 'success');
+            });
+        }
+
+        function viewApplicantDetails(id) {
+            const applicant = sampleApplicants.find(a => a.id === id);
+            if (applicant) {
+                alert(`
+                    Applicant Details:
+                    
+                    Name: ${applicant.name}
+                    Email: ${applicant.email}
+                    Role: ${applicant.role}
+                    AI Score: ${applicant.score}/100
+                    Status: ${applicant.status === 'fast-track' ? 'Fast Track' : 'Manual Review'}
+                    Experience: ${applicant.experience}
+                    Source: ${applicant.source}
+                    Skills: ${applicant.skills.join(', ')}
+                    
+                    ${applicant.score >= 80 ? 
+                        '? This applicant meets the fast-track criteria!' : 
+                        '?? This applicant requires manual review.'}
+                `);
+            }
+        }
+
+        // Quick Actions Functions
+        function searchCandidates() {
+            showMessage('Opening candidate search...', 'info');
+            // In production, this would open a search modal or page
+        }
+
+        function postJob() {
+            const jobTitle = prompt('Enter job title:');
+            if (jobTitle) {
+                showMessage(`Job "${jobTitle}" posted successfully to multiple platforms!`, 'success');
+            }
+        }
+
+        function sendCampaign() {
+            showMessage('Opening email campaign creator...', 'info');
+        }
+
+        function generateReport() {
+            showMessage('Generating recruitment metrics report...', 'info');
+            // In production, this would generate and download a report
+        }
+
+        // Integration Functions
+        function connectBrevo() {
+            showMessage('Connecting to Brevo CRM...', 'info');
+            setTimeout(() => {
+                showMessage('Brevo CRM connected successfully!', 'success');
+            }, 2000);
+        }
+
+        function connectLinkedIn() {
+            showMessage('Connecting to LinkedIn Jobs API...', 'info');
+            setTimeout(() => {
+                showMessage('LinkedIn integration active!', 'success');
+            }, 2000);
+        }
+
+        function connectFirebase() {
+            showMessage('Connecting to Firebase...', 'info');
+            setTimeout(() => {
+                showMessage('Firebase connected! Real-time data sync enabled.', 'success');
+            }, 2000);
+        }
+
+        function saveAIConfig() {
+            showMessage('AI configuration saved successfully!', 'success');
+        }
+
+        function exportWorkflow() {
+            const workflow = {
+                name: "AI Talent Scoring Workflow",
+                trigger: "webhook",
+                steps: [
+                    "1. Receive applicant data from CRM",
+                    "2. Parse resume with OpenAI GPT-4",
+                    "3. Calculate AI score (0-100)",
+                    "4. Store in Firebase Firestore",
+                    "5. Send notifications for high scores",
+                    "6. Update CRM status"
+                ],
+                timestamp: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(workflow, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'n8n-workflow.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showMessage('Workflow exported successfully!', 'success');
+        }
+
+        function viewWorkflowLogs() {
+            alert(`
+                Workflow Logs (Last 24 hours):
+                
+                [14:30] ? Processed applicant: Sarah Johnson (Score: 92)
+                [14:15] ? Processed applicant: Michael Chen (Score: 85)
+                [13:45] ?? Processed applicant: Emma Wilson (Score: 78)
+                [13:20] ? Processed applicant: David Brown (Score: 88)
+                [12:55] ?? Processed applicant: Lisa Martinez (Score: 65)
+                
+                Success Rate: 100%
+                Average Processing Time: 2.3s
+                Total Processed: 42 applicants
+            `);
+        }
+
+        function loadWorkflowStatus() {
+            // In production, this would fetch from n8n API
+            console.log('Loading workflow status...');
+        }
+
+        // Initialize dashboard
+        window.onload = initializeDashboard;
+    </script>
+</body>
+</html>

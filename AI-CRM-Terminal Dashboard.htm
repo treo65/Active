@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CRM Terminal Dashboard</title>
+    <style>
+        :root {
+            --terminal-bg: #1e1e1e;
+            --terminal-green: #00ff00;
+            --terminal-blue: #007acc;
+            --terminal-red: #ff5555;
+            --terminal-yellow: #ffff55;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .dashboard-container {
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .terminal-window {
+            background: var(--terminal-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+        
+        .terminal-header {
+            background: #333;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #555;
+        }
+        
+        .terminal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca3f; }
+        
+        .terminal-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            background: #444;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: #555;
+        }
+        
+        .terminal-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .terminal-output {
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+        
+        .terminal-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .prompt {
+            color: var(--terminal-green);
+        }
+        
+        .cursor {
+            background: var(--terminal-green);
+            width: 8px;
+            height: 18px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .command {
+            color: var(--terminal-blue);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #666;
+        }
+        
+        .status-dot.online { background: var(--terminal-green); }
+        .status-dot.offline { background: var(--terminal-red); }
+        .status-dot.loading { 
+            background: var(--terminal-yellow);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Quick Actions Panel */
+        .quick-actions {
+            background: #161b22;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-card {
+            background: var(--terminal-bg);
+            padding: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            border-left: 4px solid var(--terminal-blue);
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            background: #252525;
+        }
+        
+        .action-card h4 {
+            color: var(--terminal-green);
+            margin-bottom: 8px;
+        }
+        
+        .action-card p {
+            font-size: 12px;
+            color: #8b949e;
+        }
+        
+        /* Log Output Window */
+        .log-window {
+            background: #000;
+            color: var(--terminal-green);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        
+        /* Terminal Tabs */
+        .terminal-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .terminal-tab {
+            background: #333;
+            padding: 8px 15px;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .terminal-tab.active {
+            background: var(--terminal-bg);
+            border-color: #555;
+            border-bottom: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .terminal-window {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: var(--terminal-green); margin-bottom: 10px;">
+        ?? AI CRM Terminal Dashboard
+    </h1>
+    <p style="color: #8b949e; margin-bottom: 20px;">
+        Centralized terminal control for your AI-powered CRM workflow
+    </p>
+
+    <!-- Terminal Tabs Navigation -->
+    <div class="terminal-tabs">
+        <div class="terminal-tab active" onclick="switchTerminal('n8n')">
+            ?? n8n Workflow
+        </div>
+        <div class="terminal-tab" onclick="switchTerminal('firebase')">
+            ?? Firebase DB
+        </div>
+        <div class="terminal-tab" onclick="switchTerminal('api')">
+            ? API Server
+        </div>
+        <div class="terminal-tab" onclick="switchTerminal('monitoring')">
+            ?? Monitoring
+        </div>
+        <div class="terminal-tab" onclick="switchTerminal('ai')">
+            ?? AI Services
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        
+        <!-- Terminal 1: n8n Workflow -->
+        <div class="terminal-window" id="terminal-n8n">
+            <div class="terminal-header">
+                <div class="terminal-title">
+                    <span class="terminal-dot dot-red"></span>
+                    <span class="terminal-dot dot-yellow"></span>
+                    <span class="terminal-dot dot-green"></span>
+                    <span style="margin-left: 10px;">?? n8n Workflow Engine</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot online"></span>
+                    <span>Running</span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-output">
+                    $ n8n start --tunnel<br>
+                    Starting n8n v1.18.1...<br>
+                    Webhook URL: https://your-domain.webhook.n8n.cloud/<br>
+                    Dashboard: http://localhost:5678<br>
+                    <br>
+                    ? Workflows loaded: 3<br>
+      - applicant_processing<br>
+      - ai_scoring<br>
+      - notifications<br>
+                    <br>
+      ???  Watching for new applicants...<br>
+      Last processed: 5 seconds ago<br>
+                </div>
+                <div class="terminal-input">
+                    <span class="prompt">n8n$</span>
+                    <span class="command" id="n8n-command">n8n import --separate</span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal 2: Firebase Database -->
+        <div class="terminal-window" id="terminal-firebase">
+            <div class="terminal-header">
+                <div class="terminal-title">
+                    <span class="terminal-dot dot-red"></span>
+                    <span class="terminal-dot dot-yellow"></span>
+                    <span class="terminal-dot dot-green"></span>
+                    <span style="margin-left: 10px;">?? Firebase Firestore</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot online"></span>
+                    <span>Connected</span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-output">
+                    $ firebase emulators:start<br>
+                    Starting emulators...<br>
+      Firestore: http://localhost:8080<br>
+      Auth: http://localhost:9099<br>
+      <br>
+      ?? Database Stats:<br>
+      - /applicants: 1,247 documents<br>
+      - /ai_scores: 892 documents<br>
+      - /notifications: 156 documents<br>
+      <br>
+      ?? Real-time updates active<br>
+      Last sync: Just now<br>
+                </div>
+                <div class="terminal-input">
+                    <span class="prompt">firebase$</span>
+                    <span class="command" id="firebase-command">firebase firestore:list /applicants --limit=5</span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal 3: API Server -->
+        <div class="terminal-window" id="terminal-api">
+            <div class="terminal-header">
+                <div class="terminal-title">
+                    <span class="terminal-dot dot-red"></span>
+                    <span class="terminal-dot dot-yellow"></span>
+                    <span class="terminal-dot dot-green"></span>
+                    <span style="margin-left: 10px;">? CRM API Server</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot online"></span>
+                    <span>Port 3000</span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-output">
+                    $ npm start<br>
+      Server running on http://localhost:3000<br>
+      <br>
+      ?? API Endpoints:<br>
+      POST /api/v1/webhook/crm<br>
+      GET  /api/v1/applicants<br>
+      POST /api/v1/ai/process<br>
+      GET  /api/v1/analytics<br>
+      <br>
+      ?? API Metrics:<br>
+      - Requests: 2,345<br>
+      - Avg Response: 120ms<br>
+      - Errors: 0.2%<br>
+                </div>
+                <div class="terminal-input">
+                    <span class="prompt">api$</span>
+                    <span class="command" id="api-command">curl localhost:3000/api/v1/health</span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal 4: AI Services -->
+        <div class="terminal-window" id="terminal-ai">
+            <div class="terminal-header">
+                <div class="terminal-title">
+                    <span class="terminal-dot dot-red"></span>
+                    <span class="terminal-dot dot-yellow"></span>
+                    <span class="terminal-dot dot-green"></span>
+                    <span style="margin-left: 10px;">?? AI Processing Services</span>
+                </div>
+                <div class="terminal-controls">
+                    <button class="control-btn" onclick="restartAIServices()">Restart AI</button>
+                    <button class="control-btn" onclick="clearAICache()">Clear Cache</button>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-output">
+                    ?? AI Services Status:<br>
+      <br>
+      ? OpenAI GPT-4: Connected<br>
+      ? Google Gemini: Connected<br>
+      ?? OpenWeb Ninja: Scraping 3 sites<br>
+      ? ActiveSkills Analytics: Synced<br>
+      <br>
+      ?? Processing Queue:<br>
+      - Current: 5 resumes<br>
+      - Today: 234 processed<br>
+      - Avg Score: 78/100<br>
+      <br>
+      ?? API Usage: $42.50 this month
+                </div>
+                <div class="terminal-input">
+                    <span class="prompt">ai$</span>
+                    <span class="command" id="ai-command">python ai_scorer.py --resume=latest.pdf</span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Quick Actions Panel -->
+    <div class="quick-actions">
+        <h3 style="color: var(--terminal-green); margin-bottom: 15px;">
+            ? Quick Actions
+        </h3>
+        <div class="actions-grid">
+            <div class="action-card" onclick="triggerTestApplicant()">
+                <h4>?? Test New Applicant</h4>
+                <p>Simulate applicant from Brevo/Apollo</p>
+            </div>
+            <div class="action-card" onclick="checkWorkflowStatus()">
+                <h4>?? Check Workflow Status</h4>
+                <p>View all active workflows & triggers</p>
+            </div>
+            <div class="action-card" onclick="exportApplicants()">
+                <h4>?? Export Applicants</h4>
+                <p>Download processed candidates CSV</p>
+            </div>
+            <div class="action-card" onclick="clearAllLogs()">
+                <h4>??? Clear All Logs</h4>
+                <p>Clean terminal outputs</p>
+            </div>
+            <div class="action-card" onclick="runHealthCheck()">
+                <h4>?? System Health Check</h4>
+                <p>Test all services connectivity</p>
+            </div>
+            <div class="action-card" onclick="backupDatabase()">
+                <h4>?? Backup Database</h4>
+                <p>Create Firestore backup</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Logs -->
+    <div class="quick-actions" style="margin-top: 20px;">
+        <h3 style="color: var(--terminal-green); margin-bottom: 15px;">
+            ?? System Logs
+        </h3>
+        <div class="log-window" id="system-logs">
+[10:25:42] ? n8n workflow "applicant_processing" triggered<br>
+[10:25:43] ?? Processing applicant ID: APP_2387<br>
+[10:25:45] ?? AI scoring complete: 92/100<br>
+[10:25:46] ?? Email sent to hiring team<br>
+[10:25:47] ? CRM updated successfully<br>
+[10:26:01] ?? New webhook from Brevo<br>
+[10:26:03] ?? Processing applicant ID: APP_2388<br>
+        </div>
+        <div style="margin-top: 10px; display: flex; gap: 10px;">
+            <button class="control-btn" onclick="pauseLogs()">?? Pause</button>
+            <button class="control-btn" onclick="clearLogs()">?? Clear</button>
+            <button class="control-btn" onclick="downloadLogs()">?? Download</button>
+        </div>
+    </div>
+
+    <!-- Active Workflows Status -->
+    <div class="quick-actions" style="margin-top: 20px;">
+        <h3 style="color: var(--terminal-green); margin-bottom: 15px;">
+            ?? Active Workflows
+        </h3>
+        <div id="workflow-status" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Terminal switching functionality
+        let activeTerminal = 'n8n';
+        const terminals = ['n8n', 'firebase', 'api', 'monitoring', 'ai'];
+        
+        function switchTerminal(terminalId) {
+            // Update tabs
+            document.querySelectorAll('.terminal-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show selected terminal, hide others
+            terminals.forEach(term => {
+                const element = document.getElementById(`terminal-${term}`);
+                if (element) {
+                    element.style.display = term === terminalId ? 'flex' : 'none';
+                }
+            });
+            
+            activeTerminal = terminalId;
+        }
+
+        // Simulate terminal commands
+        const terminalCommands = {
+            n8n: [
+                'n8n list:workflows',
+                'n8n execute --id=applicant_processing',
+                'n8n import workflows/ai_scoring.json',
+                'n8n export --all --output=backup.zip',
+                'n8n webhook:list'
+            ],
+            firebase: [
+                'firebase firestore:list /applicants --order-by="createdAt"',
+                'firebase firestore:get /applicants/APP_2387',
+                'firebase emulators:export ./backup',
+                'firebase deploy --only firestore:rules',
+                'firebase functions:log'
+            ],
+            api: [
+                'curl -X POST http://localhost:3000/webhook/test',
+                'npm run test:integration',
+                'node scripts/seedDatabase.js',
+                'pm2 restart api-server',
+                'redis-cli monitor'
+            ],
+            ai: [
+                'python scripts/ai_batch.py --limit=50',
+                'node scripts/scrape_companies.js',
+                'curl https://api.openai.com/v1/models',
+                'python -c "import nltk; nltk.download(\'punkt\')"',
+                'docker-compose up ai_services'
+            ]
+        };
+
+        let commandIndex = 0;
+        setInterval(() => {
+            const commands = terminalCommands[activeTerminal] || [];
+            if (commands.length > 0) {
+                const commandElement = document.getElementById(`${activeTerminal}-command`);
+                if (commandElement) {
+                    commandElement.textContent = commands[commandIndex % commands.length];
+                    commandIndex++;
+                }
+            }
+        }, 3000);
+
+        // Quick Actions Functions
+        function triggerTestApplicant() {
+            addLog('?? Simulating test applicant from Brevo...');
+            setTimeout(() => addLog('? Test applicant processed. Score: 88/100'), 1000);
+        }
+
+        function checkWorkflowStatus() {
+            addLog('?? Checking workflow status...');
+            const workflows = [
+                { name: 'applicant_processing', status: 'active', lastRun: '2 min ago' },
+                { name: 'ai_scoring', status: 'active', lastRun: '1 min ago' },
+                { name: 'notifications', status: 'active', lastRun: '30 sec ago' },
+                { name: 'data_sync', status: 'paused', lastRun: '1 hour ago' }
+            ];
+            
+            const container = document.getElementById('workflow-status');
+            container.innerHTML = workflows.map(wf => `
+                <div style="background: #1e1e1e; padding: 15px; border-radius: 6px; border-left: 4px solid ${wf.status === 'active' ? '#27ca3f' : '#ffbd2e'}">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="color: ${wf.status === 'active' ? '#27ca3f' : '#ffbd2e'}">${wf.name}</h4>
+                        <span style="font-size: 12px; background: #333; padding: 2px 8px; border-radius: 10px;">${wf.status}</span>
+                    </div>
+                    <p style="font-size: 12px; color: #8b949e; margin-top: 5px;">Last run: ${wf.lastRun}</p>
+                    <button onclick="toggleWorkflow('${wf.name}')" style="margin-top: 10px; background: #444; border: none; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                        ${wf.status === 'active' ? '?? Pause' : '?? Start'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function exportApplicants() {
+            addLog('?? Exporting applicants to CSV...');
+            setTimeout(() => {
+                addLog('? Export complete. Downloading file...');
+                // Simulate download
+                const link = document.createElement('a');
+                link.href = 'data:text/csv;charset=utf-8,applicant_id,score,name,email\nAPP_2387,92,John Doe,john@example.com';
+                link.download = 'applicants_export.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 1500);
+        }
+
+        function clearAllLogs() {
+            document.querySelectorAll('.terminal-output').forEach(output => {
+                output.textContent = '$';
+            });
+            document.getElementById('system-logs').textContent = '';
+            addLog('??? All logs cleared');
+        }
+
+        function runHealthCheck() {
+            addLog('?? Running system health check...');
+            const services = ['n8n', 'firebase', 'api', 'ai'];
+            services.forEach((service, index) => {
+                setTimeout(() => {
+                    const status = Math.random() > 0.2 ? '?' : '?';
+                    addLog(`${status} ${service}: ${status === '?' ? 'Healthy' : 'Issues detected'}`);
+                }, index * 500);
+            });
+        }
+
+        function backupDatabase() {
+            addLog('?? Starting database backup...');
+            setTimeout(() => addLog('? Backup created: firestore_backup_2024_01_15.json'), 2000);
+        }
+
+        function restartAIServices() {
+            addLog('?? Restarting AI services...');
+            setTimeout(() => addLog('? AI services restarted successfully'), 1500);
+        }
+
+        function clearAICache() {
+            addLog('?? Clearing AI model cache...');
+            setTimeout(() => addLog('? Cache cleared. Models will reload on next request'), 1000);
+        }
+
+        // Log management
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            const logs = document.getElementById('system-logs');
+            logs.innerHTML += `[${timestamp}] ${message}<br>`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('system-logs').innerHTML = '';
+        }
+
+        function pauseLogs() {
+            // Implementation would pause real-time log updates
+            addLog('?? Log updates paused');
+        }
+
+        function downloadLogs() {
+            const logs = document.getElementById('system-logs').textContent;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'crm_logs.txt';
+            link.click();
+        }
+
+        function toggleWorkflow(workflowName) {
+            addLog(`?? Toggling workflow: ${workflowName}`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkWorkflowStatus();
+            
+            // Simulate real-time updates
+            setInterval(() => {
+                const events = [
+                    '?? AI searching for candidate skills',
+                    '?? Sending notification to hiring@company.com',
+                    '?? Syncing with Brevo CRM',
+                    '?? Processing resume with Gemini AI',
+                    '?? Updating analytics dashboard'
+                ];
+                const randomEvent = events[Math.floor(Math.random() * events.length)];
+                addLog(randomEvent);
+            }, 8000);
+            
+            // Initial terminal setup
+            switchTerminal('n8n');
+        });
+    </script>
+    <script>
+// UNIVERSAL CRM API Integration - Works on ALL pages
+class UniversalCRM {
+  constructor() {
+    this.apiBase = 'https://activeskillsrecruitment.co.uk/CRM-ai/api.php';
+    this.pageName = document.title || 'CRM Page';
+    this.init();
+  }
+
+  async init() {
+    console.log(`CRM Integration loaded on: ${this.pageName}`);
+    this.injectAPIIndicator();
+    await this.syncWithAPI();
+    this.setupRealTimeUpdates();
+  }
+
+  injectAPIIndicator() {
+    // Remove any existing indicator
+    const existing = document.getElementById('crm-api-indicator');
+    if (existing) existing.remove();
+
+    const indicator = document.createElement('div');
+    indicator.id = 'crm-api-indicator';
+    indicator.innerHTML = `
+      <div style="position: fixed; bottom: 10px; right: 10px; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 9999; font-family: Arial, sans-serif; font-size: 12px; border-left: 4px solid #3B82F6; max-width: 250px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <div style="width: 10px; height: 10px; background: #10B981; border-radius: 50%;"></div>
+          <strong style="color: #1E40AF;">Live CRM Data</strong>
+        </div>
+        <div style="color: #4B5563; margin-bottom: 8px;">Connected to central database</div>
+        <div style="display: flex; gap: 8px; font-size: 11px;">
+          <a href="javascript:void(0)" onclick="window.CRM.refreshData()" style="color: #3B82F6; text-decoration: none;">🔄 Refresh</a>
+          <a href="https://activeskillsrecruitment.co.uk/CRM-ai/crm-dashboard.html" target="_blank" style="color: #059669; text-decoration: none;">📊 Dashboard</a>
+          <a href="https://activeskillsrecruitment.co.uk/CRM-ai/api.php?endpoint=stats" target="_blank" style="color: #7C3AED; text-decoration: none;">📈 API</a>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(indicator);
+  }
+
+  async syncWithAPI() {
+    try {
+      // Get data from central API
+      const [stats, candidates, jobs] = await Promise.all([
+        this.fetchData('stats'),
+        this.fetchData('candidates'),
+        this.fetchData('jobs')
+      ]);
+
+      // Update current page based on its content
+      this.updateCurrentPage(stats, candidates, jobs);
+      
+      this.showMessage('✅ Live data synced successfully', 'success');
+      
+    } catch (error) {
+      console.error('Sync error:', error);
+      this.showMessage('⚠️ Using offline data', 'warning');
+    }
+  }
+
+  async fetchData(endpoint) {
+    const response = await fetch(`${this.apiBase}?endpoint=${endpoint}`);
+    if (!response.ok) throw new Error('API Error');
+    return await response.json();
+  }
+
+  updateCurrentPage(stats, candidates, jobs) {
+    // JOB-LISTING.HTML updates
+    if (this.pageName.includes('Job') || document.querySelector('#jobsContainer, .jobs-grid')) {
+      this.updateJobListings(jobs);
+    }
+    
+    // ANALYTICS-DASHBOARD.HTML updates
+    if (this.pageName.includes('Analytics') || document.querySelector('.stats-grid, .analytics-chart')) {
+      this.updateAnalytics(stats, candidates);
+    }
+    
+    // CRM-DASHBOARD.HTML updates
+    if (this.pageName.includes('CRM') || document.querySelector('#candidates-table-body')) {
+      this.updateCRMData(stats, candidates, jobs);
+    }
+    
+    // UNIVERSAL updates for any page
+    this.updateUniversalElements(stats);
+  }
+
+  updateJobListings(jobs) {
+    // Update job listings on Job-listing.html
+    const containers = [
+      '#jobsContainer',
+      '.jobs-grid',
+      '#job-listings',
+      '.job-board',
+      '[class*="job"]',
+      '[id*="job"]'
+    ];
+    
+    containers.forEach(selector => {
+      const container = document.querySelector(selector);
+      if (container && !container.innerHTML.includes('Live CRM')) {
+        container.innerHTML = `
+          <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px;">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+              <span>🔄</span> Live CRM Job Listings (${jobs.length} positions)
+            </h3>
+            <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Synced from central database</p>
+          </div>
+          ${jobs.map(job => `
+            <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-left: 4px solid #3B82F6;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <div>
+                  <h4 style="margin: 0; color: #1E40AF;">${job.title}</h4>
+                  <p style="margin: 5px 0; color: #4B5563; font-size: 14px;">
+                    <strong>${job.company}</strong> • ${job.location}
+                  </p>
+                </div>
+                <span style="background: #10B981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                  ${job.salary}
+                </span>
+              </div>
+              <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="window.CRM.applyToJob(${job.id})" style="background: #3B82F6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                  Apply Now
+                </button>
+                <button onclick="window.CRM.saveJob(${job.id})" style="background: white; color: #3B82F6; border: 1px solid #3B82F6; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                  Save Job
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        `;
+      }
+    });
+  }
+
+  updateAnalytics(stats, candidates) {
+    // Update analytics dashboard
+    const statElements = {
+      'total-candidates': stats.total,
+      'new-candidates': stats.new,
+      'interview-candidates': stats.interview,
+      'conversion-rate': stats.conversionRate + '%',
+      'stat-candidates': stats.total,
+      'stat-jobs': '86',
+      'stat-applications': stats.total,
+      'stat-match-rate': stats.conversionRate + '%'
+    };
+    
+    Object.entries(statElements).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    });
+    
+    // Update charts or tables
+    const tables = document.querySelectorAll('table');
+    tables.forEach(table => {
+      if (table.innerHTML.includes('Candidate') || table.innerHTML.includes('Application')) {
+        const tbody = table.querySelector('tbody');
+        if (tbody) {
+          tbody.innerHTML = candidates.slice(0, 5).map(candidate => `
+            <tr>
+              <td><strong>${candidate.name}</strong></td>
+              <td>${candidate.email}</td>
+              <td>${candidate.position || 'N/A'}</td>
+              <td><span style="padding: 4px 12px; background: ${this.getStatusColor(candidate.status)}; color: white; border-radius: 20px; font-size: 12px;">${candidate.status}</span></td>
+              <td>
+                <button onclick="window.CRM.viewCandidate(${candidate.id})" style="background: #3B82F6; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                  View
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+    });
+  }
+
+  updateCRMData(stats, candidates, jobs) {
+    // Specific updates for CRM dashboard
+    this.updateCRMStats(stats);
+    this.updateCandidatesTable(candidates);
+    this.updateJobsInCRM(jobs);
+  }
+
+  updateUniversalElements(stats) {
+    // Update any element that mentions numbers
+    const numberElements = document.querySelectorAll('*');
+    numberElements.forEach(el => {
+      const text = el.textContent;
+      if (text.includes('candidates') && text.match(/\d+/)) {
+        el.innerHTML = el.innerHTML.replace(/\d+(?=\s*candidates)/, stats.total);
+      }
+      if (text.includes('jobs') && text.match(/\d+/)) {
+        el.innerHTML = el.innerHTML.replace(/\d+(?=\s*jobs)/, '86');
+      }
+    });
+  }
+
+  updateCRMStats(stats) {
+    const statCards = [
+      { selector: '.card .value', text: 'Total Candidates', value: stats.total },
+      { selector: '[class*="stat"]', text: 'in interview', value: stats.interview },
+      { selector: '[class*="hired"]', text: 'Hired', value: stats.hired }
+    ];
+    
+    statCards.forEach(card => {
+      const elements = document.querySelectorAll(card.selector);
+      elements.forEach(el => {
+        if (el.textContent.includes(card.text)) {
+          el.textContent = el.textContent.replace(/\d+/, card.value);
+        }
+      });
+    });
+  }
+
+  updateCandidatesTable(candidates) {
+    const tbody = document.getElementById('candidates-table-body');
+    if (tbody) {
+      tbody.innerHTML = candidates.map(candidate => `
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 32px; height: 32px; background: #3B82F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                ${candidate.name.charAt(0)}
+              </div>
+              <div>
+                <div style="font-weight: 600;">${candidate.name}</div>
+                <div style="font-size: 12px; color: #6B7280;">${candidate.email}</div>
+              </div>
+            </div>
+          </td>
+          <td>${candidate.position || 'Not specified'}</td>
+          <td>
+            <span style="padding: 4px 12px; border-radius: 20px; background: ${this.getStatusColor(candidate.status)}; color: white; font-size: 12px;">
+              ${candidate.status}
+            </span>
+          </td>
+          <td>${candidate.skills ? candidate.skills.join(', ') : 'N/A'}</td>
+          <td>
+            <div style="display: flex; gap: 5px;">
+              <button onclick="window.CRM.callCandidate('${candidate.phone}', '${candidate.name}')" 
+                      style="background: #10B981; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                📞
+              </button>
+              <button onclick="window.location.href='mailto:${candidate.email}'" 
+                      style="background: #3B82F6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                ✉️
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  updateJobsInCRM(jobs) {
+    const jobContainers = [
+      '#jobsContainer',
+      '#job-board',
+      '.job-listings'
+    ];
+    
+    jobContainers.forEach(selector => {
+      const container = document.querySelector(selector);
+      if (container) {
+        container.innerHTML = jobs.map(job => `
+          <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h4 style="margin: 0 0 5px 0; color: #1E40AF;">${job.title}</h4>
+            <p style="margin: 0 0 5px 0; color: #4B5563; font-size: 14px;">
+              ${job.company} • ${job.location}
+            </p>
+            <p style="margin: 0 0 10px 0; color: #059669; font-weight: bold;">${job.salary}</p>
+            <button onclick="window.CRM.applyJob(${job.id})" 
+                    style="background: #3B82F6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+              View Details
+            </button>
+          </div>
+        `).join('');
+      }
+    });
+  }
+
+  getStatusColor(status) {
+    const colors = {
+      'new': '#3B82F6',
+      'interview': '#F59E0B',
+      'hired': '#10B981',
+      'rejected': '#EF4444'
+    };
+    return colors[status.toLowerCase()] || '#6B7280';
+  }
+
+  // Public methods
+  async refreshData() {
+    await this.syncWithAPI();
+  }
+
+  callCandidate(phone, name) {
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = `tel:${phone}`;
+    } else {
+      navigator.clipboard.writeText(phone);
+      this.showMessage(`📋 Copied ${name}'s number: ${phone}`, 'success');
+    }
+  }
+
+  applyToJob(jobId) {
+    this.showMessage(`Applying to job #${jobId}...`, 'info');
+    // Add your application logic here
+  }
+
+  saveJob(jobId) {
+    this.showMessage(`Job #${jobId} saved to favorites`, 'success');
+  }
+
+  viewCandidate(id) {
+    this.showMessage(`Viewing candidate #${id} details`, 'info');
+  }
+
+  showMessage(message, type = 'info') {
+    const existing = document.getElementById('crm-message');
+    if (existing) existing.remove();
+    
+    const msg = document.createElement('div');
+    msg.id = 'crm-message';
+    msg.innerHTML = `
+      <div style="position: fixed; top: 20px; right: 20px; background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'}; 
+                  color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10000; 
+                  display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">
+        <div style="font-size: 20px;">
+          ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
+        </div>
+        <div>
+          <div style="font-weight: bold; margin-bottom: 2px;">${type.toUpperCase()}</div>
+          <div>${message}</div>
+        </div>
+      </div>
+    `;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(msg);
+    setTimeout(() => {
+      msg.style.animation = 'slideIn 0.3s reverse';
+      setTimeout(() => {
+        msg.remove();
+        style.remove();
+      }, 300);
+    }, 3000);
+  }
+
+  setupRealTimeUpdates() {
+    // Auto-refresh every 60 seconds
+    setInterval(() => {
+      this.syncWithAPI();
+    }, 60000);
+    
+    // Add refresh buttons to all pages
+    this.addRefreshButtons();
+  }
+
+  addRefreshButtons() {
+    // Look for headers or action areas to add refresh button
+    const headers = document.querySelectorAll('.header, [class*="header"], [id*="header"]');
+    headers.forEach(header => {
+      if (!header.querySelector('.crm-refresh-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'crm-refresh-btn';
+        btn.innerHTML = '🔄 Sync CRM Data';
+        btn.style.cssText = `
+          background: #3B82F6;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          margin-left: 10px;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+        `;
+        btn.onclick = () => this.refreshData();
+        
+        // Try to find a good spot in the header
+        const actionsDiv = header.querySelector('div:last-child');
+        if (actionsDiv) {
+          actionsDiv.appendChild(btn);
+        } else {
+          header.appendChild(btn);
+        }
+      }
+    });
+  }
+}
+
+// Initialize on all pages
+document.addEventListener('DOMContentLoaded', () => {
+  window.CRM = new UniversalCRM();
+  
+  // Add CSS for animations
+  const style = document.createElement('style');
+  style.textContent = `
+    .crm-pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  `;
+  document.head.appendChild(style);
+});
+</script>
+<!-- EMERGENCY FIX - Add to ALL pages -->
+<script>
+// Emergency CRM Data Sync
+(function() {
+    console.log('EMERGENCY CRM SYNC activated');
+    
+    // Force inject CRM data
+    const forceData = {
+        totalCandidates: 3,
+        activeJobs: 3,
+        interviewCandidates: 1,
+        hiredCandidates: 1,
+        conversionRate: '33.3%'
+    };
+    
+    // Create/update indicator
+    let indicator = document.getElementById('emergency-crm-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'emergency-crm-indicator';
+        document.body.appendChild(indicator);
+    }
+    
+    indicator.innerHTML = `
+        <div style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3B82F6;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 9999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-family: Arial;
+            min-width: 250px;
+        ">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <strong>🔗 CRM SYNC ACTIVE</strong>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer;">×</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px;">
+                    <div style="font-size: 24px; font-weight: bold;">${forceData.totalCandidates}</div>
+                    <div style="font-size: 11px;">Candidates</div>
+                </div>
+                <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px;">
+                    <div style="font-size: 24px; font-weight: bold;">${forceData.activeJobs}</div>
+                    <div style="font-size: 11px;">Active Jobs</div>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.9); margin-bottom: 10px;">
+                All pages showing same data
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="syncAllPages()" style="
+                    flex: 1;
+                    background: rgba(255,255,255,0.2);
+                    border: 1px solid rgba(255,255,255,0.3);
+                    color: white;
+                    padding: 8px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 11px;
+                ">🔄 Sync Now</button>
+                <button onclick="window.open('https://activeskillsrecruitment.co.uk/CRM-ai/api.php?endpoint=stats', '_blank')" style="
+                    flex: 1;
+                    background: rgba(255,255,255,0.2);
+                    border: 1px solid rgba(255,255,255,0.3);
+                    color: white;
+                    padding: 8px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 11px;
+                ">📊 View API</button>
+            </div>
+        </div>
+    `;
+    
+    // Force update numbers on page
+    document.querySelectorAll('*').forEach(el => {
+        const text = el.textContent.toLowerCase();
+        if (text.includes('candidate') && text.match(/\d+/)) {
+            el.innerHTML = el.innerHTML.replace(/\d+(?=\s*candidates?)/i, forceData.totalCandidates);
+        }
+        if (text.includes('job') && text.match(/\d+/) && !text.includes('board')) {
+            el.innerHTML = el.innerHTML.replace(/\d+(?=\s*jobs?)/i, forceData.activeJobs);
+        }
+    });
+    
+    window.syncAllPages = function() {
+        location.reload();
+    };
+})();
+</script>
+</body>
+</html>

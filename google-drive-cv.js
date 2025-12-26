@@ -1,22 +1,22 @@
-// google-drive-cv.js - Simple CV Import from Google Drive
-const fs = require('fs');
-const path = require('path');
-const { google } = require('googleapis');
-const readline = require('readline');
+﻿// google-drive-cv.js - Simple CV Import from Google Drive
+const fs = require("fs");
+const path = require("path");
+const { google } = require("googleapis");
+const readline = require("readline");
 
-console.log('\n🚀 Google Drive CV Importer\n');
+console.log("\n🚀 Google Drive CV Importer\n");
 
 // Check for credentials
-const KEY_PATH = path.join(__dirname, 'service-account-key.json');
+const KEY_PATH = path.join(__dirname, "service-account-key.json");
 
 if (!fs.existsSync(KEY_PATH)) {
-    console.log('❌ ERROR: service-account-key.json not found');
-    console.log('\n📝 SETUP INSTRUCTIONS:');
-    console.log('1. Go to: https://console.cloud.google.com');
-    console.log('2. Create project → Enable Drive API');
-    console.log('3. Create Service Account → Download JSON key');
-    console.log('4. Save as service-account-key.json in this folder');
-    console.log('\nQuick setup video: https://www.youtube.com/watch?v=7YBh7A9pLIE');
+    console.log("❌ ERROR: service-account-key.json not found");
+    console.log("\n📝 SETUP INSTRUCTIONS:");
+    console.log("1. Go to: https://console.cloud.google.com");
+    console.log("2. Create project → Enable Drive API");
+    console.log("3. Create Service Account → Download JSON key");
+    console.log("4. Save as service-account-key.json in this folder");
+    console.log("\nQuick setup video: https://www.youtube.com/watch?v=7YBh7A9pLIE");
     process.exit(1);
 }
 
@@ -24,28 +24,28 @@ async function authenticate() {
     try {
         const auth = new google.auth.GoogleAuth({
             keyFile: KEY_PATH,
-            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+            scopes: ["https://www.googleapis.com/auth/drive.readonly"],
         });
         
         const client = await auth.getClient();
-        console.log('✅ Google Drive authenticated');
+        console.log("✅ Google Drive authenticated");
         return client;
     } catch (error) {
-        console.error('❌ Authentication failed:', error.message);
+        console.error("❌ Authentication failed:", error.message);
         process.exit(1);
     }
 }
 
 async function listCVFiles(authClient) {
     try {
-        const drive = google.drive({ version: 'v3', auth: authClient });
+        const drive = google.drive({ version: "v3", auth: authClient });
         
         // Search for CV files (PDF, DOCX, TXT)
         const response = await drive.files.list({
             q: "mimeType contains 'pdf' or mimeType contains 'document' or mimeType contains 'text'",
-            fields: 'files(id, name, mimeType, webViewLink, createdTime)',
+            fields: "files(id, name, mimeType, webViewLink, createdTime)",
             pageSize: 20,
-            orderBy: 'createdTime desc'
+            orderBy: "createdTime desc"
         });
         
         const files = response.data.files || [];
@@ -58,18 +58,18 @@ async function listCVFiles(authClient) {
         
         return files;
     } catch (error) {
-        console.error('❌ Error listing files:', error.message);
+        console.error("❌ Error listing files:", error.message);
         return [];
     }
 }
 
 async function downloadCV(authClient, fileId, fileName) {
     try {
-        const drive = google.drive({ version: 'v3', auth: authClient });
-        const destPath = path.join(__dirname, 'temp_cvs', fileName);
+        const drive = google.drive({ version: "v3", auth: authClient });
+        const destPath = path.join(__dirname, "temp_cvs", fileName);
         
         // Create temp directory
-        const tempDir = path.join(__dirname, 'temp_cvs');
+        const tempDir = path.join(__dirname, "temp_cvs");
         if (!fs.existsSync(tempDir)) {
             fs.mkdirSync(tempDir, { recursive: true });
         }
@@ -77,18 +77,18 @@ async function downloadCV(authClient, fileId, fileName) {
         const dest = fs.createWriteStream(destPath);
         
         const response = await drive.files.get(
-            { fileId: fileId, alt: 'media' },
-            { responseType: 'stream' }
+            { fileId: fileId, alt: "media" },
+            { responseType: "stream" }
         );
         
         return new Promise((resolve, reject) => {
             response.data
                 .pipe(dest)
-                .on('finish', () => {
+                .on("finish", () => {
                     console.log(`✅ Downloaded: ${fileName}`);
                     resolve(destPath);
                 })
-                .on('error', reject);
+                .on("error", reject);
         });
     } catch (error) {
         console.error(`❌ Download failed: ${error.message}`);
@@ -99,14 +99,14 @@ async function downloadCV(authClient, fileId, fileName) {
 async function extractCVInfo(filePath) {
     // Simple text extraction for now
     try {
-        let text = '';
+        let text = "";
         
-        if (filePath.endsWith('.txt')) {
-            text = fs.readFileSync(filePath, 'utf8');
-        } else if (filePath.endsWith('.pdf')) {
+        if (filePath.endsWith(".txt")) {
+            text = fs.readFileSync(filePath, "utf8");
+        } else if (filePath.endsWith(".pdf")) {
             // Simple PDF text extraction (basic)
             const buffer = fs.readFileSync(filePath);
-            text = buffer.toString('utf8', 0, 5000); // First 5000 bytes
+            text = buffer.toString("utf8", 0, 5000); // First 5000 bytes
         }
         
         // Extract basic info
@@ -115,15 +115,15 @@ async function extractCVInfo(filePath) {
         const nameMatch = text.match(/[A-Z][a-z]+ [A-Z][a-z]+/);
         
         return {
-            name: nameMatch ? nameMatch[0] : 'Unknown Candidate',
-            email: emailMatch ? emailMatch[0] : 'no-email@example.com',
-            phone: phoneMatch ? phoneMatch[0] : '+440000000000',
-            source: 'Google Drive CV',
+            name: nameMatch ? nameMatch[0] : "Unknown Candidate",
+            email: emailMatch ? emailMatch[0] : "no-email@example.com",
+            phone: phoneMatch ? phoneMatch[0] : "+440000000000",
+            source: "Google Drive CV",
             cvFile: path.basename(filePath),
             importedAt: new Date(),
             aiScore: Math.floor(Math.random() * 20) + 75,
-            skills: ['CV Import'],
-            status: 'New'
+            skills: ["CV Import"],
+            status: "New"
         };
     } catch (error) {
         console.error(`❌ Extraction error: ${error.message}`);
@@ -132,14 +132,14 @@ async function extractCVInfo(filePath) {
 }
 
 async function main() {
-    console.log('🔗 Connecting to Google Drive...');
+    console.log("🔗 Connecting to Google Drive...");
     
     const authClient = await authenticate();
     const files = await listCVFiles(authClient);
     
     if (files.length === 0) {
-        console.log('\n📝 No files found. Upload CVs to your Google Drive.');
-        console.log('Supported formats: PDF, DOCX, TXT');
+        console.log("\n📝 No files found. Upload CVs to your Google Drive.");
+        console.log("Supported formats: PDF, DOCX, TXT");
         return;
     }
     
@@ -148,9 +148,9 @@ async function main() {
         output: process.stdout
     });
     
-    rl.question('\n📥 Download and process these files? (y/n): ', async (answer) => {
-        if (answer.toLowerCase() === 'y') {
-            console.log('\n🔄 Processing files...');
+    rl.question("\n📥 Download and process these files? (y/n): ", async (answer) => {
+        if (answer.toLowerCase() === "y") {
+            console.log("\n🔄 Processing files...");
             
             const candidates = [];
             
@@ -170,11 +170,11 @@ async function main() {
             
             // Save to candidates.json
             if (candidates.length > 0) {
-                const jsonPath = path.join(__dirname, 'data', 'candidates.json');
+                const jsonPath = path.join(__dirname, "data", "candidates.json");
                 let existingCandidates = [];
                 
                 if (fs.existsSync(jsonPath)) {
-                    const existing = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+                    const existing = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
                     existingCandidates = existing;
                 }
                 
@@ -190,7 +190,7 @@ async function main() {
                 console.log(`\n🎯 SUCCESS: Added ${candidates.length} candidates`);
                 console.log(`📊 Total candidates: ${existingCandidates.length}`);
                 console.log(`📁 Saved to: ${jsonPath}`);
-                console.log('\n🔄 Restart server to see changes: node server.js');
+                console.log("\n🔄 Restart server to see changes: node server.js");
             }
         }
         

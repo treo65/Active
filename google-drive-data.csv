@@ -1,0 +1,6 @@
+﻿name,email,phone,position,skills,status,source
+Alex Johnson,alex.johnson@example.com,+441111111111,AI Engineer,Python|TensorFlow|MLOps,New,Google Drive CV
+Sarah Chen,sarah.chen@example.com,+442222222222,Data Scientist,R|SQL|Statistics|Python,Interview,Google Drive CV
+Mike Wilson,mike.wilson@example.com,+443333333333,ML Engineer,Python|AWS|Docker|Kubernetes,Screening,Google Drive CV
+Emma Brown,emma.brown@example.com,+444444444444,Data Analyst,Excel|Tableau|SQL|Python,New,Google Drive CV
+James Taylor,james.taylor@example.com,+445555555555,DevOps Engineer,AWS|Docker|Jenkins|Linux,New,Google Drive CV

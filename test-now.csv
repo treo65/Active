@@ -1,0 +1,4 @@
+﻿name,email,phone,position,skills,experience,status
+Alex Turner,alex@example.com,+441234567893,AI Engineer,Python|TensorFlow,5 years,new
+Maria Garcia,maria@example.com,+441234567894,Data Scientist,R|SQL,3 years,interview
+David Lee,david@example.com,+441234567895,ML Engineer,Python|AWS,4 years,screening

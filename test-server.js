@@ -11,4 +11,5 @@ app.get('/api/test', (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Test server on port ${PORT}`);
     console.log(`📡 http://localhost:${PORT}/api/test`);
+    console.log(`🏠 http://localhost:${PORT}/dashboard-enhanced.html`);
 });
